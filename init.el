@@ -1,13 +1,16 @@
 ;; init.el --- Daniel's init file
 ;;; Commentary:
-;; Daniel's init file.
+;;   Uses minimal external packages for R development.
 
 ;;; Code:
+
+;; package repositories
 (require 'package)
 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
+;; use-package initialization
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -30,8 +33,8 @@
 (use-package company
   :init (global-company-mode t))
 
-(use-package nimbus-theme)
-(load-theme 'nimbus t)
+(use-package nimbus-theme
+  :init (load-theme 'nimbus t))
 
 ;; general settings
 (setq auto-save-default nil)
@@ -39,8 +42,7 @@
 (scroll-bar-mode -1)
 (set-fringe-mode 10)
 
-					; (set-face-attribute 'default t :font "Cascadia Code 11")
-
+;; set font on windows
 (if (string-equal system-type "windows-nt")
     (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" )))
 
