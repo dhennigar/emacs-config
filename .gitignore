@@ -9,3 +9,8 @@
 
 # Undo-tree save-files
 *.~undo-tree
+
+# libs and system files
+server/*
+auto-save-list/*
+elpa/*
