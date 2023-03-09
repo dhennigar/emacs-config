@@ -1,4 +1,4 @@
-;; init.el --- Daniel's init file
+;;; init.el --- Daniel's init file
 ;;; Commentary:
 ;;   Uses minimal external packages for R development.
 
@@ -19,7 +19,7 @@
         use-package-expand-minimally t))
 
 ;; use-package declarations
- (use-package ess
+(use-package ess
   :ensure t
   :init (require 'ess-site)
   :config (setq ess-use-flymake nil))
@@ -36,13 +36,20 @@
 (use-package nimbus-theme
   :init (load-theme 'nimbus t))
 
+;; midnight mode
+(require 'midnight)
+(midnight-delay-set 'midnight-delay "4:30am")
+
+;; set font on windows
+(if (string-equal system-type "windows-nt")
+    (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" )))
+
 ;; general settings
 (setq auto-save-default nil)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (set-fringe-mode 10)
 
-;; set font on windows
-(if (string-equal system-type "windows-nt")
-    (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" )))
+(provide 'init)
+;;; init.el ends here
 
