@@ -45,7 +45,7 @@
     (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
     (add-to-list 'default-frame-alist '(font . "IBM Plex Mono 11" )))
 
-;; general settings
+;; gui settings
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (set-fringe-mode 10)
