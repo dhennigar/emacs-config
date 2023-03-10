@@ -1,6 +1,6 @@
 ;;; init.el --- Daniel's init file
 ;;; Commentary:
-;;   Uses minimal external packages for R development.
+;;   Only a few packages for R development.
 
 ;;; Code:
 
@@ -45,10 +45,15 @@
     (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" )))
 
 ;; general settings
-(setq auto-save-default nil)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (set-fringe-mode 10)
+
+;; temp and backup files
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
 (provide 'init)
 ;;; init.el ends here
