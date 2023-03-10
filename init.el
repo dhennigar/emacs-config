@@ -42,7 +42,8 @@
 
 ;; set font on windows
 (if (string-equal system-type "windows-nt")
-    (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" )))
+    (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
+    (add-to-list 'default-frame-alist '(font . "IBM Plex Mono 11" )))
 
 ;; general settings
 (tool-bar-mode -1)
@@ -57,4 +58,3 @@
 
 (provide 'init)
 ;;; init.el ends here
-
