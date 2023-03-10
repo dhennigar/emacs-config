@@ -20,12 +20,10 @@
 
 ;; use-package declarations
 (use-package ess
-  :ensure t
-  :init (require 'ess-site)
+;;  :init (require 'ess-site)
   :config (setq ess-use-flymake nil))
 
 (use-package flycheck
-  :ensure t
   :init (global-flycheck-mode t)
   :custom (flycheck-lintr-linters
             "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
@@ -35,6 +33,9 @@
 
 (use-package nimbus-theme
   :init (load-theme 'nimbus t))
+
+(use-package evil
+  :init (evil-mode 1))
 
 ;; midnight mode
 (require 'midnight)
