@@ -1,5 +1,14 @@
 ;; init.el --- Daniel's init file
 
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(set-fringe-mode 10)
+(setq inhibit-splash-screen t)
+
+(if (string-equal system-type "windows-nt")
+    (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
+    (add-to-list 'default-frame-alist '(font . "IBM Plex Mono 11" )))
+
 (require 'package)
 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
@@ -34,18 +43,9 @@
 (use-package evil
   :init (evil-mode 1))
 
-(if (string-equal system-type "windows-nt")
-    (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
-    (add-to-list 'default-frame-alist '(font . "IBM Plex Mono 11" )))
-
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(set-fringe-mode 10)
-
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
 
 (require 'midnight)
-(midnight-delay-set 'midnight-delay "4:30am")
