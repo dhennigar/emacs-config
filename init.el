@@ -4,6 +4,7 @@
 (scroll-bar-mode -1)
 (set-fringe-mode 10)
 (setq inhibit-splash-screen t)
+(setq custom-safe-themes t)
 
 (if (string-equal system-type "windows-nt")
     (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
@@ -24,6 +25,10 @@
 (use-package ess
   :config (setq ess-use-flymake nil))
 
+(defun my-inferior-ess-init ()
+  (setq-local ansi-color-for-comint-mode 'filter))
+(add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
+
 (use-package poly-R
   :ensure t)
 
@@ -40,12 +45,20 @@
 (use-package tree-sitter-langs
   :ensure t)
 
+(global-tree-sitter-mode)
+(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+
 (use-package evil
   :init (evil-mode 1))
+
+(use-package github-theme
+  :ensure t)
+
+(use-package doom-themes
+  :ensure t
+  :init (load-theme 'doom-material-dark))
 
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
-
-(require 'midnight)
