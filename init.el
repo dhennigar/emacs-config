@@ -1,5 +1,3 @@
-;; init.el --- Daniel's init file
-
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (set-fringe-mode 10)
@@ -10,53 +8,47 @@
     (add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
     (add-to-list 'default-frame-alist '(font . "IBM Plex Mono 11" )))
 
-(require 'package)
-(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(eval-and-compile
-  (setq use-package-always-ensure t
-        use-package-expand-minimally t))
-
-(use-package ess
-  :config (setq ess-use-flymake nil))
-
+(straight-use-package 'ess)
 (defun my-inferior-ess-init ()
   (setq-local ansi-color-for-comint-mode 'filter))
+(defun my-ess-init ()
+  (setq-local ess-use-flymake nil))
+(add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
-(use-package poly-R
-  :ensure t)
+(straight-use-package 'poly-R)
 
-(use-package flycheck
-  :init (global-flycheck-mode t)
-  :custom (flycheck-lintr-linters
-            "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
+(straight-use-package 'flycheck)
+(setq flycheck-lintr-linters 
+      "linters_with_defaults(trailing_blank_lines_linter = NULL)")
+(global-flycheck-mode)
 
-(use-package company
-  :init (global-company-mode t))
+(straight-use-package 'company)
+(global-company-mode)
 
-(use-package tree-sitter
-  :ensure t)
-(use-package tree-sitter-langs
-  :ensure t)
-
+(straight-use-package 'tree-sitter)
+(straight-use-package 'tree-sitter-langs)
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
-(use-package evil
-  :init (evil-mode 1))
+(straight-use-package 'evil)
+(evil-mode)
 
-(use-package github-theme
-  :ensure t)
-
-(use-package doom-themes
-  :ensure t
-  :init (load-theme 'doom-material-dark))
+(straight-use-package 'doom-themes)
+(load-theme 'doom-material-dark)
 
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))

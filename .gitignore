@@ -13,4 +13,4 @@
 # libs and system files
 server/*
 auto-save-list/*
-elpa/*
+straight/*
