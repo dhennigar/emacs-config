@@ -21,7 +21,10 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-(straight-use-package 'ess)
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
+(use-package ess)
 (defun my-inferior-ess-init ()
   (setq-local ansi-color-for-comint-mode 'filter))
 (defun my-ess-init ()
@@ -29,26 +32,28 @@
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
-(straight-use-package 'poly-R)
+(use-package poly-R)
 
-(straight-use-package 'flycheck)
-(setq flycheck-lintr-linters 
-      "linters_with_defaults(trailing_blank_lines_linter = NULL)")
-(global-flycheck-mode)
+(use-package flycheck
+  :custom (flycheck-lintr-linters 
+	   "linters_with_defaults(trailing_blank_lines_linter = NULL)")
+  :config (global-flycheck-mode))
 
-(straight-use-package 'company)
-(global-company-mode)
+(use-package company
+  :config (global-company-mode))
 
-(straight-use-package 'tree-sitter)
-(straight-use-package 'tree-sitter-langs)
-(global-tree-sitter-mode)
+(use-package tree-sitter)
+  :init (global-tree-sitter-mode)
+(use-package tree-sitter-langs)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
-(straight-use-package 'evil)
-(evil-mode)
+(use-package magit)
 
-(straight-use-package 'doom-themes)
-(load-theme 'doom-material-dark)
+;(use-package evil
+;  :config (evil-mode))
+
+(use-package doom-themes
+  :config (load-theme 'doom-material-dark))
 
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
