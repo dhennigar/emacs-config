@@ -19,19 +19,9 @@
 (setq straight-use-package-by-default t)
 
 ;; custom emacs theme settings
-(use-package doom-themes
-  :config (load-theme 'doom-tomorrow-night))
-
-(defun theme-light-mode ()
-  (interactive)
-  (disable-theme 'doom-tomorrow-night)
-  (load-theme 'doom-tomorrow-day))
-(defun theme-dark-mode ()
-  (interactive)
-  (disable-theme 'doom-tomorrow-day)
-  (load-theme 'doom-tomorrow-night))
-(global-set-key (kbd "C-c d") 'theme-dark-mode)
-(global-set-key (kbd "C-c l") 'theme-light-mode)
+(use-package ef-themes
+  :config (load-theme 'ef-frost)
+  :custom (ef-themes-to-toggle '(ef-frost ef-night)))
 
 ;; emacs speaks statistics and rmarkdown abilities
 (use-package ess)
@@ -40,10 +30,12 @@
 (defun my-ess-init ()
   (setq-local ess-use-flymake nil)
   (flycheck-mode))
+
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
-(use-package poly-R)
+;; support for Rmd with code execution and knitting/sweaving.
+;; (use-package poly-R)
 
 ;; linting (syntax checking)
 (use-package flycheck
