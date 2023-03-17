@@ -1,17 +1,5 @@
 ;; init.el
 
-;; basic gui settings
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-(set-fringe-mode 10)
-(setq inhibit-splash-screen t)
-(setq custom-safe-themes t)
-
-;; default font settings
-(add-to-list 'default-frame-alist '(font . "Cascadia Code 10" ))
-(add-to-list 'default-frame-alist '(font . "IBM Plex Mono 12" ))
-
 ;; package managers
 ;; bootstrap straight.el and install use-package
 (defvar bootstrap-version)
@@ -38,11 +26,12 @@
   (interactive)
   (disable-theme 'doom-tomorrow-night)
   (load-theme 'doom-tomorrow-day))
-
 (defun theme-dark-mode ()
   (interactive)
   (disable-theme 'doom-tomorrow-day)
   (load-theme 'doom-tomorrow-night))
+(global-set-key (kbd "C-c d") 'theme-dark-mode)
+(global-set-key (kbd "C-c l") 'theme-light-mode)
 
 ;; emacs speaks statistics and rmarkdown abilities
 (use-package ess)
