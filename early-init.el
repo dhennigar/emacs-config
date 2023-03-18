@@ -3,7 +3,7 @@
 (setq package-enable-at-startup nil)
 
 ;; default font settings
-(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-12" ))
+(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11" ))
 
 ;; basic gui settings
 (tool-bar-mode -1)

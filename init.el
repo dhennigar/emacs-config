@@ -19,12 +19,18 @@
 (setq straight-use-package-by-default t)
 
 ;; custom emacs theme settings
-(use-package ef-themes
-  :config (load-theme 'ef-frost)
-  :custom (ef-themes-to-toggle '(ef-frost ef-night)))
+(use-package modus-themes
+  :config (load-theme 'modus-operandi))
+
+(use-package ef-themes)
+
+;;(use-package ef-themes
+  ; :config (load-theme 'ef-frost)
+  ; :custom (ef-themes-to-toggle '(ef-frost ef-night)))
 
 ;; emacs speaks statistics and rmarkdown abilities
 (use-package ess)
+
 (defun my-inferior-ess-init ()
   (setq-local ansi-color-for-comint-mode 'filter))
 (defun my-ess-init ()
@@ -57,7 +63,7 @@
 
 ;; quickly create uniquely named notes.
 (use-package denote
-  :custom ((denote-directory (expand-file-name "~/notes/"))
+  :custom ((denote-directory (expand-file-name "~/Notes/"))
 	   (denote-keywords '("emacs", "ecology", "salmon", "botany", "R", "FRE", "linux"))))  
 
 ;; buffers are per-frame
