@@ -2,6 +2,10 @@
 
 ;; package managers
 ;; bootstrap straight.el and install use-package
+(define-obsolete-variable-alias
+  'native-comp-deferred-compilation-deny-list
+  'native-comp-jit-compilation-deny-list
+  "Renamed in emacs#95692f6")
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -20,28 +24,22 @@
 
 ;; custom emacs theme settings
 (use-package modus-themes
-  :config (load-theme 'modus-operandi))
-
-(use-package ef-themes)
-
-;;(use-package ef-themes
-  ; :config (load-theme 'ef-frost)
-  ; :custom (ef-themes-to-toggle '(ef-frost ef-night)))
+  :config (load-theme 'modus-operandi)
+  :custom (modus-operandi-palette-overrides nil)
+  :bind ("C-c t" . modus-themes-toggle))
 
 ;; emacs speaks statistics and rmarkdown abilities
 (use-package ess)
-
 (defun my-inferior-ess-init ()
   (setq-local ansi-color-for-comint-mode 'filter))
 (defun my-ess-init ()
   (setq-local ess-use-flymake nil)
   (flycheck-mode))
-
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
 ;; support for Rmd with code execution and knitting/sweaving.
-;; (use-package poly-R)
+(use-package poly-R)
 
 ;; linting (syntax checking)
 (use-package flycheck
@@ -66,14 +64,22 @@
   :custom ((denote-directory (expand-file-name "~/Notes/"))
 	   (denote-keywords '("emacs", "ecology", "salmon", "botany", "R", "FRE", "linux"))))  
 
-;; buffers are per-frame
-(use-package beframe)
-
-;(use-package evil
-;  :config (evil-mode))
+;; bibtex citations in org-mode
+(use-package helm-bibtex
+  :custom ((bibtex-completion-bibliography "~/Zotero/zotero.bib")
+	   (bibtex-completion-pdf-field "File"))
+  )
 
 ;; backups are stored in the system temp directory
 (setq backup-directory-alist
       `((".*" . ,temporary-file-directory)))
 (setq auto-save-file-name-transforms
       `((".*" ,temporary-file-directory t)))
+
+;; autopairs
+(setq electric-pair-mode t)
+
+;; org-mode settings
+(with-eval-after-load 'org       
+  (setq org-startup-indented t)
+  (add-hook 'org-mode-hook #'visual-line-mode))
