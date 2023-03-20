@@ -24,7 +24,7 @@
 
 ;; custom emacs theme settings
 (use-package modus-themes
-  :config (load-theme 'modus-operandi)
+  :init (load-theme 'modus-operandi)
   :custom (modus-operandi-palette-overrides nil)
   :bind ("C-c t" . modus-themes-toggle))
 
@@ -61,12 +61,12 @@
 
 ;; quickly create uniquely named notes.
 (use-package denote
-  :custom ((denote-directory (expand-file-name "~/Notes/"))
+  :custom ((denote-directory "~/Documents/Notes/")
 	   (denote-keywords '("emacs", "ecology", "salmon", "botany", "R", "FRE", "linux"))))  
 
 ;; bibtex citations in org-mode
 (use-package helm-bibtex
-  :custom ((bibtex-completion-bibliography "~/Zotero/zotero.bib")
+  :custom ((bibtex-completion-bibliography "~/Zotero/zotero.bib") ;; this is not correct for Windows! (Unless I move it)
 	   (bibtex-completion-pdf-field "File"))
   )
 
