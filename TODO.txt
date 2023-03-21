@@ -1,0 +1,32 @@
+A description of my desired workflow:
+
+- Take notes in org-mode, with support for links/backlinks, references, citations, and links to the relevant pdf documents.
+
+  - This should integrate with my Zotero library.
+  - Notes should be kept in plain text and tracked with git, pushed to github.
+
+- Write academic papers in org-mode
+
+  - similar as above, with integration with Zotero. Support for export to docx, pdf, or whatever is built in to Emacs org-mode.
+  - export to docx in a consistent style template suitable for submission to my supervisor.
+  - searchable better bibtex keys making citations and bibliographies a breeze.
+
+
+- Develop R code for statistical analyses
+
+  - ESS/iESS for R script development
+  - renv and git for version control
+  - Support for Rmarkdown via polymode
+    - allow export to basically any format via pandoc.
+  -org-based R development also possible via Babble, which I believe can export to markdown-yaml (the same as Rmarkdown under the hood.)
+
+
+Thoughts on Emacs config structure:
+Basic tasks:
+      - initialize straight.el and use-package
+      - set gui settings and themes (modus-themes)
+      - Base emacs functions e.g., electric-pair-mode
+      - R programming set-up (ESS, Poly-R)
+      - Org-mode settings
+      	- Org-Roam
+	- Helm-bibtex
