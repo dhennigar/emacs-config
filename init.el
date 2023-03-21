@@ -24,8 +24,6 @@
   :config (tree-sitter-hl-mode)
   :requires (tree-sitter-langs)
   )
-;;(use-package tree-sitter-langs)
-;;(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
 ;; better git integration
 (use-package magit

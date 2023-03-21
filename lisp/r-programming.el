@@ -12,3 +12,6 @@
 
 ;; support for Rmd with code execution and knitting/sweaving.
 (use-package poly-R)
+(add-to-list 'auto-mode-alist
+             '("\\.[rR]md\\'" . poly-gfm+r-mode))
+(setq markdown-code-block-braces t)
