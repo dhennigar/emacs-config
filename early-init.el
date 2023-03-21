@@ -10,5 +10,8 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 (set-fringe-mode 10)
-(setq inhibit-splash-screen t)
 (setq custom-safe-themes t)
+
+;; startup options
+(setq inhibit-startup-screen t)
+(setq inhibit-splash-screen t)
