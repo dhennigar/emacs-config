@@ -22,7 +22,6 @@
 (straight-use-package 'use-package)
 (setq straight-use-package-by-default t)
 
-
 ;; theme settings
 (use-package modus-themes
   :init (load-theme 'modus-operandi)
@@ -52,13 +51,17 @@
   :config (global-company-mode))
 
 ;; tree-sitter support with syntax hilighting.
-(use-package tree-sitter)
-  :init (global-tree-sitter-mode)
-(use-package tree-sitter-langs)
-(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
+(use-package tree-sitter
+  :config (tree-sitter-hl-mode)
+  :requires (tree-sitter-langs)
+  )
+;;(use-package tree-sitter-langs)
+;;(add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
 ;; better git integration
-(use-package magit)
+(use-package magit
+  :bind (("C-x g" . magit-status)
+	 ("C-x C-g" . magit-status)))
 
 ;; quickly create uniquely named notes.
 (use-package denote
