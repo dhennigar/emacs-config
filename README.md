@@ -1,6 +1,6 @@
 # emacs-config
-Configuration files for the Emacs text editor.
+These are my configuration files for Emacs. Supported tasks include:
 
-* Set up primarily for `R` programming with `ess`
-* Supports `Rmarkdown` via `poly-mode`
-* `evil-mode` emulates Vim functions
+* Interactive `R` programming with `ess` including `Rmarkdown` support via `poly-mode`,
+* Academic writing and note-taking in `org-mode`, with *Zotero* citation integration,
+* Maintenance of a *Zettelkasten*, or "second brain" via `denote`, a minimalist note-taking tool.
