@@ -1,9 +1,29 @@
 ;; init.el
 
-;; add my customizations to the load path
-(add-to-list 'load-path (locate-user-emacs-file "lisp"))
+;; bootstrap straight.el and load use-package
 
-;; custom emacs theme settings
+(define-obsolete-variable-alias
+  'native-comp-deferred-compilation-deny-list
+  'native-comp-jit-compilation-deny-list
+  "Renamed in emacs#95692f6")
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
+
+
+;; theme settings
 (use-package modus-themes
   :init (load-theme 'modus-operandi)
   :custom (modus-operandi-palette-overrides nil)
@@ -59,4 +79,17 @@
 
 ;; autopairs
 (setq electric-pair-mode t)
+
+;; org-mode settings
+
+;; org-mode settings
+(with-eval-after-load 'org       
+  (setq org-startup-indented t)
+  (add-hook 'org-mode-hook #'visual-line-mode))
+
+;; bibtex citations in org-mode
+(use-package helm-bibtex
+  :custom ((bibtex-completion-bibliography "~/Zotero/zotero.bib")
+	   (bibtex-completion-pdf-field "File"))
+  )
 
