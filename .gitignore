@@ -15,3 +15,4 @@ server/*
 auto-save-list/*
 straight/*
 eln-cache/*
+transient/*
