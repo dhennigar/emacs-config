@@ -72,6 +72,7 @@
   (citar-denote-title-format '("author-year"))
   )
 
+
 ;; Completion System
 
 (electric-pair-mode)
