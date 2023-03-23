@@ -41,6 +41,7 @@
   )
 
 ;; Linter
+
 ; note this passes an R snippet to the lintr package.
 (use-package flycheck
   :custom (flycheck-lintr-linters 
@@ -48,12 +49,13 @@
 
 
 ;; Git
+
 (use-package magit
   :bind (("C-x g" . magit-status)
 	 ("C-x C-g" . magit-status)))
 
 
-;;; Note Taking System
+;; Note Taking System
 
 (use-package denote
   :custom 
@@ -65,8 +67,7 @@
   )
 
 
-
-;;; Completion System
+;; Completion System
 
 (electric-pair-mode)
 
@@ -91,7 +92,8 @@
   :no-require
   :config (citar-embark-mode))
 
-;;; Citation Manager
+
+;; Citation Manager
 
 (use-package citar
   :custom
