@@ -2,11 +2,6 @@
 
 (load "~/.emacs.d/lisp/straight-bootstrap.el" nil t)
 
-;; Completion
-
-(electric-pair-mode)
-(use-package company)
-
 
 ;; Aesthetics
 
@@ -38,11 +33,19 @@
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
 (setq markdown-code-block-braces t)
 
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode))
+  :init (setq markdown-command "/usr/bin/pandoc")
+  :config (flyspell-mode)
+  )
 
 ;; Linter
+; note this passes an R snippet to the lintr package.
 (use-package flycheck
   :custom (flycheck-lintr-linters 
 	   "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
+
 
 ;; Git
 (use-package magit
@@ -60,3 +63,39 @@
   :config
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   )
+
+
+
+;;; Completion System
+
+(electric-pair-mode)
+
+(use-package company
+  :init (global-company-mode))
+
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package marginalia
+  :init (marginalia-mode))
+
+(use-package vertico
+  :init (vertico-mode))
+
+(use-package embark)
+
+(use-package citar-embark
+  :after (citar embark)
+  :no-require
+  :config (citar-embark-mode))
+
+;;; Citation Manager
+
+(use-package citar
+  :custom
+  (citar-bibliography '("~/Documents/Ref/Ref.bib"))
+  :hook
+  (markdown-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup))
