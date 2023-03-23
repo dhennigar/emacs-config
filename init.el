@@ -66,7 +66,11 @@
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   )
 
-
+(use-package citar-denote
+  :init (citar-denote-mode)
+  :custom
+  (citar-denote-title-format '("author-year"))
+  )
 
 ;; Completion System
 
