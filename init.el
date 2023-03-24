@@ -7,7 +7,6 @@
 
 (use-package modus-themes
   :init (load-theme 'modus-operandi)
-  :custom (modus-operandi-palette-overrides nil)
   :bind ("C-c t" . modus-themes-toggle))
 
 (use-package tree-sitter-langs)
