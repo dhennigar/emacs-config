@@ -10,10 +10,8 @@
   :custom (modus-operandi-palette-overrides nil)
   :bind ("C-c t" . modus-themes-toggle))
 
-(use-package tree-sitter
-  :config (tree-sitter-hl-mode)
-  :requires (tree-sitter-langs)
-  )
+(use-package tree-sitter-langs)
+(use-package tree-sitter)
 
 
 ;; R Programming
@@ -28,7 +26,9 @@
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
-(use-package poly-R)
+(use-package poly-R
+  :config (citar-embark-mode)
+  )
 (add-to-list 'auto-mode-alist
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
 (setq markdown-code-block-braces t)
@@ -37,7 +37,7 @@
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
   :init (setq markdown-command "/usr/bin/pandoc")
-  :config (flyspell-mode)
+  :config (citar-embark-mode)
   )
 
 ;; Linter
@@ -93,7 +93,7 @@
 (use-package citar-embark
   :after (citar embark)
   :no-require
-  :config (citar-embark-mode))
+  )
 
 (use-package corfu
   ;; Optional customizations
@@ -139,7 +139,7 @@
 
 (use-package citar
   :custom
-  (citar-bibliography '("~/Documents/Ref/Ref.bib"))
+  (citar-bibliography '("~/Documents/References/References.bib"))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
