@@ -22,7 +22,7 @@
 
 (use-package modus-themes
   :init (load-theme 'modus-operandi)
-  :bind ("C-c t" . modus-themes-toggle))
+  :bind ("C-c d" . modus-themes-toggle))
 
 (use-package tree-sitter-langs
   :straight t)
@@ -45,12 +45,19 @@
   (denote-file-type "text")
   :config
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+  :bind
+  ("C-c n n" . denote)
+  ("C-c n o" . denote-open-or-create)
+  ("C-c n f" . denote-type)
   )
 
 (use-package citar-denote
-  :init (citar-denote-mode)
+  :config (citar-denote-mode)
   :custom
   (citar-denote-title-format 'author-year)
+  :bind
+  ("C-c n c" . citar-create-note)
+  ("C-c n b" . citar-denote-open-note)
   )
 
 
@@ -69,7 +76,9 @@
 (use-package vertico
   :init (vertico-mode))
 
-(use-package embark)
+(use-package embark
+  :bind ("C-." . embark-act)
+  )
 
 (use-package corfu
   ;; Optional customizations
