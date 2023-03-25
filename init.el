@@ -3,6 +3,21 @@
 (load "~/.emacs.d/lisp/straight-bootstrap.el" nil t)
 
 
+;; Package Repositories and Use-Package Setup
+
+(require 'package)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure t
+        use-package-expand-minimally t))
+
+
 ;; Aesthetics
 
 (use-package modus-themes
@@ -10,40 +25,9 @@
   :custom (modus-operandi-palette-overrides nil)
   :bind ("C-c t" . modus-themes-toggle))
 
-(use-package tree-sitter-langs)
+(use-package tree-sitter-langs
+  :straight t)
 (use-package tree-sitter)
-
-
-;; R Programming
-
-(use-package ess)
-(defun my-inferior-ess-init ()
-  (setq-local ansi-color-for-comint-mode 'filter))
-(defun my-ess-init ()
-  (setq-local ess-use-flymake nil)
-  (flycheck-mode)
-  (company-mode))
-(add-hook 'ess-mode-hook 'my-ess-init)
-(add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
-
-(use-package poly-R
-  )
-(add-to-list 'auto-mode-alist
-             '("\\.[rR]md\\'" . poly-gfm+r-mode))
-(setq markdown-code-block-braces t)
-
-(use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode))
-  :init (setq markdown-command "/usr/bin/pandoc")
-  )
-
-;; Linter
-
-; note this passes an R snippet to the lintr package.
-(use-package flycheck
-  :custom (flycheck-lintr-linters 
-	   "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
 
 
 ;; Git
@@ -88,18 +72,12 @@
 
 (use-package embark)
 
-(use-package citar-embark
-  :after (citar embark)
-  :no-require
-  :config (citar-embark-mode)
-  )
-
 (use-package corfu
   ;; Optional customizations
    :custom
    (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
    (corfu-auto t)                 ;; Enable auto completion
-   (corfu-separator ?\s)          ;; Orderless field separator
+  ;; (corfu-separator ?\s)          ;; Orderless field separator
   ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
   ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
   ;; (corfu-preview-current nil)    ;; Disable current candidate preview
@@ -138,7 +116,46 @@
 
 (use-package citar
   :custom
-  (citar-bibliography '("~/Documents/References/References.bib"))
+  (citar-bibliography '("~/Zotero/references.bib"))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
+
+ (use-package citar-embark
+  :after (citar embark)
+  :no-require
+  :config (citar-embark-mode)
+  )
+
+
+;; R Programming
+
+(use-package ess)
+(defun my-inferior-ess-init ()
+  (setq-local ansi-color-for-comint-mode 'filter))
+(defun my-ess-init ()
+  (setq-local ess-use-flymake nil)
+  (flycheck-mode)
+  (company-mode))
+(add-hook 'ess-mode-hook 'my-ess-init)
+(add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
+
+(use-package poly-R)
+(add-to-list 'auto-mode-alist
+             '("\\.[rR]md\\'" . poly-gfm+r-mode))
+(setq markdown-code-block-braces t)
+
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode))
+  :init (setq markdown-command "/usr/bin/pandoc")
+  )
+
+;; Linter
+
+; note this passes an R snippet to the lintr package.
+(use-package flycheck
+  :custom (flycheck-lintr-linters 
+	   "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
+
+
