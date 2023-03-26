@@ -155,9 +155,12 @@
 
 (use-package vterm
   :bind
-  ("s-<return>" . 'vterm)
   ("s-M-<return>" . 'vterm-other-window)
   )
-
+(use-package vterm-toggle
+  :after (vterm)
+  :bind
+  ("s-<return>" . 'vterm-toggle)
+  )
 
 
