@@ -21,8 +21,8 @@
 ;; Aesthetics
 
 (use-package modus-themes
-  :init (load-theme 'modus-operandi)
-  :bind ("C-c d" . modus-themes-toggle))
+  :init (load-theme 'modus-vivendi)
+  :bind ("s-d" . modus-themes-toggle))
 
 (use-package tree-sitter-langs
   :straight t)
@@ -149,5 +149,15 @@
 (use-package flycheck
   :custom (flycheck-lintr-linters 
 	   "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
+
+
+;; Shell Integration
+
+(use-package vterm
+  :bind
+  ("s-<return>" . 'vterm)
+  ("s-M-<return>" . 'vterm-other-window)
+  )
+
 
 
