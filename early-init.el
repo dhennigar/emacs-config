@@ -9,8 +9,13 @@
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-(set-fringe-mode 10)
 (setq custom-safe-themes t)
+
+(fringe-mode 0)
+
+(add-hook 'window-configuration-change-hook
+          (lambda ()
+            (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 1 1)))
 
 ;; startup options
 (setq inhibit-startup-screen t)

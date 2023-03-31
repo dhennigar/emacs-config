@@ -22,7 +22,7 @@
 
 (use-package modus-themes
   :init (load-theme 'modus-vivendi)
-  :bind ("s-d" . modus-themes-toggle))
+  :bind ("C-c t" . modus-themes-toggle))
 
 (use-package tree-sitter-langs
   :straight t)
@@ -127,8 +127,7 @@
   (setq-local ansi-color-for-comint-mode 'filter))
 (defun my-ess-init ()
   (setq-local ess-use-flymake nil)
-  (flycheck-mode)
-  (company-mode))
+  (flycheck-mode))
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
@@ -153,16 +152,11 @@
 
 ;; Shell Integration
 
-(if (eq system-type '("gnu/linux"))
-  (use-package vterm
-    :bind
-    ("s-M-<return>" . 'vterm-other-window)
+(if (eq system-type 'gnu/linux)
+    (message "Loading linux-specific settings")
+    (use-package vterm)
+    (use-package vterm-toggle)
     )
-  (use-package vterm-toggle
-    :after (vterm)
-    :bind
-    ("s-<return>" . 'vterm-toggle)
-    )
-  )
 
+(bind-key "C-c v" 'vterm-toggle)
 
