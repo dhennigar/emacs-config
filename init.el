@@ -24,6 +24,9 @@
   :init (load-theme 'modus-vivendi)
   :bind ("C-c t" . modus-themes-toggle))
 
+(use-package ef-themes
+  :ensure t)
+
 (use-package tree-sitter-langs
   :straight t)
 (use-package tree-sitter)
@@ -48,7 +51,7 @@
   :bind
   ("C-c n n" . denote)
   ("C-c n o" . denote-open-or-create)
-  ("C-c n f" . denote-type)
+  ("C-c n t" . denote-type)
   )
 
 (use-package citar-denote
@@ -56,8 +59,8 @@
   :custom
   (citar-denote-title-format 'author-year)
   :bind
-  ("C-c n c" . citar-create-note)
-  ("C-c n b" . citar-denote-open-note)
+  ("C-c n b" . citar-create-note)
+  ("C-c n S-b" . citar-denote-open-note)
   )
 
 
@@ -104,6 +107,7 @@
   (setq tab-always-indent 'complete))
 
 
+
 ;; Citation Manager
 
 (use-package citar
@@ -127,7 +131,8 @@
   (setq-local ansi-color-for-comint-mode 'filter))
 (defun my-ess-init ()
   (setq-local ess-use-flymake nil)
-  (flycheck-mode))
+  (flycheck-mode)
+  (tree-sitter-hl-mode))
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
@@ -160,3 +165,8 @@
 
 (bind-key "C-c v" 'vterm-toggle)
 
+
+;; Other Keybindings
+
+(bind-key "C-c h" 'hippie-expand)
+(bind-key "M-o" 'other-window)

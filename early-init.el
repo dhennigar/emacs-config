@@ -2,22 +2,19 @@
 
 (setq package-enable-at-startup nil)
 
-;; default font settings
 (add-to-list 'default-frame-alist '(font . "IBM Plex Mono-12" ))
 
-;; basic gui settings
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
-(setq custom-safe-themes t)
-
 (fringe-mode 0)
+
+(setq custom-safe-themes t)
 
 (add-hook 'window-configuration-change-hook
           (lambda ()
             (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 1 1)))
 
-;; startup options
 (setq inhibit-startup-screen t)
 (setq inhibit-splash-screen t)
 
