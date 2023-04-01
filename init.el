@@ -153,10 +153,12 @@
 ;; Shell Integration
 
 (if (eq system-type 'gnu/linux)
-    (message "Loading linux-specific settings")
-    (use-package vterm)
-    (use-package vterm-toggle)
-    )
+    (
+     (use-package vterm)
+     (use-package vterm-toggle)
+     (bind-key "C-c v" 'vterm-toggle)
+     )
+  )
 
-(bind-key "C-c v" 'vterm-toggle)
+
 
