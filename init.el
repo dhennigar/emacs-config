@@ -166,7 +166,9 @@
   )
 (use-package vterm-toggle
   :if (eq system-type 'gnu/linux)
-  :bind ("C-c s" . 'vterm-toggle)
+  :bind (("M-RET" . 'vterm-toggle)
+	 :map vterm-mode-map
+	 ("M-RET". 'vterm-toggle))
   )
 
 
