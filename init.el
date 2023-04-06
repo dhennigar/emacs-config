@@ -21,11 +21,15 @@
 ;; Aesthetics
 
 (use-package modus-themes
-  :init (load-theme 'modus-vivendi)
-  :bind ("C-c t" . modus-themes-toggle))
+;  :init (load-theme 'modus-vivendi)
+;  :bind ("C-c t" . modus-themes-toggle)
+  )
 
 (use-package ef-themes
-  :ensure t)
+  :init (load-theme 'ef-spring)
+  :custom (ef-themes-to-toggle '(ef-spring ef-bio))
+  :bind ("C-c t . ef-themes-toggle")
+  )
 
 (use-package tree-sitter-langs
   :straight t)
@@ -157,18 +161,22 @@
 
 ;; Shell Integration
 
-(if (eq system-type 'gnu/linux)
-    (
-     (use-package vterm)
-     (use-package vterm-toggle)
-     (bind-key "C-c v" 'vterm-toggle)
-     )
+(use-package vterm
+  :if (eq system-type 'gnu/linux)
+  )
+(use-package vterm-toggle
+  :if (eq system-type 'gnu/linux)
+  :bind ("C-c s" . 'vterm-toggle)
   )
 
 
+;; Keyboard Shortcuts
+
+(bind-key* "M-<right>" 'windmove-right)
+(bind-key* "M-<left>" 'windmove-left)
+(bind-key* "M-<up>" 'windmove-up)
+(bind-key* "M-<down>" 'windmove-down)
+(bind-key* "M-o" 'other-window)
 
 
-;; Other Keybindings
 
-(bind-key "C-c h" 'hippie-expand)
-(bind-key "M-o" 'other-window)
