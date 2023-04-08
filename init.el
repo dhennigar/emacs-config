@@ -20,16 +20,15 @@
 
 ;; Aesthetics
 
-(use-package modus-themes
-;  :init (load-theme 'modus-vivendi)
-;  :bind ("C-c t" . modus-themes-toggle)
-  )
-
-(use-package ef-themes
-  :init (load-theme 'ef-spring)
-  :custom (ef-themes-to-toggle '(ef-spring ef-bio))
-  :bind ("C-c t . ef-themes-toggle")
-  )
+(use-package modus-themes)
+(use-package ef-themes)
+(use-package circadian
+  :config
+  (setq calendar-latitude 49.32)
+  (setq calendar-longitude -128.07)
+  (setq circadian-themes '((:sunrise . modus-operandi)
+                           (:sunset  . modus-vivendi)))
+  (circadian-setup))
 
 (use-package tree-sitter-langs
   :straight t)
@@ -47,7 +46,7 @@
 
 (use-package denote
   :custom 
-  (denote-directory "~/Documents/Notes")
+  (denote-directory "~/Documents/Denotes")
   (denote-known-keywords '("fre" "emacs" "salmon" "plants"))
   (denote-file-type "text")
   :config
@@ -66,6 +65,13 @@
   ("C-c n b" . citar-create-note)
   ("C-c n S-b" . citar-denote-open-note)
   )
+
+(use-package org-roam
+  :config
+  (org-roam-db-autosync-mode)
+  :custom
+  (org-roam-directory (file-truename "~/Documents/Org/Roam")))
+
 
 
 ;; Completion System
