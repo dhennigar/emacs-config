@@ -1,8 +1,0 @@
-EMACS TODO LIST
-
-1. Optimize use-package calls to load packages only when necessary
-   e.g., citar-related things currently load everywhere.
-
-2. Assign all this great functionality to easily accessible keybindings.
-
-3. When all is said and done, consider evil-mode. You know you wanna.
