@@ -1,4 +1,4 @@
-;; init.el
+;; init.elpp
 
 (load "~/.emacs.d/lisp/straight-bootstrap.el" nil t)
 
@@ -20,8 +20,20 @@
 
 ;; Aesthetics
 
-(use-package modus-themes)
-(use-package ef-themes)
+(use-package modus-themes
+  :custom
+  ((modus-themes-org-blocks 'tinted-background)
+   (modus-themes-common-palette-overrides
+    '((fnname magenta-faint)
+      (fg-region unspecified)
+      (bg-region bg-magenta-nuanced)
+      (border-mode-line-active unspecified)
+      (border-mode-line-inactive unspecified)
+      (bg-mode-line-active bg-magenta-intense)
+      (fg-mode-line-active fg-main)))
+   )
+  )
+
 (use-package circadian
   :config
   (setq calendar-latitude 49.32)
@@ -46,9 +58,9 @@
 
 (use-package denote
   :custom 
-  (denote-directory "~/Documents/Denotes")
+  (denote-directory "~/Documents/Notes")
   (denote-known-keywords '("fre" "emacs" "salmon" "plants"))
-  (denote-file-type "text")
+;  (denote-file-type "text")
   :config
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   :bind
@@ -65,13 +77,6 @@
   ("C-c n b" . citar-create-note)
   ("C-c n S-b" . citar-denote-open-note)
   )
-
-(use-package org-roam
-  :config
-  (org-roam-db-autosync-mode)
-  :custom
-  (org-roam-directory (file-truename "~/Documents/Org/Roam")))
-
 
 
 ;; Completion System
@@ -94,7 +99,6 @@
   )
 
 (use-package corfu
-  ;; Optional customizations
   :custom
   (corfu-cycle t)
   (corfu-auto t)
@@ -109,8 +113,8 @@
 
   ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
   ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
-   (setq read-extended-command-predicate
-         #'command-completion-default-include-p)
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
 
   ;; Enable indentation+completion using the TAB key.
   ;; `completion-at-point' is often bound to M-TAB.
@@ -157,6 +161,13 @@
   :init (setq markdown-command "/usr/bin/pandoc")
   )
 
+(use-package projectile
+  :ensure t
+  :config (projectile-global-mode)
+  :bind (:map projectile-mode-map
+	      ("C-c C-p" . 'projectile-command-map))
+  )
+
 ;; Linter
 
 ; note this passes an R snippet to the lintr package.
@@ -185,6 +196,3 @@
 (bind-key* "M-<up>" 'windmove-up)
 (bind-key* "M-<down>" 'windmove-down)
 (bind-key* "M-o" 'other-window)
-
-
-
