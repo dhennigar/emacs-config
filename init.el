@@ -24,17 +24,22 @@
   :custom
   ((modus-themes-org-blocks 'tinted-background)
    (modus-themes-common-palette-overrides
-    '((fnname magenta-faint)
+    '(;; Code Keywords
+      (fnname blue-cooler)
+      (string green)
+      (variable cyan)
+      ;; Interface Colors
+      (cursor magenta-faint)
+      (bg-region bg-magenta-subtle)
       (fg-region unspecified)
-      (bg-region bg-magenta-nuanced)
       (border-mode-line-active unspecified)
       (border-mode-line-inactive unspecified)
-      (bg-mode-line-active bg-magenta-intense)
       (fg-mode-line-active fg-main)))
    )
   )
 
 (use-package circadian
+  :ensure t
   :config
   (setq calendar-latitude 49.32)
   (setq calendar-longitude -128.07)
@@ -59,14 +64,15 @@
 (use-package denote
   :custom 
   (denote-directory "~/Documents/Notes")
-  (denote-known-keywords '("fre" "emacs" "salmon" "plants"))
+  (denote-known-keywords '("fre" "salmon" "plants" "stats" "emacs"))
 ;  (denote-file-type "text")
   :config
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   :bind
-  ("C-c n n" . denote)
-  ("C-c n o" . denote-open-or-create)
-  ("C-c n t" . denote-type)
+  ("C-c C-n n" . denote)
+  ("C-c C-n o" . denote-open-or-create)
+  ("C-c C-n t" . denote-type)
+  ("C-c C-n l" . denote-link)
   )
 
 (use-package citar-denote
@@ -74,8 +80,8 @@
   :custom
   (citar-denote-title-format 'author-year)
   :bind
-  ("C-c n b" . citar-create-note)
-  ("C-c n S-b" . citar-denote-open-note)
+  ("C-c C-n c" . citar-create-note)
+  ("C-c C-n S-c" . citar-denote-open-note)
   )
 
 
@@ -145,7 +151,6 @@
   (setq-local ansi-color-for-comint-mode 'filter))
 (defun my-ess-init ()
   (setq-local ess-use-flymake nil)
-  (flycheck-mode)
   (tree-sitter-hl-mode))
 (add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
@@ -171,23 +176,25 @@
 ;; Linter
 
 ; note this passes an R snippet to the lintr package.
-(use-package flycheck
-  :custom (flycheck-lintr-linters 
-	   "linters_with_defaults(trailing_blank_lines_linter = NULL)"))
+;(use-package flycheck
+;  :init (add-hook 'after-init-hook #'global-flycheck-mode)
+;  :custom ((flycheck-lintr-linters 
+;	   "linters_with_defaults(trailing_blank_lines_linter = NULL)")
+;	   (flycheck-check-syntax-automatically
+;	    '(mode-enabled saved)))
+;  )
 
 
 ;; Shell Integration
 
-(use-package vterm
-  :if (eq system-type 'gnu/linux)
-  )
-(use-package vterm-toggle
-  :if (eq system-type 'gnu/linux)
-  :bind (("M-RET" . 'vterm-toggle)
-	 :map vterm-mode-map
-	 ("M-RET". 'vterm-toggle))
-  )
-
+(when (eq system-type 'gnu/linux)
+  ((use-package vterm)
+   (use-package vterm-toggle
+     :bind (("M-RET" . 'vterm-toggle)
+	    :map vterm-mode-map
+	    ("M-RET". 'vterm-toggle)))
+   )
+)
 
 ;; Keyboard Shortcuts
 
