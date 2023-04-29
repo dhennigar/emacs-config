@@ -1,4 +1,4 @@
-;; init.elpp
+;; init.el
 
 (load "~/.emacs.d/lisp/straight-bootstrap.el" nil t)
 
@@ -69,10 +69,10 @@
   :config
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
   :bind
-  ("C-c C-n n" . denote)
-  ("C-c C-n o" . denote-open-or-create)
-  ("C-c C-n t" . denote-type)
-  ("C-c C-n l" . denote-link)
+  ("C-c C-d n" . denote)
+  ("C-c C-d o" . denote-open-or-create)
+  ("C-c C-d t" . denote-type)
+  ("C-c C-d l" . denote-link)
   )
 
 (use-package citar-denote
@@ -80,8 +80,8 @@
   :custom
   (citar-denote-title-format 'author-year)
   :bind
-  ("C-c C-n c" . citar-create-note)
-  ("C-c C-n S-c" . citar-denote-open-note)
+  ("C-c C-d c" . citar-create-note)
+  ("C-c C-d S-c" . citar-denote-open-note)
   )
 
 
@@ -166,35 +166,36 @@
   :init (setq markdown-command "/usr/bin/pandoc")
   )
 
-(use-package projectile
-  :ensure t
-  :config (projectile-global-mode)
-  :bind (:map projectile-mode-map
-	      ("C-c C-p" . 'projectile-command-map))
-  )
+
+;; Go Programming
+
+(use-package go-mode)
+
 
 ;; Linter
 
 ; note this passes an R snippet to the lintr package.
-;(use-package flycheck
-;  :init (add-hook 'after-init-hook #'global-flycheck-mode)
-;  :custom ((flycheck-lintr-linters 
-;	   "linters_with_defaults(trailing_blank_lines_linter = NULL)")
-;	   (flycheck-check-syntax-automatically
-;	    '(mode-enabled saved)))
-;  )
+(use-package flycheck
+  :init (add-hook 'after-init-hook #'global-flycheck-mode)
+  :custom ((flycheck-lintr-linters 
+	   "linters_with_defaults(trailing_blank_lines_linter = NULL)")
+	   (flycheck-check-syntax-automatically
+	    '(mode-enabled saved)))
+  )
 
 
 ;; Shell Integration
 
 (when (eq system-type 'gnu/linux)
-  ((use-package vterm)
+  (use-package vterm))
+
+(when (eq system-type 'gnu/linux)
    (use-package vterm-toggle
-     :bind (("M-RET" . 'vterm-toggle)
+     :bind (("C-c v" . 'vterm-toggle)
 	    :map vterm-mode-map
-	    ("M-RET". 'vterm-toggle)))
+	    ("C-c v". 'vterm-toggle)))
    )
-)
+
 
 ;; Keyboard Shortcuts
 
@@ -203,3 +204,5 @@
 (bind-key* "M-<up>" 'windmove-up)
 (bind-key* "M-<down>" 'windmove-down)
 (bind-key* "M-o" 'other-window)
+
+(bind-key* "C-c c" 'calc)
