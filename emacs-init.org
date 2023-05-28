@@ -1,0 +1,241 @@
+#+TITLE: Daniel's Emacs init file
+
+* Aesthetics
+** Modus themes
+Prot's highly accessible colour schemes.
+#+BEGIN_SRC emacs-lisp
+(use-package modus-themes
+  :custom
+  ((modus-themes-org-blocks 'tinted-background)
+   (modus-themes-common-palette-overrides
+    '(;; Code Keywords
+      (fnname blue-cooler)
+      (string green)
+      (variable cyan)
+      ;; Interface Colors
+      (cursor magenta-faint)
+      (bg-region bg-magenta-subtle)
+      (fg-region unspecified)
+      (border-mode-line-active unspecified)
+      (border-mode-line-inactive unspecified)
+      (bg-mode-line-active bg-blue-intense)
+      (fg-mode-line-active fg-main)
+      ))
+   )
+  )
+#+END_SRC
+
+** Circadian
+Adjusts colour schemes based on solar elevation.
+#+BEGIN_SRC emacs-lisp
+(use-package circadian
+  :ensure t
+  :config
+  (setq calendar-latitude 49.32)
+  (setq calendar-longitude -128.07)
+  (setq circadian-themes '((:sunrise . modus-operandi)
+                           (:sunset  . modus-vivendi)))
+  (circadian-setup))
+#+END_SRC
+
+** Tree-sitter
+#+BEGIN_SRC emacs-lisp
+(use-package tree-sitter-langs
+  :straight t)
+(use-package tree-sitter)
+#+END_SRC
+
+
+* Autocompletion
+
+#+BEGIN_SRC emacs-lisp
+(electric-pair-mode)
+
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+(use-package marginalia
+  :init (marginalia-mode))
+
+(use-package vertico
+  :init (vertico-mode))
+
+(use-package embark
+  :bind ("C-." . embark-act)
+  )
+
+(use-package corfu
+  :custom
+  (corfu-cycle t)
+  (corfu-auto t)
+  :init
+  (global-corfu-mode))
+
+;; A few more useful configurations...
+(use-package emacs
+  :init
+  ;; TAB cycle if there are only few candidates
+  (setq completion-cycle-threshold 3)
+
+  ;; Emacs 28: Hide commands in M-x which do not apply to the current mode.
+  ;; Corfu commands are hidden, since they are not supposed to be used via M-x.
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
+
+  ;; Enable indentation+completion using the TAB key.
+  ;; `completion-at-point' is often bound to M-TAB.
+  (setq tab-always-indent 'complete))
+#+END_SRC
+
+
+* Note-taking system
+My note-taking system is based on Prot's ~denote~ package. Denote defines an efficient human-readable file-naming scheme for note organization in plain text files. I can link between notes, thus creating a /second brain/.
+
+#+BEGIN_SRC emacs-lisp
+(use-package denote
+  :custom 
+  (denote-directory "~/Documents/Notes")
+  (denote-known-keywords '("fre" "salmon" "plants" "stats" "emacs"))
+  (denote-file-type "text")
+  :config
+  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+  :bind
+  ("C-c C-d" . denote)
+  ("C-c d" . denote-open-or-create)
+  ("C-c M-d" . denote-type)
+  ("C-c C-l" . denote-link)
+  )
+#+END_SRC
+
+Citar interfaces with my Zotero bib files, allowing me to use Denote to creat bibliographic notes, and cite my sources in org or markdown documents.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package citar-denote
+     :config (citar-denote-mode)
+     :custom
+     (citar-denote-title-format "author-year")
+     (citar-notes-path "~/Documents/Notes/")
+     :bind
+     ("C-c C-b" . citar-create-note)
+     ("C-c b" . citar-denote-open-note)
+     )
+
+   (use-package citar
+   :custom
+   (citar-bibliography '("~/Zotero/references.bib"))
+   :hook
+   (markdown-mode . citar-capf-setup)
+   (org-mode . citar-capf-setup))
+
+  (use-package citar-embark
+   :after (citar embark)
+   :no-require
+   :config (citar-embark-mode)
+   )
+#+END_SRC
+
+
+
+
+* Programming
+** Git
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :bind (("C-x g" . magit-status)
+	 ("C-x C-g" . magit-status)))
+#+END_SRC
+
+** Language server protocol
+#+BEGIN_SRC emacs-lisp
+(use-package eglot)
+#+END_SRC
+** Linting
+#+BEGIN_SRC emacs-lisp
+  (use-package flymake
+    :custom
+    ((flymake-wrap-around 1)
+     (flymake-no-changes-timeout 5)))
+#+END_SRC
+
+** R
+#+BEGIN_SRC emacs-lisp
+  (use-package ess)
+  (defun my-inferior-ess-init ()
+    (setq-local ansi-color-for-comint-mode 'filter))
+  (defun my-ess-init ()
+    (eglot-ensure)
+    (tree-sitter-hl-mode)
+    )
+  (add-hook 'ess-mode-hook 'my-ess-init)
+  (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
+
+  (use-package poly-R)
+  (add-to-list 'auto-mode-alist
+               '("\\.[rR]md\\'" . poly-gfm+r-mode))
+  (setq markdown-code-block-braces t)
+
+  (use-package markdown-mode
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode))
+    :init (setq markdown-command "/usr/bin/pandoc")
+    )
+
+  (use-package pdf-tools)
+#+END_SRC
+
+** Go
+#+BEGIN_SRC emacs-lisp
+  (use-package go-mode)
+  (add-hook 'go-mode-hook 'eglot-ensure)
+#+END_SRC
+
+** Common Lisp
+#+BEGIN_SRC emacs-lisp
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))
+  (setq inferior-lisp-program "sbcl")
+#+END_SRC
+
+
+* Org-mode
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'org       
+    (setq org-startup-indented t)
+    (setq org-agenda-files (directory-files-recursively "~/Documents/Org/" "\\.org$"))
+    (add-hook 'org-mode-hook #'visual-line-mode))
+
+  ;; active Babel languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((R . t)
+     (emacs-lisp . t)))
+#+END_SRC
+
+
+* Terminal emulator
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'gnu/linux)
+  (use-package vterm))
+
+(when (eq system-type 'gnu/linux)
+   (use-package vterm-toggle
+     :bind (("M-RET" . 'vterm-toggle)
+	    :map vterm-mode-map
+	    ("M-RET". 'vterm-toggle))))
+#+END_SRC
+
+
+* Keyboard shortcuts
+#+BEGIN_SRC emacs-lisp
+  ;; Navigation
+  (bind-key* "M-<right>" 'windmove-right)
+  (bind-key* "M-<left>" 'windmove-left)
+  (bind-key* "M-<up>" 'windmove-up)
+  (bind-key* "M-<down>" 'windmove-down)
+  (bind-key* "M-o" 'other-window)
+
+  ;; Applications
+  (bind-key* "C-c c" 'calc)
+
+#+END_SRC
