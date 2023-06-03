@@ -17,4 +17,6 @@
         use-package-expand-minimally t))
 
 (require 'org)
-(org-babel-load-file '"/home/dhenn/.emacs.d/emacs-init.org")
+(if (eq system-type 'windows-nt)
+	(org-babel-load-file '"C:/Users/dhenn/.emacs.d/emacs-init.org")
+	(org-babel-load-file '"/home/dhenn/.emacs.d/emacs-init.org"))
