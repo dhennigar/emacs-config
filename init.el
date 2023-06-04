@@ -173,7 +173,7 @@
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
-  :init (setq markdown-command "/usr/bin/pandoc"))
+  :init (setq markdown-command "pandoc"))
 
 (use-package pdf-tools)
 
@@ -207,11 +207,5 @@
 
 ;; Keybindings
 
-  
-(bind-key* "M-<right>" 'windmove-right)
-(bind-key* "M-<left>" 'windmove-left)
-(bind-key* "M-<up>" 'windmove-up)
-(bind-key* "M-<down>" 'windmove-down)
-(bind-key* "M-o" 'other-window)
-
-(bind-key* "C-c c" 'calc)
+(windmove-default-keybindings)
+(setq org-replace-disputed-keys t)
