@@ -5,5 +5,3 @@ These are my configuration files for Emacs. Supported tasks include:
 * Academic writing and note-taking in `org-mode`, with *Zotero* citation integration,
 * Maintenance of a *Zettelkasten*, or "second brain" via `denote`, a minimalist note-taking tool.
 
-
-@chalifourChinookSalmonExhibit2020
