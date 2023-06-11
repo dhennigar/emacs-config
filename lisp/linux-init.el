@@ -14,4 +14,4 @@
 
 ;; Sudo
 
-(use-package sudo-edit)
+;;(use-package sudo-edit)
