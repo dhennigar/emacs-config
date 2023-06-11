@@ -101,7 +101,6 @@
   (setq tab-always-indent 'complete))
 
 
-
 ;; Notes --------------------------------------------------------
 
 (use-package denote
@@ -117,26 +116,26 @@
   ("C-c M-d" . denote-type)
   ("C-c C-l" . denote-link))
 
-  (use-package citar-denote
-     :config (citar-denote-mode)
-     :custom
-     (citar-denote-title-format "author-year")
-     (citar-notes-path  (concat documents-directory "Notes"))
-     :bind
-     ("C-c C-b" . citar-create-note)
-     ("C-c b" . citar-denote-open-note))
+(use-package citar-denote
+  :config (citar-denote-mode)
+  :custom
+  (citar-denote-title-format "author-year")
+  (citar-notes-path  (concat documents-directory "Notes"))
+  :bind
+  ("C-c C-b" . citar-create-note)
+  ("C-c b" . citar-denote-open-note))
 
-   (use-package citar
-   :custom
-   (citar-bibliography '("~/Zotero/references.bib"))
-   :hook
-   (markdown-mode . citar-capf-setup)
-   (org-mode . citar-capf-setup))
+(use-package citar
+  :custom
+  (citar-bibliography '("~/Zotero/references.bib"))
+  :hook
+  (markdown-mode . citar-capf-setup)
+  (org-mode . citar-capf-setup))
 
-  (use-package citar-embark
-   :after (citar embark)
-   :no-require
-   :config (citar-embark-mode))
+(use-package citar-embark
+  :after (citar embark)
+  :no-require
+  :config (citar-embark-mode))
 
 
 ;; Programming --------------------------------------------------
@@ -170,23 +169,13 @@
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
 (setq markdown-code-block-braces t)
 
+;; Markdown
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
   :init (setq markdown-command "pandoc"))
 
 (use-package pdf-tools)
-
-;; Golang
-(use-package go-mode)
-(add-hook 'go-mode-hook 'eglot-ensure)
-
-;; Common Lisp
-
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "sbcl")
-
 
 
 ;; Org-Mode -----------------------------------------------------
@@ -207,5 +196,5 @@
 
 ;; Keybindings
 
-(windmove-default-keybindings)
+(windmove-default-keybindings 'meta)
 (setq org-replace-disputed-keys t)
