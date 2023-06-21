@@ -11,9 +11,6 @@
 	 :map vterm-mode-map
 	 ("M-RET". 'vterm-toggle)))
 
-;; Sudo
-(use-package sudo-edit)
-
 ;; Common Lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; Replace "sbcl" with the path to your implementation
