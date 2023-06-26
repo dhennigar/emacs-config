@@ -89,9 +89,9 @@
 (use-package vertico
   :init (vertico-mode))
 
-(use-package embark
-  :bind ("C-." . embark-act)
-  )
+;; (use-package embark
+;;   :bind ("C-." . embark-act)
+;;   )
 
 (use-package corfu
   :custom
@@ -139,10 +139,10 @@
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
 
-(use-package citar-embark
-  :after (citar embark)
-  :no-require
-  :config (citar-embark-mode))
+;; (use-package citar-embark
+;;   :after (citar embark)
+;;   :no-require
+;;   :config (citar-embark-mode))
 
 
 ;; Programming --------------------------------------------------
