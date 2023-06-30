@@ -205,3 +205,17 @@
 
 (windmove-default-keybindings 'meta)
 (setq org-replace-disputed-keys t)
+
+
+;; Calibre -------------------------------------------------------
+
+(use-package calibredb
+  :defer t
+  :config
+  (setq calibredb-root-dir "~/Documents/Calibre")
+  (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+  (setq calibredb-library-alist '("~/Documents/Calibre")))
+
+
+(use-package nov)
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
