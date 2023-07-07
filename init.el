@@ -26,20 +26,6 @@
         use-package-expand-minimally t))
 
 
-;; OS-Specific Configuration ------------------------------------
-
-(if (eq system-type 'windows-nt)
-    (load "~/.emacs.d/lisp/windows-init.el")
-  (load "~/.emacs.d/lisp/linux-init.el"))
-
-
-;; Custom file --------------------------------------------------
-
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
-
 ;; Aesthetics ---------------------------------------------------
 
 (use-package modus-themes
@@ -72,6 +58,19 @@
   :straight t)
 (use-package tree-sitter)
 
+
+;; OS-Specific Configuration ------------------------------------
+
+(if (eq system-type 'windows-nt)
+    (load "~/.emacs.d/lisp/windows-init.el")
+  (load "~/.emacs.d/lisp/linux-init.el"))
+
+
+;; Custom file --------------------------------------------------
+
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(when (file-exists-p custom-file)
+  (load custom-file))
 
 
 ;; Autocompletion -----------------------------------------------
