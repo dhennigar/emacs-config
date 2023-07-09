@@ -3,8 +3,9 @@
 
 ;; File Paths
 
-(defvar documents-directory "d:/Documents/")
-(defvar orgfiles-directory "d:/Documents/Org/")
+(defvar org-dir "d:/Documents/Org")
+(defvar note-dir "d:/Documents/Org/Notes")
+(defvar cite-dir "d:/Documents/Org/Bib")
 
 
 ;; GUI Settings

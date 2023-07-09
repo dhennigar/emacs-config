@@ -1,8 +1,9 @@
 ;;; linux-init.el
 
 ;; File Paths
-(defvar documents-directory "~/Documents/")
-(defvar orgfiles-directory "~/Documents/Org/")
+(defvar org-dir "~/Documents/Org/")
+(defvar note-dir "~/Documents/Org/Notes")
+(defvar cite-dir "~/Documents/Org/Bib")
 
 ;; Terminal Emulator
 (use-package vterm)

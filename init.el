@@ -48,10 +48,8 @@
 (use-package circadian
   :ensure t
   :config
-  (setq calendar-latitude 49.32)
-  (setq calendar-longitude -128.07)
-  (setq circadian-themes '((:sunrise . modus-operandi)
-                           (:sunset  . modus-vivendi)))
+  (setq circadian-themes '(("5:00" . modus-operandi)
+                           ("19:00"  . modus-vivendi)))
   (circadian-setup))
 
 (use-package tree-sitter-langs
@@ -88,10 +86,6 @@
 (use-package vertico
   :init (vertico-mode))
 
-;; (use-package embark
-;;   :bind ("C-." . embark-act)
-;;   )
-
 (use-package corfu
   :custom
   (corfu-cycle t)
@@ -109,39 +103,34 @@
 
 ;; Notes --------------------------------------------------------
 
-(use-package denote
-  :custom 
-  (denote-directory (concat documents-directory "Notes"))
-  (denote-known-keywords '("fre" "salmon" "plants" "stats" "emacs"))
-  (denote-file-type "text")
-  :config
-  (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
-  :bind
-  ("C-c C-d" . denote)
-  ("C-c d" . denote-open-or-create)
-  ("C-c M-d" . denote-type)
-  ("C-c C-l" . denote-link))
-
-(use-package citar-denote
-  :config (citar-denote-mode)
+(use-package org-roam
+  :ensure t
   :custom
-  (citar-denote-title-format "author-year")
-  (citar-notes-path  (concat documents-directory "Notes"))
+  (org-roam-directory (concat org-dir "/Roam"))
   :bind
-  ("C-c C-b" . citar-create-note)
-  ("C-c b" . citar-denote-open-note))
+  (("C-c n l" . org-roam-buffer-toggle)
+   ("C-c n f" . org-roam-node-find)
+   ("C-c n i" . org-roam-node-insert))
+  :config
+  (org-roam-setup))
 
 (use-package citar
   :custom
   (citar-bibliography '("~/Zotero/references.bib"))
+  (org-cite-global-bibliography '("~/Zotero/references.bib"))
+  (org-cite-insert-processor 'citar)
+  (org-cite-follow-processor 'citar)
+  (org-cite-activate-processor 'citar)
+  (citar-bibliography org-cite-global-bibliography)
+  :bind
+  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
 
-;; (use-package citar-embark
-;;   :after (citar embark)
-;;   :no-require
-;;   :config (citar-embark-mode))
+(use-package citar-org-roam
+  :after (citar org-roam)
+  :config (citar-org-roam-mode))
 
 
 ;; Programming --------------------------------------------------
@@ -184,13 +173,14 @@
 (use-package pdf-tools)
 
 
+
 ;; Org-Mode -----------------------------------------------------
 
 (with-eval-after-load 'org       
   (setq org-startup-indented t)
   (setq org-agenda-files
         (directory-files-recursively
-         orgfiles-directory "\\.org$")))
+         (concat org-dir "/Agenda") "\\.org$")))
 (add-hook 'org-mode-hook #'visual-line-mode)
 
 ;; active Babel languages
@@ -200,7 +190,25 @@
    (emacs-lisp . t)))
 
 
-;; Keybindings
+(use-package org-gcal
+  :config
+  (org-gcal-sync)
+  :custom
+  (plstore-cache-passphrase-for-symmetric-encryption t)
+  (org-gcal-client-id "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com")
+  (org-gcal-client-secret "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")
+  (org-gcal-fetch-file-alist '(("danrhennigar@gmail.com" . "~/Documents/Org/Agenda/calendar.org"))))
+
+(use-package org-gtasks
+  :straight (org-tasks :type git :host sourcehut :repo "jmasson/org-gtasks")
+  :config
+  (org-gtasks-register-account :name "Tasks"
+			       :directory (concat org-dir "/Tasks")
+			       :login "danrhennigar@gmail.com"
+			       :client-id "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com"
+			       :client-secret "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"))
+
+;; Keybindings ---------------------------------------------------
 
 (windmove-default-keybindings 'meta)
 (setq org-replace-disputed-keys t)
@@ -218,3 +226,14 @@
 
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+
+;; Multi Media ------ ---------------------------------------------
+
+(use-package emms
+  :config
+  (emms-all)
+  :custom
+  (emms-player-list '(emms-player-mpv))
+  (emms-info-functions '(emms-info-native)))
+
