@@ -220,6 +220,7 @@
 (windmove-default-keybindings 'meta)
 (setq org-replace-disputed-keys t)
 
+(bind-key "C-M-g" 'exit-recursive-edit)
 
 ;; Calibre -------------------------------------------------------
 

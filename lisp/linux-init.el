@@ -9,9 +9,9 @@
 ;; Terminal Emulator
 (use-package vterm)
 (use-package vterm-toggle
-  :bind (("M-RET" . 'vterm-toggle)
+  :bind (("C-c C-t" . 'vterm-toggle)
 	 :map vterm-mode-map
-	 ("M-RET". 'vterm-toggle)))
+	 ("C-c C-t". 'vterm-toggle)))
 
 ;; Common Lisp
 
