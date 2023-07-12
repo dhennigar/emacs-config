@@ -1,9 +1,10 @@
 ;;; linux-init.el
 
 ;; File Paths
-(defvar org-dir "~/Documents/Org/")
-(defvar note-dir "~/Documents/Org/Notes")
-(defvar cite-dir "~/Documents/Org/Bib")
+(defvar my-org-dir "~/Documents/Org/")
+(defvar my-roam-dir "~/Documents/Org/roam")
+(defvar my-task-dir "~/Documents/Org/tasks")
+(defvar my-org-gcal-file "~/Documents/Org/calendar.org")
 
 ;; Terminal Emulator
 (use-package vterm)
@@ -13,9 +14,10 @@
 	 ("M-RET". 'vterm-toggle)))
 
 ;; Common Lisp
+
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "sbcl")
+
 
 ;; Golang
 (use-package go-mode)

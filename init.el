@@ -106,7 +106,7 @@
 (use-package org-roam
   :ensure t
   :custom
-  (org-roam-directory (concat org-dir "/Roam"))
+  (org-roam-directory my-roam-dir)
   :bind
   (("C-c n l" . org-roam-buffer-toggle)
    ("C-c n f" . org-roam-node-find)
@@ -123,7 +123,7 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography)
   :bind
-  (:map org-mode-map :package org ("C-c b" . #'org-cite-insert))
+  (:map org-mode-map :package org ("C-c c" . #'org-cite-insert))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
@@ -137,7 +137,7 @@
 
 ;; Git
 (use-package magit
-  :bind (("C-x g" . magit-status)
+  :bind (("C-c . g" . magit-status)
 	 ("C-x C-g" . magit-status)))
 
 ;; LSP
@@ -180,33 +180,40 @@
   (setq org-startup-indented t)
   (setq org-agenda-files
         (directory-files-recursively
-         (concat org-dir "/Agenda") "\\.org$")))
+         my-org-dir "\\.org$")))
 (add-hook 'org-mode-hook #'visual-line-mode)
 
-;; active Babel languages
+(bind-key "C-c . a" 'org-agenda)
+
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((R . t)
    (emacs-lisp . t)))
 
-
 (use-package org-gcal
-  :config
-  (org-gcal-sync)
   :custom
   (plstore-cache-passphrase-for-symmetric-encryption t)
   (org-gcal-client-id "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com")
   (org-gcal-client-secret "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")
-  (org-gcal-fetch-file-alist '(("danrhennigar@gmail.com" . "~/Documents/Org/Agenda/calendar.org"))))
+  (org-gcal-fetch-file-alist '(("danrhennigar@gmail.com" . "~/Documents/Org/calendar.org")))
+  :bind
+  ("C-c . c" . org-gcal-sync))
+
+
+(require 'plstore)
+(setq plstore-encrypt-to "D62AFA22AF88461345EAFE11A6BFDA6AB8BA0541")
 
 (use-package org-gtasks
   :straight (org-tasks :type git :host sourcehut :repo "jmasson/org-gtasks")
   :config
   (org-gtasks-register-account :name "Tasks"
-			       :directory (concat org-dir "/Tasks")
+			       :directory my-task-dir
 			       :login "danrhennigar@gmail.com"
 			       :client-id "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com"
-			       :client-secret "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"))
+			       :client-secret "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")
+  :bind
+  ("C-c . t" . org-gtasks))
+
 
 ;; Keybindings ---------------------------------------------------
 
@@ -235,5 +242,7 @@
   (emms-all)
   :custom
   (emms-player-list '(emms-player-mpv))
-  (emms-info-functions '(emms-info-native)))
+  (emms-info-functions '(emms-info-native))
+  :bind
+  ("C-c . m" . emms-browser))
 
