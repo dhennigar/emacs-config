@@ -120,10 +120,10 @@
   (setq org-refile-targets '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5)))
 
   (setq org-capture-templates '(("t" "Todo [inbox]" entry
-				 (file+headline "~/Dropbox/org/gtd/inbox.org" "Tasks")
+				 (file+headline "~/Dropbox/org/inbox.org" "Tasks")
 				 "* TODO %i%?")
 				("a" "Appointment [calendar]" entry
-				 (file+headline "~/Dropbox/org/gtd/calendar.org" "Calendar")
+				 (file+headline "~/Dropbox/org/calendar.org" "Calendar")
                                "* %i%? \n %^t"))))
 
 (add-hook 'org-mode-hook #'visual-line-mode)
@@ -133,7 +133,7 @@
   :custom
   (org-roam-directory "~/Dropbox/org/roam")
   :bind
-  (("C-c n r" . org-roam-buffer-toggle)
+  (("C-c n t" . org-roam-buffer-toggle)
    ("C-c n f" . org-roam-node-find)
    ("C-c n i" . org-roam-node-insert))
   :config
@@ -158,16 +158,23 @@
   :after (citar org-roam)
   :config (citar-org-roam-mode))
 
+(defun org-mode-inbox ()
+  "Open inbox.org to refile loose items"
+  (interactive)
+  (find-file "~/Dropbox/org/inbox.org"))
+
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
 (bind-key "C-c r" 'org-roam-capture)
+(bind-key "C-c i" 'org-mode-inbox)
+
 
 
 ;; Programming --------------------------------------------------
 
 ;; Git
 (use-package magit
-  :bind (("C-c . g" . magit-status)
+  :bind (("C-c g" . magit-status)
 	 ("C-x C-g" . magit-status)))
 
 ;; LSP
@@ -243,5 +250,5 @@
   (emms-player-list '(emms-player-mpv))
   (emms-info-functions '(emms-info-native))
   :bind
-  ("C-c . m" . emms-browser))
+  ("C-c m" . emms-browser))
 
