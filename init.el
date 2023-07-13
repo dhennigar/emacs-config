@@ -103,22 +103,32 @@
 
 ;; Org-mode --------------------------------------------------------
 
+(use-package org-contrib)
+(require 'org-depend)
+
 (with-eval-after-load 'org
   
   (setq org-startup-indented t)
 
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
   
   (setq org-agenda-files '("~/Dropbox/org/tasks.org"
 			   "~/Dropbox/org/projects.org"
 			   "~/Dropbox/org/inbox.org"
 			   "~/Dropbox/org/calendar.org"))
 
-
   (setq org-archive-location "~/Dropbox/org/archive/archive23.org::")
 
-  (setq org-refile-targets '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5)))
+  (setq org-refile-targets '(("~/Dropbox/org/tasks.org" :level . 1)
+			     ("~/Dropbox/org/calendar.org" :level . 1)
+			     ("~/Dropbox/org/projects.org" :maxlevel . 2)))
 
+  (setq org-agenda-custom-commands
+	'(("N" todo "NEXT")
+	  ("W" todo "WAITING")))
+
+  (setq org-agenda-window-setup 'only-window)
+  
   (setq org-capture-templates '(("t" "Todo [inbox]" entry
 				 (file+headline "~/Dropbox/org/inbox.org" "Tasks")
 				 "* TODO %i%?")
@@ -126,6 +136,16 @@
 				 (file+headline "~/Dropbox/org/calendar.org" "Calendar")
                                "* %i%? \n %^t"))))
 
+
+(defun dh/org-insert-trigger ()
+  "Automatically insert chain-find-next trigger when entry becomes NEXT"
+  (cond ((equal org-state "NEXT")
+         (unless org-depend-doing-chain-find-next
+           (org-set-property "TRIGGER" "chain-find-next(NEXT,from-current,priority-up,effort-down)")))
+        ((not (member org-state org-done-keywords))
+         (org-delete-property "TRIGGER"))))
+
+(add-hook 'org-after-todo-state-change-hook 'dh/org-insert-trigger)
 (add-hook 'org-mode-hook #'visual-line-mode)
 
 (use-package org-roam
