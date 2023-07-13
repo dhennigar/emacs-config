@@ -101,14 +101,39 @@
   (setq tab-always-indent 'complete))
 
 
-;; Notes --------------------------------------------------------
+;; Org-mode --------------------------------------------------------
+
+(with-eval-after-load 'org
+  
+  (setq org-startup-indented t)
+
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  
+  (setq org-agenda-files '("~/Dropbox/org/tasks.org"
+			   "~/Dropbox/org/projects.org"
+			   "~/Dropbox/org/inbox.org"
+			   "~/Dropbox/org/calendar.org"))
+
+
+  (setq org-archive-location "~/Dropbox/org/archive/archive23.org::")
+
+  (setq org-refile-targets '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5)))
+
+  (setq org-capture-templates '(("t" "Todo [inbox]" entry
+				 (file+headline "~/Dropbox/org/gtd/inbox.org" "Tasks")
+				 "* TODO %i%?")
+				("a" "Appointment [calendar]" entry
+				 (file+headline "~/Dropbox/org/gtd/calendar.org" "Calendar")
+                               "* %i%? \n %^t"))))
+
+(add-hook 'org-mode-hook #'visual-line-mode)
 
 (use-package org-roam
   :ensure t
   :custom
-  (org-roam-directory my-roam-dir)
+  (org-roam-directory "~/Dropbox/org/roam")
   :bind
-  (("C-c n l" . org-roam-buffer-toggle)
+  (("C-c n r" . org-roam-buffer-toggle)
    ("C-c n f" . org-roam-node-find)
    ("C-c n i" . org-roam-node-insert))
   :config
@@ -123,7 +148,8 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography)
   :bind
-  (:map org-mode-map :package org ("C-c c" . #'org-cite-insert))
+  ("C-c n b" . citar-open-notes)
+  (:map org-mode-map :package org ("C-c n l" . #'org-cite-insert))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
@@ -131,6 +157,10 @@
 (use-package citar-org-roam
   :after (citar org-roam)
   :config (citar-org-roam-mode))
+
+(bind-key "C-c a" 'org-agenda)
+(bind-key "C-c c" 'org-capture)
+(bind-key "C-c r" 'org-roam-capture)
 
 
 ;; Programming --------------------------------------------------
@@ -164,7 +194,16 @@
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
 (setq markdown-code-block-braces t)
 
-;; Markdown
+
+;; Emacs Lisp
+(setq initial-scratch-message
+      ";; Emacs LISP *scratch* buffer
+
+")
+
+
+;; Markdown and PDFs --------------------------------------------
+
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
@@ -173,54 +212,13 @@
 (use-package pdf-tools)
 
 
-
-;; Org-Mode -----------------------------------------------------
-
-(with-eval-after-load 'org       
-  (setq org-startup-indented t)
-  (setq org-agenda-files
-        (directory-files-recursively
-         my-org-dir "\\.org$")))
-(add-hook 'org-mode-hook #'visual-line-mode)
-
-(bind-key "C-c . a" 'org-agenda)
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((R . t)
-   (emacs-lisp . t)))
-
-(use-package org-gcal
-  :custom
-  (plstore-cache-passphrase-for-symmetric-encryption t)
-  (org-gcal-client-id "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com")
-  (org-gcal-client-secret "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")
-  (org-gcal-fetch-file-alist '(("danrhennigar@gmail.com" . "~/Documents/Org/calendar.org")))
-  :bind
-  ("C-c . c" . org-gcal-sync))
-
-
-(require 'plstore)
-(setq plstore-encrypt-to "D62AFA22AF88461345EAFE11A6BFDA6AB8BA0541")
-
-(use-package org-gtasks
-  :straight (org-tasks :type git :host sourcehut :repo "jmasson/org-gtasks")
-  :config
-  (org-gtasks-register-account :name "Tasks"
-			       :directory my-task-dir
-			       :login "danrhennigar@gmail.com"
-			       :client-id "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com"
-			       :client-secret "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")
-  :bind
-  ("C-c . t" . org-gtasks))
-
-
 ;; Keybindings ---------------------------------------------------
 
 (windmove-default-keybindings 'meta)
 (setq org-replace-disputed-keys t)
 
 (bind-key "C-M-g" 'exit-recursive-edit)
+
 
 ;; Calibre -------------------------------------------------------
 
