@@ -224,12 +224,10 @@
 
 ;; Emacs Lisp
 (setq initial-scratch-message
-      ";; Emacs LISP *scratch* buffer
-
-")
+      ";; Emacs LISP *scratch* buffer\n\n")
 
 
-;; Markdown and PDFs --------------------------------------------
+;; Writing Documents  --------------------------------------------
 
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
@@ -237,6 +235,8 @@
   :init (setq markdown-command "pandoc"))
 
 (use-package pdf-tools)
+
+(add-hook 'text-mode-hook 'flyspell-mode)
 
 
 ;; Keybindings ---------------------------------------------------
