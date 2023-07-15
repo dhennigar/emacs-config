@@ -7,6 +7,10 @@
 	 :map vterm-mode-map
 	 ("C-c v". 'vterm-toggle)))
 
+;; System Monitor
+(use-package symon
+  :config (symon-mode))
+
 ;; Common Lisp
 
 (load (expand-file-name "~/quicklisp/slime-helper.el"))

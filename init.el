@@ -59,9 +59,8 @@
 
 ;; OS-Specific Configuration ------------------------------------
 
-(if (eq system-type 'windows-nt)
-    (load "~/.emacs.d/lisp/windows-init.el")
-  (load "~/.emacs.d/lisp/linux-init.el"))
+(if (eq system-type 'gnu/linux)
+    (load "~/.emacs.d/lisp/linux-init.el"))
 
 
 ;; Custom file --------------------------------------------------
