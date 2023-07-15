@@ -147,6 +147,7 @@
 
 (add-hook 'org-after-todo-state-change-hook 'dh/org-insert-trigger)
 (add-hook 'org-mode-hook #'visual-line-mode)
+(add-hook 'org-mode-hook 'flyspell-mode)
 
 (use-package org-roam
   :ensure t
@@ -237,6 +238,7 @@
 (use-package pdf-tools)
 
 (add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'Rd-mode-hook 'flyspell-mode)
 
 
 ;; Keybindings ---------------------------------------------------
