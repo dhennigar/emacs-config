@@ -13,10 +13,10 @@
  (rear-context-string . "   :Home:Chore:\n")
  (position . 525))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/inbox.org")
- (front-context-string . "** TODO Pick up ")
- (rear-context-string . "omment\n\n* Tasks\n")
- (position . 104))
+ (filename . "~/Dropbox/org/notes/20230716T115737--this-is-a-testing-note__emacs.org")
+ (front-context-string . "#+title:      Th")
+ (rear-context-string)
+ (position . 1))
 ("tasks.org"
  (filename . "~/Documents/Org/tasks.org")
  (front-context-string . "\n*** TODO Get st")

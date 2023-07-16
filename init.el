@@ -52,10 +52,6 @@
                            ("19:00"  . modus-vivendi)))
   (circadian-setup))
 
-(use-package tree-sitter-langs
-  :straight t)
-(use-package tree-sitter)
-
 
 ;; OS-Specific Configuration ------------------------------------
 
@@ -127,13 +123,21 @@
 	  ("W" todo "WAITING")))
 
   (setq org-agenda-window-setup 'only-window)
+
+  (setq denote-org-capture-specifier "%l\n%i\n%?")
   
   (setq org-capture-templates '(("t" "Todo [inbox]" entry
 				 (file+headline "~/Dropbox/org/inbox.org" "Tasks")
 				 "* TODO %i%?")
 				("a" "Appointment [calendar]" entry
 				 (file+headline "~/Dropbox/org/calendar.org" "Calendar")
-                               "* %i%? \n %^t"))))
+				 "* %i%? \n %^t")
+				("n" "New note [denote]" plain
+				(file denote-last-path)
+				#'denote-org-capture
+				:no-save t
+				:immediate-finish nil
+				:kill-buffer t))))
 
 
 (defun dh/org-insert-trigger ()
@@ -148,16 +152,16 @@
 (add-hook 'org-mode-hook #'visual-line-mode)
 (add-hook 'org-mode-hook 'flyspell-mode)
 
-(use-package org-roam
-  :ensure t
-  :custom
-  (org-roam-directory "~/Dropbox/org/roam")
-  :bind
-  (("C-c n t" . org-roam-buffer-toggle)
-   ("C-c n f" . org-roam-node-find)
-   ("C-c n i" . org-roam-node-insert))
-  :config
-  (org-roam-setup))
+;; (use-package org-roam
+;;   :ensure t
+;;   :custom
+;;   (org-roam-directory "~/Dropbox/org/roam")
+;;   :bind
+;;   (("C-c n t" . org-roam-buffer-toggle)
+;;    ("C-c n f" . org-roam-node-find)
+;;    ("C-c n i" . org-roam-node-insert))
+;;   :config
+;;   (org-roam-setup))
 
 (use-package citar
   :custom
@@ -168,15 +172,54 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography org-cite-global-bibliography)
   :bind
-  ("C-c n b" . citar-open-notes)
-  (:map org-mode-map :package org ("C-c n l" . #'org-cite-insert))
+  ("C-c n c o" . citar-open-notes)
+  (:map org-mode-map :package org ("C-c n c l" . #'org-cite-insert))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
 
-(use-package citar-org-roam
-  :after (citar org-roam)
-  :config (citar-org-roam-mode))
+;; (use-package citar-org-roam
+;;   :after (citar org-roam)
+;;   :config (citar-org-roam-mode))
+
+
+(use-package denote
+  :ensure t
+  :custom
+  (denote-directory (expand-file-name "~/Dropbox/org/notes"))
+  (denote-known-keywords '("ecology" "philosophy" "emacs"))
+  (denote-infer-keywords t)
+  (denote-sort-keywords t)
+  (denote-file-type nil)
+  (denote-prompts '(title keywords))
+  (denote-date-prompt-use-org-read-date t)
+  :bind
+  ("C-c C-n" . denote)
+  ("C-c n n" . denote)
+  ("C-c n t" . denote-type)
+  ("C-c n l" . denote-link)
+  ("C-c n L" . denote-add-links)
+  ("C-c n b" . denote-backlinks)
+  ("C-c n f" . denote-find-link)
+  ("C-c n F" . denote-find-backlink)
+  ("C-c n r" . denote-rename-file)
+  ("C-c n R" . denote-rename-file-using-front-matter))
+
+
+(use-package citar-denote
+  :config (citar-denote-mode)
+  :bind
+  ("C-c n c c" . citar-create-note)
+  ("C-c n c o" . citar-denote-open-note)
+  ("C-c n c d" . citar-denote-dwim)
+  ("C-c n c a" . citar-denote-add-citekey)
+  ("C-c n c k" . citar-denote-remove-citekey)
+  ("C-c n c e" . citar-denote-open-reference-entry)
+  ("C-c n c r" . citar-denote-find-reference)
+  ("C-c n c f" . citar-denote-find-citation)
+  ("C-c n c n" . citar-denote-cite-nocite)
+  ("C-c n c m" . citar-denote-reference-nocite))
+
 
 (defun org-mode-inbox ()
   "Open inbox.org to refile loose items"
@@ -192,14 +235,6 @@
 
 ;; Programming --------------------------------------------------
 
-;; Git
-(use-package magit
-  :bind (("C-c g" . magit-status)
-	 ("C-x C-g" . magit-status)))
-
-;; LSP
-(use-package eglot)
-
 ;; Linting
 (use-package flymake
   :custom
@@ -210,10 +245,6 @@
 (use-package ess)
 (defun my-inferior-ess-init ()
   (setq-local ansi-color-for-comint-mode 'filter))
-(defun my-ess-init ()
-  (eglot-ensure)
-  (tree-sitter-hl-mode))
-(add-hook 'ess-mode-hook 'my-ess-init)
 (add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
 
 (use-package poly-R)
