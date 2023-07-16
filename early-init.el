@@ -2,7 +2,7 @@
 
 (setq package-enable-at-startup nil)
 
-(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-12" ))
+(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11" ))
 (add-to-list 'default-frame-alist '(height . 24))
 (add-to-list 'default-frame-alist '(width . 80))
 

@@ -29,6 +29,7 @@
 ;; Aesthetics ---------------------------------------------------
 
 (use-package modus-themes
+  :config (load-theme 'modus-operandi)
   :custom
   ((modus-themes-org-blocks 'tinted-background)
    (modus-themes-common-palette-overrides
@@ -44,13 +45,6 @@
       (border-mode-line-inactive unspecified)
       (bg-mode-line-active bg-blue-intense)
       (fg-mode-line-active fg-main)))))
-
-(use-package circadian
-  :ensure t
-  :config
-  (setq circadian-themes '(("5:00" . modus-operandi)
-                           ("19:00"  . modus-vivendi)))
-  (circadian-setup))
 
 
 ;; OS-Specific Configuration ------------------------------------
@@ -119,8 +113,13 @@
 			     ("~/Dropbox/org/projects.org" :maxlevel . 2)))
 
   (setq org-agenda-custom-commands
-	'(("N" todo "NEXT")
-	  ("W" todo "WAITING")))
+	'(("n" "Agenda and NEXT actions"
+	   ((agenda "")
+	    (todo "NEXT")))
+	  ("N" "NEXT actions only" todo "NEXT")
+	  ("a" "Agenda and all TODOs"
+	   ((agenda "")
+	    (alltodo "")))))
 
   (setq org-agenda-window-setup 'only-window)
 
@@ -207,7 +206,8 @@
 
 
 (use-package citar-denote
-  :config (citar-denote-mode)
+  :init (citar-denote-mode)
+  :custom (citar-notes-paths '("~/Dropbox/org/notes"))
   :bind
   ("C-c n c c" . citar-create-note)
   ("C-c n c o" . citar-denote-open-note)
@@ -304,3 +304,9 @@
   :bind
   ("C-c m" . emms-browser))
 
+
+;; Diminish minor modes
+(use-package diminish
+  :config
+  (diminish 'citar-denote-mode)
+  (diminish 'eldoc-mode))
