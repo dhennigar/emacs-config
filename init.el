@@ -52,6 +52,8 @@
 (if (eq system-type 'gnu/linux)
     (load "~/.emacs.d/lisp/linux-init.el"))
 
+(if (eq system-type 'windows-nt)
+    (setq ring-bell-function 'ignore))
 
 ;; Custom file --------------------------------------------------
 
@@ -115,11 +117,8 @@
   (setq org-agenda-custom-commands
 	'(("n" "Agenda and NEXT actions"
 	   ((agenda "")
-	    (todo "NEXT")))
-	  ("N" "NEXT actions only" todo "NEXT")
-	  ("a" "Agenda and all TODOs"
-	   ((agenda "")
-	    (alltodo "")))))
+	    (todo "NEXT")))))
+
 
   (setq org-agenda-window-setup 'only-window)
 
