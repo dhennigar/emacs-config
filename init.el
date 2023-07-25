@@ -29,7 +29,8 @@
 ;; Aesthetics ---------------------------------------------------
 
 (use-package modus-themes
-  :config (load-theme 'modus-operandi)
+  :config
+  (load-theme 'modus-operandi)
   :custom
   ((modus-themes-org-blocks 'tinted-background)
    (modus-themes-common-palette-overrides
@@ -256,6 +257,8 @@
 (setq initial-scratch-message
       ";; Emacs LISP *scratch* buffer\n\n")
 
+;; AutoHotKey
+(use-package ahk-mode)
 
 ;; Writing Documents  --------------------------------------------
 

@@ -3,20 +3,20 @@
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored-marker"
- (filename . "~/Dropbox/org/tasks.org")
- (front-context-string . "** TODO Pick up ")
- (rear-context-string . "   :Home:Chore:\n")
- (position . 525))
+ (filename . "~/Dropbox/org/projects.org")
+ (front-context-string . "*** TODO Send bi")
+ (rear-context-string . "adshot in field\n")
+ (position . 756))
 ("org-refile-last-stored"
- (filename . "~/Dropbox/org/tasks.org")
- (front-context-string . "** TODO come up ")
- (rear-context-string . "       :errand:\n")
- (position . 864))
+ (filename . "~/Dropbox/org/projects.org")
+ (front-context-string . "*** TODO Send bi")
+ (rear-context-string . "adshot in field\n")
+ (position . 756))
 ("org-capture-last-stored"
- (filename . "~/Dropbox/org/calendar.org")
- (front-context-string . "** Study Buddhis")
- (rear-context-string . "Shower, wash up\n")
- (position . 483))
+ (filename . "~/Dropbox/org/inbox.org")
+ (front-context-string . "** TODO Send bio")
+ (rear-context-string . "omment\n\n* Tasks\n")
+ (position . 104))
 ("tasks.org"
  (filename . "~/Documents/Org/tasks.org")
  (front-context-string . "\n*** TODO Get st")
