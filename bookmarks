@@ -2,31 +2,7 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-capture-last-stored-marker"
- (filename . "~/Dropbox/org/projects.org")
- (front-context-string . "*** TODO Send bi")
- (rear-context-string . "adshot in field\n")
- (position . 756))
-("org-refile-last-stored"
- (filename . "~/Dropbox/org/projects.org")
- (front-context-string . "*** TODO Send bi")
- (rear-context-string . "adshot in field\n")
- (position . 756))
-("org-capture-last-stored"
- (filename . "~/Dropbox/org/inbox.org")
- (front-context-string . "** TODO Send bio")
- (rear-context-string . "omment\n\n* Tasks\n")
- (position . 104))
-("tasks.org"
- (filename . "~/Documents/Org/tasks.org")
- (front-context-string . "\n*** TODO Get st")
- (rear-context-string . "ximize utility.\n")
- (position . 382))
-("sway"
- (filename . "~/.dotfiles/sway/.config/sway/config")
- (front-context-string . "# ~/.config/sway")
- (rear-context-string)
- (position . 1))
+(
 ("init.el"
  (filename . "~/.emacs.d/init.el")
  (front-context-string . ";; init.elpp\n\n(l")

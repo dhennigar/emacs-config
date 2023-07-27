@@ -2,9 +2,7 @@
 
 ;;; Commentary:
 
-;; Emacs initialization file. Here I load and configure several packages which extend standard Emacs functionality.
-;; My core workflow includes R programming for data analysis, academic writing in Markdown with poly-mode (.Rmd files),
-;; and my life in plain text via org-mode.
+;;; My Emacs configuration file.
 
 ;;; Code:
 
@@ -104,16 +102,16 @@
 
   (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
   
-  (setq org-agenda-files '("~/Dropbox/org/tasks.org"
-			   "~/Dropbox/org/projects.org"
-			   "~/Dropbox/org/inbox.org"
-			   "~/Dropbox/org/calendar.org"))
+  (setq org-agenda-files '("d:/Documents/Org/tasks.org"
+			   "d:/Documents/Org/projects.org"
+			   "d:/Documents/Org/inbox.org"
+			   "d:/Documents/Org/calendar.org"))
 
-  (setq org-archive-location "~/Dropbox/org/archive/archive23.org::")
+  (setq org-archive-location "d:/Documents/Org/archive/archive23.org::")
 
-  (setq org-refile-targets '(("~/Dropbox/org/tasks.org" :level . 1)
-			     ("~/Dropbox/org/calendar.org" :level . 1)
-			     ("~/Dropbox/org/projects.org" :maxlevel . 2)))
+  (setq org-refile-targets '(("d:/Documents/Org/tasks.org" :level . 1)
+			     ("d:/Documents/Org/calendar.org" :level . 1)
+			     ("d:/Documents/Org/projects.org" :maxlevel . 2)))
 
   (setq org-agenda-custom-commands
 	'(("n" "Agenda and NEXT actions"
@@ -126,17 +124,26 @@
   (setq denote-org-capture-specifier "%l\n%i\n%?")
   
   (setq org-capture-templates '(("t" "Todo [inbox]" entry
-				 (file+headline "~/Dropbox/org/inbox.org" "Tasks")
+				 (file+headline
+				  "d:/Documents/Org/inbox.org"
+				  "Tasks")
 				 "* TODO %i%?")
 				("a" "Appointment [calendar]" entry
-				 (file+headline "~/Dropbox/org/calendar.org" "Calendar")
+				 (file+headline
+				  "d:/Documents/Org/calendar.org"
+				  "Calendar")
 				 "* %i%? \n %^t")
 				("n" "New note [denote]" plain
 				(file denote-last-path)
 				#'denote-org-capture
 				:no-save t
 				:immediate-finish nil
-				:kill-buffer t))))
+				:kill-buffer t)
+				("r" "Paper [reading-list]" entry
+				 (file+headline
+				  "d:/Documents/Org/reading-list.org"
+				  "Reading List")
+				 "* %i%?"))))
 
 
 (defun dh/org-insert-trigger ()
@@ -150,17 +157,6 @@
 (add-hook 'org-after-todo-state-change-hook 'dh/org-insert-trigger)
 (add-hook 'org-mode-hook #'visual-line-mode)
 (add-hook 'org-mode-hook 'flyspell-mode)
-
-;; (use-package org-roam
-;;   :ensure t
-;;   :custom
-;;   (org-roam-directory "~/Dropbox/org/roam")
-;;   :bind
-;;   (("C-c n t" . org-roam-buffer-toggle)
-;;    ("C-c n f" . org-roam-node-find)
-;;    ("C-c n i" . org-roam-node-insert))
-;;   :config
-;;   (org-roam-setup))
 
 (use-package citar
   :custom
@@ -185,7 +181,7 @@
 (use-package denote
   :ensure t
   :custom
-  (denote-directory (expand-file-name "~/Dropbox/org/notes"))
+  (denote-directory (expand-file-name "d:/Documents/Org/notes"))
   (denote-known-keywords '("ecology" "philosophy" "emacs"))
   (denote-infer-keywords t)
   (denote-sort-keywords t)
@@ -207,7 +203,10 @@
 
 (use-package citar-denote
   :init (citar-denote-mode)
-  :custom (citar-notes-paths '("~/Dropbox/org/notes"))
+  :custom
+  (citar-notes-paths '("d:/Documents/Org/notes"))
+  (citar-denote-title-format "author-year")
+  (citar-denote-subdir t)
   :bind
   ("C-c n c c" . citar-create-note)
   ("C-c n c o" . citar-denote-open-note)
@@ -224,7 +223,7 @@
 (defun org-mode-inbox ()
   "Open inbox.org to refile loose items"
   (interactive)
-  (find-file "~/Dropbox/org/inbox.org"))
+  (find-file "d:/Documents/Org/inbox.org"))
 
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
