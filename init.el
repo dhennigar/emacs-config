@@ -30,20 +30,18 @@
   :config
   (load-theme 'modus-operandi)
   :custom
-  ((modus-themes-org-blocks 'tinted-background)
-   (modus-themes-common-palette-overrides
-    '(;; Code Keywords
-      (fnname blue-cooler)
+  (modus-themes-org-blocks 'tinted-background)
+  (modus-themes-common-palette-overrides
+    '((fnname blue-cooler)
       (string green)
       (variable cyan)
-      ;; Interface Colors
       (cursor magenta-faint)
       (bg-region bg-magenta-subtle)
       (fg-region unspecified)
       (border-mode-line-active unspecified)
       (border-mode-line-inactive unspecified)
       (bg-mode-line-active bg-blue-intense)
-      (fg-mode-line-active fg-main)))))
+      (fg-mode-line-active fg-main))))
 
 
 ;; OS-Specific Configuration ------------------------------------
@@ -147,7 +145,7 @@
 
 
 (defun dh/org-insert-trigger ()
-  "Automatically insert chain-find-next trigger when entry becomes NEXT"
+  "Automatically insert chain-find-next trigger when entry becomes NEXT."
   (cond ((equal org-state "NEXT")
          (unless org-depend-doing-chain-find-next
            (org-set-property "TRIGGER" "chain-find-next(NEXT,from-current,priority-up,effort-down)")))
@@ -157,6 +155,45 @@
 (add-hook 'org-after-todo-state-change-hook 'dh/org-insert-trigger)
 (add-hook 'org-mode-hook #'visual-line-mode)
 (add-hook 'org-mode-hook 'flyspell-mode)
+
+(defun org-mode-inbox ()
+  "Open inbox.org to refile loose items."
+  (interactive)
+  (find-file "d:/Documents/Org/inbox.org"))
+
+(bind-key "C-c a" 'org-agenda)
+(bind-key "C-c c" 'org-capture)
+(bind-key "C-c r" 'org-roam-capture)
+(bind-key "C-c i" 'org-mode-inbox)
+
+
+;; Programming --------------------------------------------------
+
+;; R
+(use-package ess
+  :custom
+  (ess-R-readline nil)
+  (ess-use-eldoc nil)
+  (ess-use-flymake nil)
+  (inferior-R-args "--no-save")
+  :hook
+  ('inferior-ess-mode-hook
+   setq-local ansi-color-for-comint-mode 'filter))
+
+
+;; Emacs Lisp
+(setq initial-scratch-message
+      ";; Emacs LISP *scratch* buffer\n\n")
+
+;; Common Lisp
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+(setq inferior-lisp-program "sbcl")
+
+;; AutoHotKey
+(use-package ahk-mode)
+
+
+;; Academic Writing  ---------------------------------------------------
 
 (use-package citar
   :custom
@@ -172,11 +209,6 @@
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
-
-;; (use-package citar-org-roam
-;;   :after (citar org-roam)
-;;   :config (citar-org-roam-mode))
-
 
 (use-package denote
   :ensure t
@@ -219,95 +251,47 @@
   ("C-c n c n" . citar-denote-cite-nocite)
   ("C-c n c m" . citar-denote-reference-nocite))
 
-
-(defun org-mode-inbox ()
-  "Open inbox.org to refile loose items"
-  (interactive)
-  (find-file "d:/Documents/Org/inbox.org"))
-
-(bind-key "C-c a" 'org-agenda)
-(bind-key "C-c c" 'org-capture)
-(bind-key "C-c r" 'org-roam-capture)
-(bind-key "C-c i" 'org-mode-inbox)
-
-
-
-;; Programming --------------------------------------------------
-
-;; Linting
-(use-package flymake
-  :custom
-  ((flymake-wrap-around 1)
-   (flymake-no-changes-timeout 5)))
-
-;; R (including .Rmd)
-(use-package ess)
-(defun my-inferior-ess-init ()
-  (setq-local ansi-color-for-comint-mode 'filter))
-(add-hook 'inferior-ess-mode-hook 'my-inferior-ess-init)
+(use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode))
+  :init (setq markdown-command "pandoc"))
 
 (use-package poly-R)
 (add-to-list 'auto-mode-alist
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
 (setq markdown-code-block-braces t)
 
-
-;; Emacs Lisp
-(setq initial-scratch-message
-      ";; Emacs LISP *scratch* buffer\n\n")
-
-;; AutoHotKey
-(use-package ahk-mode)
-
-;; Writing Documents  --------------------------------------------
-
-(use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode))
-  :init (setq markdown-command "pandoc"))
-
-(use-package pdf-tools)
-
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'Rd-mode-hook 'flyspell-mode)
 
 
-;; Keybindings ---------------------------------------------------
+;; PDF and EPUB -------------------------------------------------------
 
-(windmove-default-keybindings 'meta)
-(setq org-replace-disputed-keys t)
-
-(bind-key "C-M-g" 'exit-recursive-edit)
-
-
-;; Calibre -------------------------------------------------------
+(use-package pdf-tools
+  :config
+  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode)))
 
 (use-package calibredb
   :defer t
   :config
-  (setq calibredb-root-dir "~/Documents/Calibre")
+  (setq calibredb-root-dir "d:/Documents/Calibre")
   (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
-  (setq calibredb-library-alist '("~/Documents/Calibre")))
-
+  (setq calibredb-library-alist '("d:/Documents/Calibre")))
 
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 
-;; Multi Media ------ ---------------------------------------------
-
-(use-package emms
-  :config
-  (emms-all)
-  :custom
-  (emms-player-list '(emms-player-mpv))
-  (emms-info-functions '(emms-info-native))
-  :bind
-  ("C-c m" . emms-browser))
-
-
-;; Diminish minor modes
+;; Diminish minor modes --------------------------------------------------
 (use-package diminish
   :config
   (diminish 'citar-denote-mode)
   (diminish 'eldoc-mode))
+
+
+;; General Keybindings ---------------------------------------------------
+
+(windmove-default-keybindings 'meta)
+(setq org-replace-disputed-keys t)
+
+(bind-key "C-M-g" 'exit-recursive-edit)
