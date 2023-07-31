@@ -91,90 +91,80 @@
 
 ;; Org-mode --------------------------------------------------------
 
-(use-package org-contrib)
-(require 'org-depend)
-
 (with-eval-after-load 'org
   
-  (setq org-startup-indented t)
-
-  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  ;; To-do lists and agendas
   
-  (setq org-agenda-files '("d:/Documents/Org/tasks.org"
-			   "d:/Documents/Org/projects.org"
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  
+  (setq org-agenda-files '("d:/Documents/Org/raincoast.org"
+			   "d:/Documents/Org/masters.org"
+			   "d:/Documents/Org/personal.org"
 			   "d:/Documents/Org/inbox.org"
-			   "d:/Documents/Org/calendar.org"))
+			   "d:/Documents/Org/calendar.org"
+			   "d:/Documents/Org/planner.org"))
 
   (setq org-archive-location "d:/Documents/Org/archive/archive23.org::")
 
-  (setq org-refile-targets '(("d:/Documents/Org/tasks.org" :level . 1)
-			     ("d:/Documents/Org/calendar.org" :level . 1)
-			     ("d:/Documents/Org/projects.org" :maxlevel . 2)))
-
-  (setq org-agenda-custom-commands
-	'(("n" "Agenda and NEXT actions"
-	   ((agenda "")
-	    (todo "NEXT")))))
-
-
-  (setq org-agenda-window-setup 'only-window)
+  (setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+  (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
 
   (setq denote-org-capture-specifier "%l\n%i\n%?")
   
-  (setq org-capture-templates '(("t" "Todo [inbox]" entry
+  (setq org-capture-templates '(("t" "Task" entry
 				 (file+headline
 				  "d:/Documents/Org/inbox.org"
 				  "Tasks")
 				 "* TODO %i%?")
-				("a" "Appointment [calendar]" entry
+				("a" "Appointment" entry
 				 (file+headline
 				  "d:/Documents/Org/calendar.org"
 				  "Calendar")
 				 "* %i%? \n %^t")
-				("n" "New note [denote]" plain
+				("n" "Note" plain
 				(file denote-last-path)
 				#'denote-org-capture
 				:no-save t
 				:immediate-finish nil
 				:kill-buffer t)
-				("r" "Paper [reading-list]" entry
+				("r" "Reading List" entry
 				 (file+headline
 				  "d:/Documents/Org/reading-list.org"
 				  "Reading List")
-				 "* %i%?"))))
+				 "* %i%?")))
 
+  ;; Aesthetics
+  
+  (add-hook 'org-mode-hook #'visual-line-mode)
+  (add-hook 'org-mode-hook #'auto-fill-mode)
+  (setq org-indent-indentation-per-level 1)
+  (setq org-startup-indented t)
+  (setq org-hide-emphasis-markers t)
 
-(defun dh/org-insert-trigger ()
-  "Automatically insert chain-find-next trigger when entry becomes NEXT."
-  (cond ((equal org-state "NEXT")
-         (unless org-depend-doing-chain-find-next
-           (org-set-property "TRIGGER" "chain-find-next(NEXT,from-current,priority-up,effort-down)")))
-        ((not (member org-state org-done-keywords))
-         (org-delete-property "TRIGGER"))))
+  ;; Keybindings
+  
+  (bind-key "C-c a" 'org-agenda)
+  (bind-key "C-c c" 'org-capture))
 
-(add-hook 'org-after-todo-state-change-hook 'dh/org-insert-trigger)
-(add-hook 'org-mode-hook #'visual-line-mode)
-(add-hook 'org-mode-hook 'flyspell-mode)
-
-(defun org-mode-inbox ()
-  "Open inbox.org to refile loose items."
-  (interactive)
-  (find-file "d:/Documents/Org/inbox.org"))
-
-(bind-key "C-c a" 'org-agenda)
-(bind-key "C-c c" 'org-capture)
-(bind-key "C-c r" 'org-roam-capture)
-(bind-key "C-c i" 'org-mode-inbox)
 
 
 ;; Programming --------------------------------------------------
+
+;; Flymake
+(use-package flymake
+  :custom (flymake-no-changes-timeout nil))
+
+;; Eldoc
+(use-package eldoc
+  :custom
+  (eldoc-idle-delay 3.5))
 
 ;; R
 (use-package ess
   :custom
   (ess-R-readline nil)
-  (ess-use-eldoc nil)
-  (ess-use-flymake nil)
   (inferior-R-args "--no-save")
   :hook
   ('inferior-ess-mode-hook
@@ -261,9 +251,20 @@
              '("\\.[rR]md\\'" . poly-gfm+r-mode))
 (setq markdown-code-block-braces t)
 
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'Rd-mode-hook 'flyspell-mode)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((R . t)
+   (python . t)
+   (lisp . t)))
 
+(setq org-confirm-babel-evaluate nil)
+
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'text-mode-hook 'auto-fill-mode)
+(add-hook 'Rd-mode-hook 'flyspell-mode)
+(add-hook 'org-mode-hook 'flyspell-mode)
+
+(setq ispell-extra-args '("--sug-mode=ultra"))
 
 ;; PDF and EPUB -------------------------------------------------------
 
@@ -283,6 +284,7 @@
 
 
 ;; Diminish minor modes --------------------------------------------------
+
 (use-package diminish
   :config
   (diminish 'citar-denote-mode)
@@ -291,7 +293,8 @@
 
 ;; General Keybindings ---------------------------------------------------
 
-(windmove-default-keybindings 'meta)
-(setq org-replace-disputed-keys t)
-
 (bind-key "C-M-g" 'exit-recursive-edit)
+
+
+
+
