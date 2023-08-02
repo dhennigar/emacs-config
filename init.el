@@ -133,20 +133,20 @@
 				 (file+headline
 				  "d:/Documents/Org/reading-list.org"
 				  "Reading List")
-				 "* %i%?")))
+				 "* %i%?"))))
 
   ;; Aesthetics
   
-  (add-hook 'org-mode-hook #'visual-line-mode)
-  (add-hook 'org-mode-hook #'auto-fill-mode)
-  (setq org-indent-indentation-per-level 1)
-  (setq org-startup-indented t)
-  (setq org-hide-emphasis-markers t)
+(add-hook 'org-mode-hook #'visual-line-mode)
+(add-hook 'org-mode-hook #'auto-fill-mode)
+(setq org-indent-indentation-per-level 1)
+(setq org-startup-indented t)
+(setq org-hide-emphasis-markers t)
 
   ;; Keybindings
   
-  (bind-key "C-c a" 'org-agenda)
-  (bind-key "C-c c" 'org-capture))
+(bind-key "C-c a" 'org-agenda)
+(bind-key "C-c c" 'org-capture)
 
 
 
@@ -192,7 +192,7 @@
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
-  (citar-bibliography org-cite-global-bibliography)
+  (citar-bibliography '("~/Zotero/references.bib"))
   :bind
   ("C-c n c o" . citar-open-notes)
   (:map org-mode-map :package org ("C-c n c l" . #'org-cite-insert))
