@@ -1,30 +1,48 @@
-;;; init.el
+;;; init.el --- My Emacs configuration file
+
+;; Copyright (c) 2022-2023 Daniel Hennigar
+
+;; Author: Daniel Hennigar
+;; URL: https://github.com/dhennigar/emacs-config
+;; Package-Requires: ((emacs "28.2"))
+
+;; This file is NOT part of GNU Emacs
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 or any later version.
+
+;; This file is distributed in the hope that it will be usefule,
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this file. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
-;;; My Emacs configuration file.
+;; My Emacs configuration file.
 
 ;;; Code:
 
-
 ;; Package Management -------------------------------------------
 
-(load "~/.emacs.d/lisp/straight-bootstrap.el" nil t)
-
 (require 'package)
-(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+	     '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives
+	     '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(eval-and-compile
-  (setq use-package-always-ensure t
-        use-package-expand-minimally t))
+(require 'use-package)
+(setq use-package-always-ensure t
+      use-package-expand-minimally t)
 
 
 ;; Aesthetics ---------------------------------------------------
+
+(pixel-scroll-precision-mode)
 
 (use-package modus-themes
   :config
@@ -47,16 +65,28 @@
 ;; OS-Specific Configuration ------------------------------------
 
 (if (eq system-type 'gnu/linux)
-    (load "~/.emacs.d/lisp/linux-init.el"))
+    ((use-package vterm)
+     (use-package vterm-toggle
+       :bind (("C-c v" . 'vterm-toggle)
+	      :map vterm-mode-map
+	      ("C-c v". 'vterm-toggle)))
+     (load "~/.emacs.d/lisp/linux-init.el")))
 
 (if (eq system-type 'windows-nt)
     (setq ring-bell-function 'ignore))
+
 
 ;; Custom file --------------------------------------------------
 
 (setq custom-file (concat user-emacs-directory "custom.el"))
 (when (file-exists-p custom-file)
   (load custom-file))
+
+
+;; Midnight mode ------------------------------------------------
+
+(require 'midnight)
+(midnight-delay-set 'midnight-delay 1800)
 
 
 ;; Autocompletion -----------------------------------------------
@@ -66,7 +96,8 @@
 (use-package orderless
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles basic partial-completion)))))
+  (completion-category-overrides
+   '((file (styles basic partial-completion)))))
 
 (use-package marginalia
   :init (marginalia-mode))
@@ -76,6 +107,7 @@
 
 (use-package corfu
   :custom
+  (corfu-auto-delay 1.0)
   (corfu-cycle t)
   (corfu-auto t)
   :init
@@ -95,7 +127,9 @@
   
   ;; To-do lists and agendas
   
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-todo-keywords
+	'((sequence
+	   "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
   
   (setq org-agenda-files '("d:/Documents/Org/raincoast.org"
 			   "d:/Documents/Org/masters.org"
@@ -106,11 +140,12 @@
 
   (setq org-archive-location "d:/Documents/Org/archive/archive23.org::")
 
-  (setq org-refile-targets '((nil :maxlevel . 9)
-                                (org-agenda-files :maxlevel . 9)))
-  (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-  (setq org-refile-use-outline-path t)                  ; Show full paths for refiling
-
+  (setq org-refile-targets
+	'((nil :maxlevel . 9)
+          (org-agenda-files :maxlevel . 9)))
+  (setq org-outline-path-complete-in-steps nil)
+  (setq org-refile-use-outline-path t)
+  
   (setq denote-org-capture-specifier "%l\n%i\n%?")
   
   (setq org-capture-templates '(("t" "Task" entry
@@ -129,13 +164,16 @@
 				:no-save t
 				:immediate-finish nil
 				:kill-buffer t)
+				("p" "Planner" entry
+				 (file "d:/Documents/Org/planner.org")
+				 "* [%] %t \n - [ ] %?")
 				("r" "Reading List" entry
 				 (file+headline
 				  "d:/Documents/Org/reading-list.org"
 				  "Reading List")
 				 "* %i%?"))))
 
-  ;; Aesthetics
+;; Aesthetics
   
 (add-hook 'org-mode-hook #'visual-line-mode)
 (add-hook 'org-mode-hook #'auto-fill-mode)
@@ -143,7 +181,7 @@
 (setq org-startup-indented t)
 (setq org-hide-emphasis-markers t)
 
-  ;; Keybindings
+;; Keybindings
   
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c c" 'org-capture)
@@ -159,17 +197,37 @@
 ;; Eldoc
 (use-package eldoc
   :custom
-  (eldoc-idle-delay 3.5))
+  (eldoc-idle-delay 5))
 
 ;; R
 (use-package ess
   :custom
   (ess-R-readline nil)
   (inferior-R-args "--no-save")
+  (ess-R-font-lock-keywords
+   '((ess-R-fl-keyword:modifiers . t)
+     (ess-R-fl-keyword:fun-defs . t)
+     (ess-R-fl-keyword:keywords . t)
+     (ess-R-fl-keyword:assign-ops)
+     (ess-R-fl-keyword:constants . t)
+     (ess-fl-keyword:fun-calls . t)
+     (ess-fl-keyword:numbers . t)
+     (ess-fl-keyword:operators)
+     (ess-fl-keyword:delimiters)
+     (ess-fl-keyword:=)
+     (ess-R-fl-keyword:F&T . t)
+     (ess-R-fl-keyword:%op% . t)))
+  (display-buffer-alist
+	'(("*R"
+	   (display-buffer-reuse-window display-buffer-in-side-window)
+	   (side . right)
+	   (slot . -1)
+	   (window-width . 0.5)
+	   (reusable-frames . nil))))
   :hook
+  ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
-
 
 ;; Emacs Lisp
 (setq initial-scratch-message
@@ -224,6 +282,7 @@
 
 
 (use-package citar-denote
+  :functions citar-denote-mode
   :init (citar-denote-mode)
   :custom
   (citar-notes-paths '("d:/Documents/Org/notes"))
@@ -242,14 +301,19 @@
   ("C-c n c m" . citar-denote-reference-nocite))
 
 (use-package markdown-mode
+  :defines markdown-command
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
-  :init (setq markdown-command "pandoc"))
+  :custom
+  (markdown-command "pandoc"))
 
-(use-package poly-R)
-(add-to-list 'auto-mode-alist
-             '("\\.[rR]md\\'" . poly-gfm+r-mode))
-(setq markdown-code-block-braces t)
+(use-package poly-R
+  :defines markdown-code-block-braces
+  :config
+  (add-to-list 'auto-mode-alist
+               '("\\.[rR]md\\'" . poly-gfm+r-mode))
+  :custom
+  (setq markdown-code-block-braces t))
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -276,14 +340,15 @@
   :defer t
   :config
   (setq calibredb-root-dir "d:/Documents/Calibre")
-  (setq calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+  (setq calibredb-db-dir
+	(expand-file-name "metadata.db" calibredb-root-dir))
   (setq calibredb-library-alist '("d:/Documents/Calibre")))
 
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 
-;; Diminish minor modes --------------------------------------------------
+;; Diminish minor modes -----------------------------------------------
 
 (use-package diminish
   :config
@@ -291,10 +356,12 @@
   (diminish 'eldoc-mode))
 
 
-;; General Keybindings ---------------------------------------------------
+;; General Keybindings ------------------------------------------------
 
 (bind-key "C-M-g" 'exit-recursive-edit)
 
+(bind-key "C-c f f" 'flymake-start)
+(bind-key "C-c f n" 'flymake-goto-next-error)
+(bind-key "C-c f p" 'flymake-goto-prev-error)
 
-
-
+;;; init.el ends here
