@@ -43,7 +43,8 @@
 
 (add-hook 'window-configuration-change-hook
           (lambda ()
-            (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 1 1)))
+            (set-window-margins
+	     (car (get-buffer-window-list (current-buffer) nil t)) 1 1)))
 
 (setq inhibit-startup-screen t)
 (setq inhibit-splash-screen t)
