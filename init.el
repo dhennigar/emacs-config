@@ -69,8 +69,7 @@
      (use-package vterm-toggle
        :bind (("C-c v" . 'vterm-toggle)
 	      :map vterm-mode-map
-	      ("C-c v". 'vterm-toggle)))
-     (load "~/.emacs.d/lisp/linux-init.el")))
+	      ("C-c v". 'vterm-toggle)))))
 
 (if (eq system-type 'windows-nt)
     (setq ring-bell-function 'ignore))
@@ -363,5 +362,8 @@
 (bind-key "C-c f f" 'flymake-start)
 (bind-key "C-c f n" 'flymake-goto-next-error)
 (bind-key "C-c f p" 'flymake-goto-prev-error)
+
+(unbind-key "C-M-w") ; since I use this to start my web browser.
+(unbind-key "C-M-e") ; since I use this to start an emacs client.
 
 ;;; init.el ends here
