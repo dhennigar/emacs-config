@@ -130,14 +130,13 @@
 	'((sequence
 	   "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
   
-  (setq org-agenda-files '("d:/Documents/Org/raincoast.org"
-			   "d:/Documents/Org/masters.org"
-			   "d:/Documents/Org/personal.org"
-			   "d:/Documents/Org/inbox.org"
-			   "d:/Documents/Org/calendar.org"
-			   "d:/Documents/Org/planner.org"))
+  (setq org-agenda-files '("~/Documents/Org/raincoast.org"
+			   "~/Documents/Org/masters.org"
+			   "~/Documents/Org/personal.org"
+			   "~/Documents/Org/inbox.org"
+			   "~/Documents/Org/calendar.org"))
 
-  (setq org-archive-location "d:/Documents/Org/archive/archive23.org::")
+  (setq org-archive-location "~/Documents/Org/archive/archive23.org::")
 
   (setq org-refile-targets
 	'((nil :maxlevel . 9)
@@ -149,12 +148,12 @@
   
   (setq org-capture-templates '(("t" "Task" entry
 				 (file+headline
-				  "d:/Documents/Org/inbox.org"
+				  "~/Documents/Org/inbox.org"
 				  "Tasks")
 				 "* TODO %i%?")
 				("a" "Appointment" entry
 				 (file+headline
-				  "d:/Documents/Org/calendar.org"
+				  "~/Documents/Org/calendar.org"
 				  "Calendar")
 				 "* %i%? \n %^t")
 				("n" "Note" plain
@@ -164,11 +163,11 @@
 				:immediate-finish nil
 				:kill-buffer t)
 				("p" "Planner" entry
-				 (file "d:/Documents/Org/planner.org")
+				 (file "~/Documents/Org/planner.org")
 				 "* [%] %t \n - [ ] %?")
 				("r" "Reading List" entry
 				 (file+headline
-				  "d:/Documents/Org/reading-list.org"
+				  "~/Documents/Org/reading-list.org"
 				  "Reading List")
 				 "* %i%?"))))
 
@@ -204,25 +203,31 @@
   (ess-R-readline nil)
   (inferior-R-args "--no-save")
   (ess-R-font-lock-keywords
-   '((ess-R-fl-keyword:modifiers . t)
-     (ess-R-fl-keyword:fun-defs . t)
-     (ess-R-fl-keyword:keywords . t)
-     (ess-R-fl-keyword:assign-ops)
-     (ess-R-fl-keyword:constants . t)
-     (ess-fl-keyword:fun-calls . t)
-     (ess-fl-keyword:numbers . t)
-     (ess-fl-keyword:operators)
-     (ess-fl-keyword:delimiters)
-     (ess-fl-keyword:=)
-     (ess-R-fl-keyword:F&T . t)
-     (ess-R-fl-keyword:%op% . t)))
+   '((ess-R-fl-keywor~modifiers . t)
+     (ess-R-fl-keywor~fun-defs . t)
+     (ess-R-fl-keywor~keywords . t)
+     (ess-R-fl-keywor~assign-ops . t)
+     (ess-R-fl-keywor~constants . t)
+     (ess-fl-keywor~fun-calls . t)
+     (ess-fl-keywor~numbers . t)
+     (ess-fl-keywor~operators)
+     (ess-fl-keywor~delimiters)
+     (ess-fl-keywor~=)
+     (ess-R-fl-keywor~F&T . t)
+     (ess-R-fl-keywor~%op% . t)))
   (display-buffer-alist
-	'(("*R"
-	   (display-buffer-reuse-window display-buffer-in-side-window)
-	   (side . right)
-	   (slot . -1)
-	   (window-width . 0.5)
-	   (reusable-frames . nil))))
+   '(("^\\*R"
+      (display-buffer-reuse-window display-buffer-in-side-window)
+      (side . right)
+      (slot . 1)
+      (window-width . 0.5)
+      (reusable-windows . nil))
+     ("^\\*R Dired"
+      (display-buffer-reuse-window display-buffer-in-side-window)
+      (side . left)
+      (slot . 1)
+      (window-height . 0.5)
+      (reusable-windows . nil))))
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
@@ -235,6 +240,12 @@
 ;; Common Lisp
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 (setq inferior-lisp-program "sbcl")
+
+;; Go
+(use-package go-mode)
+(use-package go-complete
+  :hook
+  ('completion-at-point-functions 'go-complete-at-point))
 
 ;; AutoHotKey
 (use-package ahk-mode)
@@ -260,7 +271,7 @@
 (use-package denote
   :ensure t
   :custom
-  (denote-directory (expand-file-name "d:/Documents/Org/notes"))
+  (denote-directory (expand-file-name "~/Documents/Org/notes"))
   (denote-known-keywords '("ecology" "philosophy" "emacs"))
   (denote-infer-keywords t)
   (denote-sort-keywords t)
@@ -284,7 +295,7 @@
   :functions citar-denote-mode
   :init (citar-denote-mode)
   :custom
-  (citar-notes-paths '("d:/Documents/Org/notes"))
+  (citar-notes-paths '("~/Documents/Org/notes"))
   (citar-denote-title-format "author-year")
   (citar-denote-subdir t)
   :bind
@@ -338,10 +349,10 @@
 (use-package calibredb
   :defer t
   :config
-  (setq calibredb-root-dir "d:/Documents/Calibre")
+  (setq calibredb-root-dir "~/Documents/Calibre")
   (setq calibredb-db-dir
 	(expand-file-name "metadata.db" calibredb-root-dir))
-  (setq calibredb-library-alist '("d:/Documents/Calibre")))
+  (setq calibredb-library-alist '("~/Documents/Calibre")))
 
 (use-package nov)
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
