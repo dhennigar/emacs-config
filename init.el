@@ -171,19 +171,41 @@
 				  "Reading List")
 				 "* %i%?"))))
 
-;; Aesthetics
+;; Canadian Stat Holidays
+
+(setq holiday-local-holidays
+      '(
+	(holiday-fixed 1 1 "New Year's Day") ; 1st of January
+	(holiday-float 2 1 3 "Family Day") ; third Monday in February
+	(holiday-easter-etc -2 "Good Friday") ; it's complicated...
+	(holiday-float 5 1 -2 "Victoria Day") ; Monday preceding 25th of May
+	(holiday-fixed 6 21 "Indigenous Peoples Day") ; 21st of June
+	(holiday-fixed 7 1 "Canada Day") ; 1st of July
+	(holiday-float 8 1 1 "BC Day") ; first Monday in August
+	(holiday-fixed 9 30 "National Day for Truth and Reconcilliation") ; 30th of September
+	(holiday-float 10 1 2 "Canadian Thanksgiving") ; second Monday in October
+	(holiday-fixed 10 31 "Halloween") ; 31st of October
+	(holiday-fixed 11 11 "Rememberance Day") ; 11th of November
+	(holiday-float 11 4 4 "American Thanksgiving") ; fourth Thursday of November
+	(holiday-fixed 12 25 "Christmas") ; 25th of December
+	))
+(setq holiday-general-holidays nil)
+(setq holiday-christian-holidays nil)
+(setq holiday-islamic-holidays nil)
+(setq holiday-bahai-holidays nil)
+(setq holiday-hebrew-holidays nil)
+(setq holiday-oriental-holidays nil)
+
+(setq calendar-holidays holiday-local-holidays)
+
+
+;; Org-mode Aesthetics
   
 (add-hook 'org-mode-hook #'visual-line-mode)
 (add-hook 'org-mode-hook #'auto-fill-mode)
 (setq org-indent-indentation-per-level 1)
 (setq org-startup-indented t)
 (setq org-hide-emphasis-markers t)
-
-;; Keybindings
-  
-(bind-key "C-c a" 'org-agenda)
-(bind-key "C-c c" 'org-capture)
-
 
 
 ;; Programming --------------------------------------------------
@@ -228,6 +250,8 @@
       (slot . 1)
       (window-height . 0.5)
       (reusable-windows . nil))))
+  (ess-r-flymake-linters "lintr::with_defaults(indentation_linter = NULL)")
+  (ess-r-flymake-lintr-cache nil)
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
@@ -338,7 +362,11 @@
 (add-hook 'Rd-mode-hook 'flyspell-mode)
 (add-hook 'org-mode-hook 'flyspell-mode)
 
-(setq ispell-extra-args '("--sug-mode=ultra"))
+(setenv "LANG" "en_CA")
+(setq ispell-personal-dictionary "~/.hunspell")
+(setq ispell-cmd-args "-p ~/.hunspell")
+(setq ispell-program-name "hunspell")
+
 
 ;; PDF and EPUB -------------------------------------------------------
 
@@ -373,6 +401,9 @@
 (bind-key "C-c f f" 'flymake-start)
 (bind-key "C-c f n" 'flymake-goto-next-error)
 (bind-key "C-c f p" 'flymake-goto-prev-error)
+
+(bind-key "C-c a" 'org-agenda)
+(bind-key "C-c c" 'org-capture)
 
 (unbind-key "C-M-w") ; since I use this to start my web browser.
 (unbind-key "C-M-e") ; since I use this to start an emacs client.

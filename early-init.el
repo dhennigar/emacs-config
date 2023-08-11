@@ -46,6 +46,9 @@
             (set-window-margins
 	     (car (get-buffer-window-list (current-buffer) nil t)) 1 1)))
 
+(setq split-height-threshold 40)
+
+
 (setq inhibit-startup-screen t)
 (setq inhibit-splash-screen t)
 
