@@ -1,0 +1,10 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ("mfn" "Daniel Hennigar" nil :count 1)
+    ("mpn" "250-893-7025" nil :count 1)
+    ("omw" "on my way" nil :count 1)
+    ("w" "with" nil :count 1)
+    ("wo" "without" nil :count 3)
+   ))
+
