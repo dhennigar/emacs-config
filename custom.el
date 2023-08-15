@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(go-complete go-mode ess powershell vertico use-package poly-R pkg-info pdf-tools org-contrib orderless nov modus-themes marginalia diminish corfu citar-denote calibredb ahk-mode)))
+   '(vterm vertico powershell poly-R pdf-tools org-contrib orderless nov modus-themes marginalia go-complete flycheck esup ess eshell-toggle esh-autosuggest diminish corfu citar-denote calibredb ahk-mode)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

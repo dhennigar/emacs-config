@@ -2,7 +2,13 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("my-script.ahk"
+(("org-capture-last-stored"
+ (filename . "~/Documents/Org/calendar.org")
+ (front-context-string . "** FRESH BBQ \n <")
+ (rear-context-string . "nts\n\n* Calendar\n")
+ (position . 133)
+ (last-modified 25813 30708 365369 0))
+("my-script.ahk"
  (filename . "~/AutoHotkey/my-script.ahk")
  (front-context-string . "Capslock::Ctrl\n\n")
  (rear-context-string . "MouseHook True\n\n")

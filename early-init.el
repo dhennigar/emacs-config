@@ -28,34 +28,62 @@
 
 ;; Early init ---------------------------------------------------------
 
+;; avoid garbage collection during init
+(setq gc-cons-threshold (* 1000 1000 1000))
+
+;; enable this for troubleshooting startup times.
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract after-init-time before-init-time)))
+                     gcs-done)))
+
+
+;; do not load packages until I say so
 (setq package-enable-at-startup nil)
 
+;; add my custom lisp code to load path
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
+;; use a custom custom file
+(setq custom-file (concat user-emacs-directory "custom.el"))
+
+;; backups are stored in the system temp directory
+(setq
+ backup-directory-alist '((".*" . "~/.emacs.d/backups/"))
+ delete-old-versions t
+ version-control t)
+
+;; I don't need autosave files
+(setq auto-save-default nil)
+
+;; GUI settings for early init
+(setq custom-safe-themes t)
+
+;; Default font settings
 (add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11" ))
 (add-to-list 'default-frame-alist '(height . 26))
 (add-to-list 'default-frame-alist '(width . 84))
 
+;; I want a minimal graphical interface
+(setq inhibit-startup-screen t)
+(setq inhibit-splash-screen t)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 (fringe-mode 0)
 
-(setq custom-safe-themes t)
+;; more minimal scratch message
+(setq initial-scratch-message
+      ";; Emacs LISP *scratch* buffer\n\n")
 
+;; I want small window margins
 (add-hook 'window-configuration-change-hook
           (lambda ()
             (set-window-margins
-	     (car (get-buffer-window-list (current-buffer) nil t)) 1 1)))
-
-(setq split-height-threshold 40)
-
-
-(setq inhibit-startup-screen t)
-(setq inhibit-splash-screen t)
-
-;; backups are stored in the system temp directory
-(setq backup-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms
-      `((".*" ,temporary-file-directory t)))
+	     (car (get-buffer-window-list
+		   (current-buffer) nil t)) 1 1)))
 
 ;;; early-init.el ends here

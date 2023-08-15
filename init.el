@@ -26,6 +26,7 @@
 
 ;;; Code:
 
+
 ;; Package Management -------------------------------------------
 
 (require 'package)
@@ -39,14 +40,12 @@
 (setq use-package-always-ensure t
       use-package-expand-minimally t)
 
+(use-package diminish)
 
-;; Aesthetics ---------------------------------------------------
 
-(pixel-scroll-precision-mode)
+;; Theme settings -----------------------------------------------
 
 (use-package modus-themes
-  :config
-  (load-theme 'modus-operandi)
   :custom
   (modus-themes-org-blocks 'tinted-background)
   (modus-themes-common-palette-overrides
@@ -61,36 +60,50 @@
       (bg-mode-line-active bg-blue-intense)
       (fg-mode-line-active fg-main))))
 
+;(defvar current-hour
+;  (nth 2 (decode-time (current-time))))
+
+(if (and (< (nth 2 (decode-time (current-time))) 20)
+	 (>= (nth 2 (decode-time (current-time))) 6))
+    (load-theme 'modus-operandi)
+  (load-theme 'modus-vivendi))
 
 ;; OS-Specific Configuration ------------------------------------
 
-(if (eq system-type 'gnu/linux)
-    ((use-package vterm)
-     (use-package vterm-toggle
-       :bind (("C-c v" . 'vterm-toggle)
-	      :map vterm-mode-map
-	      ("C-c v". 'vterm-toggle)))))
+;; (if (eq system-type 'gnu/linux)
+    ;; any linux-specific config goes here
+;;     )
 
 (if (eq system-type 'windows-nt)
     (setq ring-bell-function 'ignore))
 
 
-;; Custom file --------------------------------------------------
-
-(setq custom-file (concat user-emacs-directory "custom.el"))
-(when (file-exists-p custom-file)
-  (load custom-file))
-
-
-;; Midnight mode ------------------------------------------------
-
-(require 'midnight)
-(midnight-delay-set 'midnight-delay 1800)
-
-
 ;; Autocompletion -----------------------------------------------
 
 (electric-pair-mode)
+(setq tab-always-indent 'complete)
+(setq tab-first-completion nil)
+
+;; This section renders a fairly usable native completion framework,
+;; but it isn't compatible with vertico, so don't enable both. This
+;; should be used in lieu of the nice packages below as a backup.
+
+;; (setq completion-auto-help 'always)
+;; (setq completion-auto-select 'second-tab)
+
+;; (setq completions-max-height 10)
+;; (setq completions-header-format nil)
+;; (setq completion-show-help nil)
+
+;; (define-key minibuffer-mode-map (kbd "C-n")
+;; 	    #'minibuffer-next-completion)
+;; (define-key minibuffer-mode-map (kbd "C-p")
+;; 	    #'minibuffer-previous-completion)
+
+;; (define-key completion-in-region-mode-map (kbd "C-n")
+;; 	    #'minibuffer-next-completion)
+;; (define-key completion-in-region-mode-map (kbd "C-p")
+;; 	    #'minibuffer-previous-completion)
 
 (use-package orderless
   :custom
@@ -106,47 +119,58 @@
 
 (use-package corfu
   :custom
-  (corfu-auto-delay 1.0)
-  (corfu-cycle t)
-  (corfu-auto t)
+  (corfu-auto nil)
+  (corfu-quit-no-match t)
+  :bind
+  (:map corfu-map ("SPC" . corfu-insert-separator))
   :init
-  (global-corfu-mode))
+  (global-corfu-mode)
+  :hook
+  ('eshell-mode-hook . (lambda ()
+			 (setq-local corfu-auto nil)
+			 (corfu-mode))))
 
-(use-package emacs
-  :init
-  (setq completion-cycle-threshold 3)
-  (setq read-extended-command-predicate
-        #'command-completion-default-include-p)
-  (setq tab-always-indent 'complete))
+(use-package abbrev
+  :ensure nil
+  :diminish
+  :custom
+  (abbrev-file-name "~/.emacs.d/abbrevs")
+  :config
+  (dolist (hook '(org-mode-hook
+                  markdown-mode-hook
+		  Rd-mode-hook
+                  text-mode-hook))
+    (add-hook hook #'abbrev-mode)))
 
 
 ;; Org-mode --------------------------------------------------------
 
-(with-eval-after-load 'org
-  
-  ;; To-do lists and agendas
-  
-  (setq org-todo-keywords
-	'((sequence
-	   "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
-  
-  (setq org-agenda-files '("~/Documents/Org/raincoast.org"
+(use-package org
+  :ensure nil
+  :custom
+  (org-indent-indentation-per-level t)
+  (org-startup-indented t)
+  (org-hide-emphasis-markers t)
+  (org-todo-keywords
+   '((sequence
+      "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  (org-agenda-files '("~/Documents/Org/raincoast.org"
 			   "~/Documents/Org/masters.org"
 			   "~/Documents/Org/personal.org"
 			   "~/Documents/Org/inbox.org"
 			   "~/Documents/Org/calendar.org"))
 
-  (setq org-archive-location "~/Documents/Org/archive/archive23.org::")
+  (org-archive-location "~/Documents/Org/archive/archive23.org::")
 
-  (setq org-refile-targets
+  (org-refile-targets
 	'((nil :maxlevel . 9)
           (org-agenda-files :maxlevel . 9)))
-  (setq org-outline-path-complete-in-steps nil)
-  (setq org-refile-use-outline-path t)
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-use-outline-path t)
   
-  (setq denote-org-capture-specifier "%l\n%i\n%?")
+  (denote-org-capture-specifier "%l\n%i\n%?")
   
-  (setq org-capture-templates '(("t" "Task" entry
+  (org-capture-templates '(("t" "Task" entry
 				 (file+headline
 				  "~/Documents/Org/inbox.org"
 				  "Tasks")
@@ -169,59 +193,81 @@
 				 (file+headline
 				  "~/Documents/Org/reading-list.org"
 				  "Reading List")
-				 "* %i%?"))))
+				 "* %i%?")))
+  (holiday-local-holidays
+	'(
+	  (holiday-fixed 1 1 "New Year's Day") ; 1st of January
+	  (holiday-float 2 1 3 "Family Day") ; third Monday in February
+	  (holiday-easter-etc -2 "Good Friday") ; it's complicated...
+	  (holiday-float 5 1 -2 "Victoria Day") ; Monday preceding 25th of May
+	  (holiday-fixed 6 21 "Indigenous Peoples Day") ; 21st of June
+	  (holiday-fixed 7 1 "Canada Day") ; 1st of July
+	  (holiday-float 8 1 1 "BC Day") ; first Monday in August
+	  (holiday-fixed 9 30 "National Day for Truth and Reconcilliation") ; 30th of September
+	  (holiday-float 10 1 2 "Canadian Thanksgiving") ; second Monday in October
+	  (holiday-fixed 10 31 "Halloween") ; 31st of October
+	  (holiday-fixed 11 11 "Rememberance Day") ; 11th of November
+	  (holiday-float 11 4 4 "American Thanksgiving") ; fourth Thursday of November
+	  (holiday-fixed 12 25 "Christmas") ; 25th of December
+	  ))
+  (holiday-general-holidays nil)
+  (holiday-christian-holidays nil)
+  (holiday-islamic-holidays nil)
+  (holiday-bahai-holidays nil)
+  (holiday-hebrew-holidays nil)
+  (holiday-oriental-holidays nil)
 
-;; Canadian Stat Holidays
+  (calendar-holidays holiday-local-holidays)
 
-(setq holiday-local-holidays
-      '(
-	(holiday-fixed 1 1 "New Year's Day") ; 1st of January
-	(holiday-float 2 1 3 "Family Day") ; third Monday in February
-	(holiday-easter-etc -2 "Good Friday") ; it's complicated...
-	(holiday-float 5 1 -2 "Victoria Day") ; Monday preceding 25th of May
-	(holiday-fixed 6 21 "Indigenous Peoples Day") ; 21st of June
-	(holiday-fixed 7 1 "Canada Day") ; 1st of July
-	(holiday-float 8 1 1 "BC Day") ; first Monday in August
-	(holiday-fixed 9 30 "National Day for Truth and Reconcilliation") ; 30th of September
-	(holiday-float 10 1 2 "Canadian Thanksgiving") ; second Monday in October
-	(holiday-fixed 10 31 "Halloween") ; 31st of October
-	(holiday-fixed 11 11 "Rememberance Day") ; 11th of November
-	(holiday-float 11 4 4 "American Thanksgiving") ; fourth Thursday of November
-	(holiday-fixed 12 25 "Christmas") ; 25th of December
-	))
-(setq holiday-general-holidays nil)
-(setq holiday-christian-holidays nil)
-(setq holiday-islamic-holidays nil)
-(setq holiday-bahai-holidays nil)
-(setq holiday-hebrew-holidays nil)
-(setq holiday-oriental-holidays nil)
-
-(setq calendar-holidays holiday-local-holidays)
-
-
-;; Org-mode Aesthetics
+  (org-confirm-babel-evaluate nil)
   
-(add-hook 'org-mode-hook #'visual-line-mode)
-(add-hook 'org-mode-hook #'auto-fill-mode)
-(setq org-indent-indentation-per-level 1)
-(setq org-startup-indented t)
-(setq org-hide-emphasis-markers t)
+  :hook
+  ('org-mode-hook #'visual-line-mode)
+  ('org-mode-hook #'auto-fill-mode)
 
+  :bind
+  ("C-c a" . 'org-agenda)
+  ("C-c c" . 'org-capture))
+  
+(use-package ob-R
+  :ensure nil
+  :defer t
+  :commands (org-babel-execute:R))
+
+(use-package ob-lisp
+  :ensure nil
+  :defer t
+  :commands (org-babel-execute:lisp))
 
 ;; Programming --------------------------------------------------
 
-;; Flymake
-(use-package flymake
-  :custom (flymake-no-changes-timeout nil))
+;; Flycheck
+(use-package flycheck
+  :init
+  (global-flycheck-mode t)
+  :custom
+  (flycheck-lintr-linters
+   "linters_with_defaults(trailing_blank_lines_linter = NULL)")
+  (flycheck-check-syntax-automatically '(save mode-enabled))
+  :bind
+  ("C-c f f" . 'flycheck-buffer)
+  ("C-c f n" . 'flycheck-next-error)
+  ("C-c f p" . 'flycheck-previous-error))
 
 ;; Eldoc
 (use-package eldoc
+  :defer 2
   :custom
-  (eldoc-idle-delay 5))
+  (eldoc-idle-delay 3)
+  :bind
+  ("C-c e" . eldoc))
 
-;; R
+;; Language-specific configs
+
 (use-package ess
   :custom
+  (ess-use-flymake nil)
+  (ess-use-eldoc nil)
   (ess-R-readline nil)
   (inferior-R-args "--no-save")
   (ess-R-font-lock-keywords
@@ -232,7 +278,7 @@
      (ess-R-fl-keywor~constants . t)
      (ess-fl-keywor~fun-calls . t)
      (ess-fl-keywor~numbers . t)
-     (ess-fl-keywor~operators)
+     (ess-fl-keywor~operators . t)
      (ess-fl-keywor~delimiters)
      (ess-fl-keywor~=)
      (ess-R-fl-keywor~F&T . t)
@@ -250,32 +296,50 @@
       (slot . 1)
       (window-height . 0.5)
       (reusable-windows . nil))))
-  (ess-r-flymake-linters "lintr::with_defaults(indentation_linter = NULL)")
-  (ess-r-flymake-lintr-cache nil)
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
 
-;; Emacs Lisp
-(setq initial-scratch-message
-      ";; Emacs LISP *scratch* buffer\n\n")
+(defun dh/load-slime-helper ()
+  "Perform the setup for Common Lisp development with SLIME."
+  (interactive)
+  (setq-default inferior-lisp-program "sbcl")
+  (load (expand-file-name "~/quicklisp/slime-helper.el")))
 
-;; Common Lisp
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "sbcl")
-
-;; Go
-(use-package go-mode)
+(use-package go-mode
+  :defer 2)
 (use-package go-complete
+  :defer 2
   :hook
   ('completion-at-point-functions 'go-complete-at-point))
 
-;; AutoHotKey
-(use-package ahk-mode)
+(use-package ahk-mode
+  :defer 2)
 
 
-;; Academic Writing  ---------------------------------------------------
+;; Writing  ---------------------------------------------------
+
+(setenv "LANG" "en_CA")
+
+(use-package flyspell
+  :ensure nil
+  :diminish
+  :hook
+  ('text-mode-hook 'flyspell-mode)
+  ('Rd-mode-hook 'flyspell-mode)
+  ('org-mode-hook 'flyspell-mode))
+
+(use-package ispell
+  :after (flyspell)
+  :ensure nil
+  :diminish
+  :custom
+  (ispell-personal-dictionary "~/.hunspell")
+  (ispell-cmd-args "-p ~/.hunspell")
+  (ispell-program-name "hunspell")
+  :bind
+  ("<f5>" . 'ispell-word))
 
 (use-package citar
   :custom
@@ -286,8 +350,8 @@
   (org-cite-activate-processor 'citar)
   (citar-bibliography '("~/Zotero/references.bib"))
   :bind
-  ("C-c n c o" . citar-open-notes)
-  (:map org-mode-map :package org ("C-c n c l" . #'org-cite-insert))
+  ("C-c b f" . citar-open-files)
+  (:map org-mode-map :package org ("C-c b i" . #'org-cite-insert))
   :hook
   (markdown-mode . citar-capf-setup)
   (org-mode . citar-capf-setup))
@@ -303,19 +367,19 @@
   (denote-prompts '(title keywords))
   (denote-date-prompt-use-org-read-date t)
   :bind
-  ("C-c C-n" . denote)
-  ("C-c n n" . denote)
-  ("C-c n t" . denote-type)
-  ("C-c n l" . denote-link)
-  ("C-c n L" . denote-add-links)
-  ("C-c n b" . denote-backlinks)
-  ("C-c n f" . denote-find-link)
-  ("C-c n F" . denote-find-backlink)
-  ("C-c n r" . denote-rename-file)
-  ("C-c n R" . denote-rename-file-using-front-matter))
-
+  ("C-c C-d" . denote)
+  ("C-c d d" . denote)
+  ("C-c d t" . denote-type)
+  ("C-c d l" . denote-link)
+  ("C-c d L" . denote-add-links)
+  ("C-c d b" . denote-backlinks)
+  ("C-c d f" . denote-find-link)
+  ("C-c d F" . denote-find-backlink)
+  ("C-c d r" . denote-rename-file)
+  ("C-c d R" . denote-rename-file-using-front-matter))
 
 (use-package citar-denote
+  :diminish
   :functions citar-denote-mode
   :init (citar-denote-mode)
   :custom
@@ -323,16 +387,14 @@
   (citar-denote-title-format "author-year")
   (citar-denote-subdir t)
   :bind
-  ("C-c n c c" . citar-create-note)
-  ("C-c n c o" . citar-denote-open-note)
-  ("C-c n c d" . citar-denote-dwim)
-  ("C-c n c a" . citar-denote-add-citekey)
-  ("C-c n c k" . citar-denote-remove-citekey)
-  ("C-c n c e" . citar-denote-open-reference-entry)
-  ("C-c n c r" . citar-denote-find-reference)
-  ("C-c n c f" . citar-denote-find-citation)
-  ("C-c n c n" . citar-denote-cite-nocite)
-  ("C-c n c m" . citar-denote-reference-nocite))
+  ("C-c b b" . citar-create-note)
+  ("C-c b o" . citar-denote-open-note)
+  ("C-c b ." . citar-denote-dwim)
+  ("C-c b k" . citar-denote-add-citekey)
+  ("C-c b M-k" . citar-denote-remove-citekey)
+  ("C-c b M-r" . citar-denote-open-reference-entry)
+  ("C-c b r" . citar-denote-find-reference)
+  ("C-c b C-f" . citar-denote-find-citation))
 
 (use-package markdown-mode
   :defines markdown-command
@@ -342,70 +404,87 @@
   (markdown-command "pandoc"))
 
 (use-package poly-R
-  :defines markdown-code-block-braces
-  :config
-  (add-to-list 'auto-mode-alist
-               '("\\.[rR]md\\'" . poly-gfm+r-mode))
+  :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)					
   :custom
-  (setq markdown-code-block-braces t))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((R . t)
-   (python . t)
-   (lisp . t)))
-
-(setq org-confirm-babel-evaluate nil)
-
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'text-mode-hook 'auto-fill-mode)
-(add-hook 'Rd-mode-hook 'flyspell-mode)
-(add-hook 'org-mode-hook 'flyspell-mode)
-
-(setenv "LANG" "en_CA")
-(setq ispell-personal-dictionary "~/.hunspell")
-(setq ispell-cmd-args "-p ~/.hunspell")
-(setq ispell-program-name "hunspell")
+  (markdown-code-block-braces t))
 
 
 ;; PDF and EPUB -------------------------------------------------------
 
 (use-package pdf-tools
-  :config
-  (add-to-list 'auto-mode-alist '("\\.pdf\\'" . pdf-view-mode)))
+  :defer 2
+  :defines pdf-view-themed-minor-mode
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :hook
+  ('pdf-view-mode-hook  . 'pdf-view-themed-minor-mode))
 
 (use-package calibredb
-  :defer t
-  :config
-  (setq calibredb-root-dir "~/Documents/Calibre")
-  (setq calibredb-db-dir
-	(expand-file-name "metadata.db" calibredb-root-dir))
-  (setq calibredb-library-alist '("~/Documents/Calibre")))
+  :defer 2
+  :custom
+  (calibredb-db-dir "~/Documents/Calibre/metadata.db")
+  (calibredb-library-alist '("~/Documents/Calibre")))
 
-(use-package nov)
-(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+(use-package nov
+  :defer 2
+  :mode
+  (("\\.epub\\'" . nov-mode))
+  :custom
+  (nov-unzip-program "tar")
+  (nov-unzip-args '("-xC" directory "-f" filename)))
 
 
-;; Diminish minor modes -----------------------------------------------
+;; Eshell -------------------------------------------------------------
 
-(use-package diminish
-  :config
-  (diminish 'citar-denote-mode)
-  (diminish 'eldoc-mode))
+;; This is necessary since clear command sends any current input
+;; for some reason. Also allows clearing the eshell from any buffer.
+
+(declare-function eshell-kill-input 'eshell)
+(declare-function eshell-send-input 'eshell)
+(declare-function eshell-bol        'eshell)
+
+(defun run-this-in-eshell (cmd)
+    "Run the command 'CMD' in eshell."
+    `(goto-char (point-max))
+    (eshell-kill-input)
+    (message (concat "Running in Eshell: " cmd))
+    (insert cmd)
+    (eshell-send-input)
+    `(goto-char (point-max))
+    (eshell-bol)
+    (yank))
+
+(add-hook 'eshell-mode-hook (lambda ()
+    (interactive)
+    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
+
+(use-package eshell-toggle
+  :bind
+  ("C-c e" . eshell-toggle))
+
+;; Init profiling -----------------------------------------------------
+
+;; This is used for profiling the startup time of your init files.
+;; The startup timer message in early-init.el as another tool that
+;; is useful for this purpose.
+
+(use-package esup
+   :custom
+   (esup-depth 0))
 
 
 ;; General Keybindings ------------------------------------------------
 
-(bind-key "C-M-g" 'exit-recursive-edit)
+(bind-key "C-M-g" 'exit-recursive-edit) ; a more natural exit command
 
-(bind-key "C-c f f" 'flymake-start)
-(bind-key "C-c f n" 'flymake-goto-next-error)
-(bind-key "C-c f p" 'flymake-goto-prev-error)
+(unbind-key "C-?") ; formerly undo-redo
+(bind-key "C-x M-u" 'undo-redo)
 
-(bind-key "C-c a" 'org-agenda)
-(bind-key "C-c c" 'org-capture)
+(unbind-key "C-M-w") ; since I use this to start my web browser
+(unbind-key "C-M-e") ; since I use this to start an emacs client
 
-(unbind-key "C-M-w") ; since I use this to start my web browser.
-(unbind-key "C-M-e") ; since I use this to start an emacs client.
+
+;; set the garbage collection back to something reasonable
+(setq gc-cons-threshold (* 2 1000 1000))
+
 
 ;;; init.el ends here
