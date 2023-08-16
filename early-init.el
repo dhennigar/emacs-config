@@ -29,23 +29,19 @@
 ;; Early init ---------------------------------------------------------
 
 ;; avoid garbage collection during init
-(setq gc-cons-threshold (* 1000 1000 1000))
+(setq gc-cons-threshold (* 10 1000 1000 1000))
 
 ;; enable this for troubleshooting startup times.
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "Emacs ready in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract after-init-time before-init-time)))
-                     gcs-done)))
-
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (message "Emacs ready in %s with %d garbage collections."
+;;                      (format "%.2f seconds"
+;;                              (float-time
+;;                               (time-subtract after-init-time before-init-time)))
+;;                      gcs-done)))
 
 ;; do not load packages until I say so
 (setq package-enable-at-startup nil)
-
-;; add my custom lisp code to load path
-(add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;; use a custom custom file
 (setq custom-file (concat user-emacs-directory "custom.el"))
@@ -62,18 +58,18 @@
 ;; GUI settings for early init
 (setq custom-safe-themes t)
 
-;; Default font settings
-(add-to-list 'default-frame-alist '(font . "IBM Plex Mono-11" ))
-(add-to-list 'default-frame-alist '(height . 26))
-(add-to-list 'default-frame-alist '(width . 84))
-
-;; I want a minimal graphical interface
+;; Default frame settings
+(setq default-frame-alist
+      '((font . "IBM Plex Mono-11")
+	(height . 26)
+	(width . 84)
+	(left-fringe . 0)
+	(right-fringe . 0)))
 (setq inhibit-startup-screen t)
 (setq inhibit-splash-screen t)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(menu-bar-mode -1)
-(fringe-mode 0)
+(setq tool-bar-mode nil)
+(set-scroll-bar-mode nil)
+(setq menu-bar-mode nil)
 
 ;; more minimal scratch message
 (setq initial-scratch-message

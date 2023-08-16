@@ -37,8 +37,9 @@
 (package-initialize)
 
 (require 'use-package)
-(setq use-package-always-ensure t
-      use-package-expand-minimally t)
+(setq use-package-always-ensure t)
+(setq use-package-always-defer t)
+(setq use-package-expand-minimally t)
 
 (use-package diminish)
 
@@ -60,13 +61,11 @@
       (bg-mode-line-active bg-blue-intense)
       (fg-mode-line-active fg-main))))
 
-;(defvar current-hour
-;  (nth 2 (decode-time (current-time))))
-
 (if (and (< (nth 2 (decode-time (current-time))) 20)
 	 (>= (nth 2 (decode-time (current-time))) 6))
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
+
 
 ;; OS-Specific Configuration ------------------------------------
 
@@ -114,6 +113,11 @@
 (use-package marginalia
   :init (marginalia-mode))
 
+
+;; These two packages render a nicer looking completion framework
+;; both for the minibuffer and in-region. They should not be used
+;; in conjunction with the native completion framework code above.
+
 (use-package vertico
   :init (vertico-mode))
 
@@ -130,6 +134,9 @@
 			 (setq-local corfu-auto nil)
 			 (corfu-mode))))
 
+
+;; See the abbrev file for available auto-expanding completions.
+
 (use-package abbrev
   :ensure nil
   :diminish
@@ -145,58 +152,56 @@
 
 ;; Org-mode --------------------------------------------------------
 
+(use-package org-contrib)
+
 (use-package org
-  :ensure nil
   :custom
-  (org-indent-indentation-per-level t)
-  (org-startup-indented t)
-  (org-hide-emphasis-markers t)
+
+  ;; This section defines my settings for org-agenda and calendar
+  ;; views which form the basis of my personal productivity system.
+  
   (org-todo-keywords
    '((sequence
       "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
-  (org-agenda-files '("~/Documents/Org/raincoast.org"
-			   "~/Documents/Org/masters.org"
-			   "~/Documents/Org/personal.org"
-			   "~/Documents/Org/inbox.org"
-			   "~/Documents/Org/calendar.org"))
+  
+  (org-agenda-files '("~/Documents/Org/work.org"
+		      "~/Documents/Org/personal.org"
+		      "~/Documents/Org/inbox.org"
+		      "~/Documents/Org/calendar.org"))
 
   (org-archive-location "~/Documents/Org/archive/archive23.org::")
 
   (org-refile-targets
 	'((nil :maxlevel . 9)
           (org-agenda-files :maxlevel . 9)))
+  
   (org-outline-path-complete-in-steps nil)
+  
   (org-refile-use-outline-path t)
   
   (denote-org-capture-specifier "%l\n%i\n%?")
   
   (org-capture-templates '(("t" "Task" entry
-				 (file+headline
-				  "~/Documents/Org/inbox.org"
-				  "Tasks")
-				 "* TODO %i%?")
-				("a" "Appointment" entry
-				 (file+headline
-				  "~/Documents/Org/calendar.org"
-				  "Calendar")
-				 "* %i%? \n %^t")
-				("n" "Note" plain
-				(file denote-last-path)
-				#'denote-org-capture
-				:no-save t
-				:immediate-finish nil
-				:kill-buffer t)
-				("p" "Planner" entry
-				 (file "~/Documents/Org/planner.org")
-				 "* [%] %t \n - [ ] %?")
-				("r" "Reading List" entry
-				 (file+headline
-				  "~/Documents/Org/reading-list.org"
-				  "Reading List")
-				 "* %i%?")))
+			    (file "~/Documents/Org/inbox.org")
+			    "* TODO %i%?")
+			   ("a" "Appointment" entry
+			    (file "~/Documents/Org/calendar.org")
+			    "* %i%? \n %^t")
+			   ("n" "Note" plain
+			    (file denote-last-path)
+			    #'denote-org-capture
+			    :no-save t
+			    :immediate-finish nil
+			    :kill-buffer t)
+			   ("r" "Reading List" entry
+			    (file "~/Documents/Org/reading-list.org")
+			    "* %i%?")))
+  
+  ;; Here I define the statutory holidays for British Columbia
+  ;; which will appear in my calendar views.
+  
   (holiday-local-holidays
-	'(
-	  (holiday-fixed 1 1 "New Year's Day") ; 1st of January
+	'((holiday-fixed 1 1 "New Year's Day") ; 1st of January
 	  (holiday-float 2 1 3 "Family Day") ; third Monday in February
 	  (holiday-easter-etc -2 "Good Friday") ; it's complicated...
 	  (holiday-float 5 1 -2 "Victoria Day") ; Monday preceding 25th of May
@@ -210,6 +215,8 @@
 	  (holiday-float 11 4 4 "American Thanksgiving") ; fourth Thursday of November
 	  (holiday-fixed 12 25 "Christmas") ; 25th of December
 	  ))
+
+  ;; turn off all the US and religeous holidays
   (holiday-general-holidays nil)
   (holiday-christian-holidays nil)
   (holiday-islamic-holidays nil)
@@ -219,11 +226,14 @@
 
   (calendar-holidays holiday-local-holidays)
 
+
+  ;; See the ob-* use-package declarations below for language-
+  ;; specific org-babel set up.
   (org-confirm-babel-evaluate nil)
   
-  :hook
-  ('org-mode-hook #'visual-line-mode)
-  ('org-mode-hook #'auto-fill-mode)
+;  :hook
+;  ('org-mode-hook #'visual-line-mode)
+;  ('org-mode-hook #'auto-fill-mode)
 
   :bind
   ("C-c a" . 'org-agenda)
@@ -231,12 +241,10 @@
   
 (use-package ob-R
   :ensure nil
-  :defer t
   :commands (org-babel-execute:R))
 
 (use-package ob-lisp
   :ensure nil
-  :defer t
   :commands (org-babel-execute:lisp))
 
 ;; Programming --------------------------------------------------
@@ -256,20 +264,22 @@
 
 ;; Eldoc
 (use-package eldoc
-  :defer 2
+  :diminish
   :custom
-  (eldoc-idle-delay 3)
-  :bind
-  ("C-c e" . eldoc))
+  ;; I prefer a small delay in eldoc to prevent it from
+  ;; stepping on my typing.
+  (eldoc-idle-delay 3))
+
 
 ;; Language-specific configs
 
 (use-package ess
   :custom
   (ess-use-flymake nil)
-  (ess-use-eldoc nil)
-  (ess-R-readline nil)
   (inferior-R-args "--no-save")
+  (ess-R-readline nil) ; I don't remember why this is here.
+
+  ;; syntax hilighting options
   (ess-R-font-lock-keywords
    '((ess-R-fl-keywor~modifiers . t)
      (ess-R-fl-keywor~fun-defs . t)
@@ -283,6 +293,8 @@
      (ess-fl-keywor~=)
      (ess-R-fl-keywor~F&T . t)
      (ess-R-fl-keywor~%op% . t)))
+  
+  ;; choose where ess windows will appear
   (display-buffer-alist
    '(("^\\*R"
       (display-buffer-reuse-window display-buffer-in-side-window)
@@ -296,10 +308,17 @@
       (slot . 1)
       (window-height . 0.5)
       (reusable-windows . nil))))
+  
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
+
+
+;; The slime-helper.el script takes a few seconds to run,
+;; so instead of calling it on startup I prefer to bind
+;; it to a function that allows me to initialize slime
+;; as and when I need it.
 
 (defun dh/load-slime-helper ()
   "Perform the setup for Common Lisp development with SLIME."
@@ -307,15 +326,14 @@
   (setq-default inferior-lisp-program "sbcl")
   (load (expand-file-name "~/quicklisp/slime-helper.el")))
 
-(use-package go-mode
-  :defer 2)
-(use-package go-complete
-  :defer 2
-  :hook
-  ('completion-at-point-functions 'go-complete-at-point))
+;; I don't actually use Go that much anymore, so I've disabled
+;; the support here. Uncomment if the go bug bites again.
+;; (use-package go-mode)
+;; (use-package go-complete
+;;   :hook
+;;   ('completion-at-point-functions 'go-complete-at-point))
 
-(use-package ahk-mode
-  :defer 2)
+(use-package ahk-mode) ; haven't explored any config options
 
 
 ;; Writing  ---------------------------------------------------
@@ -360,16 +378,14 @@
   :ensure t
   :custom
   (denote-directory (expand-file-name "~/Documents/Org/notes"))
-  (denote-known-keywords '("ecology" "philosophy" "emacs"))
+  (denote-known-keywords '("work" "personal" "emacs"))
   (denote-infer-keywords t)
   (denote-sort-keywords t)
   (denote-file-type nil)
   (denote-prompts '(title keywords))
   (denote-date-prompt-use-org-read-date t)
   :bind
-  ("C-c C-d" . denote)
   ("C-c d d" . denote)
-  ("C-c d t" . denote-type)
   ("C-c d l" . denote-link)
   ("C-c d L" . denote-add-links)
   ("C-c d b" . denote-backlinks)
@@ -380,7 +396,6 @@
 
 (use-package citar-denote
   :diminish
-  :functions citar-denote-mode
   :init (citar-denote-mode)
   :custom
   (citar-notes-paths '("~/Documents/Org/notes"))
@@ -389,54 +404,51 @@
   :bind
   ("C-c b b" . citar-create-note)
   ("C-c b o" . citar-denote-open-note)
-  ("C-c b ." . citar-denote-dwim)
   ("C-c b k" . citar-denote-add-citekey)
-  ("C-c b M-k" . citar-denote-remove-citekey)
-  ("C-c b M-r" . citar-denote-open-reference-entry)
   ("C-c b r" . citar-denote-find-reference)
   ("C-c b C-f" . citar-denote-find-citation))
 
 (use-package markdown-mode
-  :defines markdown-command
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
   :custom
   (markdown-command "pandoc"))
 
 (use-package poly-R
-  :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)					
+  :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)
   :custom
   (markdown-code-block-braces t))
 
 
 ;; PDF and EPUB -------------------------------------------------------
 
+;; These three packages combine to allow me to view pdfs, epubs,
+;; and several other document formats, and manage my e-book library
+;; by integrating the Calibre's database.
+
 (use-package pdf-tools
-  :defer 2
   :defines pdf-view-themed-minor-mode
   :mode ("\\.pdf\\'" . pdf-view-mode)
   :hook
   ('pdf-view-mode-hook  . 'pdf-view-themed-minor-mode))
 
-(use-package calibredb
-  :defer 2
-  :custom
-  (calibredb-db-dir "~/Documents/Calibre/metadata.db")
-  (calibredb-library-alist '("~/Documents/Calibre")))
-
 (use-package nov
-  :defer 2
   :mode
   (("\\.epub\\'" . nov-mode))
   :custom
   (nov-unzip-program "tar")
   (nov-unzip-args '("-xC" directory "-f" filename)))
 
+(use-package calibredb
+  :custom
+  (calibredb-db-dir "~/Documents/Calibre/metadata.db")
+  (calibredb-library-alist '("~/Documents/Calibre")))
 
 ;; Eshell -------------------------------------------------------------
 
 ;; This is necessary since clear command sends any current input
-;; for some reason. Also allows clearing the eshell from any buffer.
+;; on the command line before clearing for some reason. The following
+;; code renders the expected C-l behavior of most shells.
 
 (declare-function eshell-kill-input 'eshell)
 (declare-function eshell-send-input 'eshell)
@@ -464,12 +476,14 @@
 ;; Init profiling -----------------------------------------------------
 
 ;; This is used for profiling the startup time of your init files.
-;; The startup timer message in early-init.el as another tool that
+;; Load this config to troubleshoot any future start-up lags.
+;;
+;; The startup timer message in early-init.el is another tool that
 ;; is useful for this purpose.
 
-(use-package esup
-   :custom
-   (esup-depth 0))
+;; (use-package esup
+;;    :custom
+;;    (esup-depth 0))
 
 
 ;; General Keybindings ------------------------------------------------
@@ -485,6 +499,5 @@
 
 ;; set the garbage collection back to something reasonable
 (setq gc-cons-threshold (* 2 1000 1000))
-
 
 ;;; init.el ends here
