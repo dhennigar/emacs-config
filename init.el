@@ -4,7 +4,7 @@
 
 ;; Author: Daniel Hennigar
 ;; URL: https://github.com/dhennigar/emacs-config
-;; Package-Requires: ((emacs "28.2"))
+;; Package-Requires: ((emacs "29.1"))
 
 ;; This file is NOT part of GNU Emacs
 
@@ -12,7 +12,7 @@
 ;; under the terms of the GNU General Public License as published by the
 ;; Free Software Foundation, either version 3 or any later version.
 
-;; This file is distributed in the hope that it will be usefule,
+;; This file is distributed in the hope that it will be useful,
 ;; WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ;; GNU General Public License for more details.
@@ -22,18 +22,21 @@
 
 ;;; Commentary:
 
-;; My Emacs configuration file.
+;; I use Emacs as an integrated research environment (IRE).  With this
+;; configuration I can complete most of my academic research within Emacs,
+;; from lit-review and bibliographic note-taking, to data analysis in R
+;; and report/manuscript outlining, writing, and editing. I can also manage my
+;; e-book library and read books in EPUB format.
 
 ;;; Code:
 
-
-;; Package Management -------------------------------------------
+;; -----------------------------------------------------------------------------
+;; Package Management
 
 (require 'package)
-(add-to-list 'package-archives
-	     '("gnu"   . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
 (require 'use-package)
@@ -44,7 +47,8 @@
 (use-package diminish)
 
 
-;; Theme settings -----------------------------------------------
+;; -----------------------------------------------------------------------------
+;; Theme settings
 
 (use-package modus-themes
   :custom
@@ -67,17 +71,19 @@
   (load-theme 'modus-vivendi))
 
 
-;; OS-Specific Configuration ------------------------------------
+;; -----------------------------------------------------------------------------
+;; OS-Specific Configuration
 
 ;; (if (eq system-type 'gnu/linux)
-    ;; any linux-specific config goes here
+;;  ;; any linux-specific config goes here
 ;;     )
 
 (if (eq system-type 'windows-nt)
     (setq ring-bell-function 'ignore))
 
 
-;; Autocompletion -----------------------------------------------
+;; -----------------------------------------------------------------------------
+;; Autocompletion
 
 (electric-pair-mode)
 (setq tab-always-indent 'complete)
@@ -125,6 +131,7 @@
   :custom
   (corfu-auto nil)
   (corfu-quit-no-match t)
+  (corfu-min-width 30)
   :bind
   (:map corfu-map ("SPC" . corfu-insert-separator))
   :init
@@ -150,13 +157,18 @@
     (add-hook hook #'abbrev-mode)))
 
 
-;; Org-mode --------------------------------------------------------
+;; -----------------------------------------------------------------------------
+;; Org Mode
 
 (use-package org-contrib)
 
 (use-package org
   :custom
 
+  ;; General org-mode stuff goes here
+
+  (org-tags-column -80)
+  
   ;; This section defines my settings for org-agenda and calendar
   ;; views which form the basis of my personal productivity system.
   
@@ -190,31 +202,33 @@
 			   ("n" "Note" plain
 			    (file denote-last-path)
 			    #'denote-org-capture
-			    :no-save t
-			    :immediate-finish nil
-			    :kill-buffer t)
+			    :no-save t :immediate-finish nil :kill-buffer t)
 			   ("r" "Reading List" entry
 			    (file "~/Documents/Org/reading-list.org")
 			    "* %i%?")))
+
+  (org-agenda-remove-tags t)
+
+  (org-agenda-custom-commands '(("o" "Office tasks" tags-todo "office")
+				("f" "Field tasks" tags-todo "field")))
   
   ;; Here I define the statutory holidays for British Columbia
   ;; which will appear in my calendar views.
   
   (holiday-local-holidays
-	'((holiday-fixed 1 1 "New Year's Day") ; 1st of January
-	  (holiday-float 2 1 3 "Family Day") ; third Monday in February
-	  (holiday-easter-etc -2 "Good Friday") ; it's complicated...
-	  (holiday-float 5 1 -2 "Victoria Day") ; Monday preceding 25th of May
-	  (holiday-fixed 6 21 "Indigenous Peoples Day") ; 21st of June
-	  (holiday-fixed 7 1 "Canada Day") ; 1st of July
-	  (holiday-float 8 1 1 "BC Day") ; first Monday in August
-	  (holiday-fixed 9 30 "National Day for Truth and Reconcilliation") ; 30th of September
-	  (holiday-float 10 1 2 "Canadian Thanksgiving") ; second Monday in October
-	  (holiday-fixed 10 31 "Halloween") ; 31st of October
-	  (holiday-fixed 11 11 "Rememberance Day") ; 11th of November
-	  (holiday-float 11 4 4 "American Thanksgiving") ; fourth Thursday of November
-	  (holiday-fixed 12 25 "Christmas") ; 25th of December
-	  ))
+	'((holiday-fixed 1 1 "New Year's Day")
+	  (holiday-float 2 1 3 "Family Day")
+	  (holiday-easter-etc -2 "Good Friday")
+	  (holiday-float 5 1 -2 "Victoria Day")
+	  (holiday-fixed 6 21 "Indigenous Peoples Day")
+	  (holiday-fixed 7 1 "Canada Day")
+	  (holiday-float 8 1 1 "BC Day")
+	  (holiday-fixed 9 30 "National Day for Truth and Reconcilliation")
+	  (holiday-float 10 1 2 "Canadian Thanksgiving")
+	  (holiday-fixed 10 31 "Halloween")
+	  (holiday-fixed 11 11 "Rememberance Day")
+	  (holiday-float 11 4 4 "American Thanksgiving")
+	  (holiday-fixed 12 25 "Christmas")))
 
   ;; turn off all the US and religeous holidays
   (holiday-general-holidays nil)
@@ -226,16 +240,14 @@
 
   (calendar-holidays holiday-local-holidays)
 
-
   ;; See the ob-* use-package declarations below for language-
   ;; specific org-babel set up.
   (org-confirm-babel-evaluate nil)
   
-;  :hook
-;  ('org-mode-hook #'visual-line-mode)
-;  ('org-mode-hook #'auto-fill-mode)
-
   :bind
+  ("C-c o" . (lambda ()
+	       (interactive)
+	       (find-file "~/Documents/Org")))
   ("C-c a" . 'org-agenda)
   ("C-c c" . 'org-capture))
   
@@ -247,33 +259,33 @@
   :ensure nil
   :commands (org-babel-execute:lisp))
 
-;; Programming --------------------------------------------------
 
-;; Flycheck
-(use-package flycheck
+;; -----------------------------------------------------------------------------
+;; Programming
+
+;; The following two packages provide linting and documentation on hover
+
+(use-package flycheck ;melpa
   :init
   (global-flycheck-mode t)
   :custom
   (flycheck-lintr-linters
-   "linters_with_defaults(trailing_blank_lines_linter = NULL)")
+   "linters_with_defaults(trailing_blank_lines_linter = NULL, indentation_linter = indentation_linter(indent = 4L))")
   (flycheck-check-syntax-automatically '(save mode-enabled))
   :bind
   ("C-c f f" . 'flycheck-buffer)
   ("C-c f n" . 'flycheck-next-error)
   ("C-c f p" . 'flycheck-previous-error))
 
-;; Eldoc
-(use-package eldoc
+(use-package eldoc ;gnu
   :diminish
   :custom
-  ;; I prefer a small delay in eldoc to prevent it from
-  ;; stepping on my typing.
+  ;; A small delay in Eldoc prevents it from stepping on my typing.
   (eldoc-idle-delay 3))
-
 
 ;; Language-specific configs
 
-(use-package ess
+(use-package ess ;melpa
   :custom
   (ess-use-flymake nil)
   (inferior-R-args "--no-save")
@@ -294,26 +306,10 @@
      (ess-R-fl-keywor~F&T . t)
      (ess-R-fl-keywor~%op% . t)))
   
-  ;; choose where ess windows will appear
-  (display-buffer-alist
-   '(("^\\*R"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . right)
-      (slot . 1)
-      (window-width . 0.5)
-      (reusable-windows . nil))
-     ("^\\*R Dired"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . left)
-      (slot . 1)
-      (window-height . 0.5)
-      (reusable-windows . nil))))
-  
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
-
 
 ;; The slime-helper.el script takes a few seconds to run,
 ;; so instead of calling it on startup I prefer to bind
@@ -324,10 +320,10 @@
   "Perform the setup for Common Lisp development with SLIME."
   (interactive)
   (setq-default inferior-lisp-program "sbcl")
-  (load (expand-file-name "~/quicklisp/slime-helper.el")))
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))) ;melpa
 
-;; I don't actually use Go that much anymore, so I've disabled
-;; the support here. Uncomment if the go bug bites again.
+;; I don't actually use Go that much anymore, so I've disabled the support here.
+;; Uncomment if the go bug bites again.
 ;; (use-package go-mode)
 ;; (use-package go-complete
 ;;   :hook
@@ -336,7 +332,8 @@
 (use-package ahk-mode) ; haven't explored any config options
 
 
-;; Writing  ---------------------------------------------------
+;; -----------------------------------------------------------------------------
+;; Writing
 
 (setenv "LANG" "en_CA")
 
@@ -420,7 +417,8 @@
   (markdown-code-block-braces t))
 
 
-;; PDF and EPUB -------------------------------------------------------
+;; -----------------------------------------------------------------------------
+;; PDF and EPUB
 
 ;; These three packages combine to allow me to view pdfs, epubs,
 ;; and several other document formats, and manage my e-book library
@@ -444,7 +442,9 @@
   (calibredb-db-dir "~/Documents/Calibre/metadata.db")
   (calibredb-library-alist '("~/Documents/Calibre")))
 
-;; Eshell -------------------------------------------------------------
+
+;; -----------------------------------------------------------------------------
+;; Eshell
 
 ;; This is necessary since clear command sends any current input
 ;; on the command line before clearing for some reason. The following
@@ -471,9 +471,11 @@
 
 (use-package eshell-toggle
   :bind
-  ("C-c e" . eshell-toggle))
+  ("C-c t" . eshell-toggle))
 
-;; Init profiling -----------------------------------------------------
+
+;; -----------------------------------------------------------------------------
+;; Init profiling
 
 ;; This is used for profiling the startup time of your init files.
 ;; Load this config to troubleshoot any future start-up lags.
@@ -481,12 +483,21 @@
 ;; The startup timer message in early-init.el is another tool that
 ;; is useful for this purpose.
 
-;; (use-package esup
-;;    :custom
-;;    (esup-depth 0))
+(use-package esup
+   :custom
+   (esup-depth 0))
 
 
-;; General Keybindings ------------------------------------------------
+;; -----------------------------------------------------------------------------
+;; General Keybindings
+
+(bind-key* "C-S-<right>" 'windmove-right)
+(bind-key* "C-S-<left>"  'windmove-left)
+(bind-key* "C-S-<up>"    'windmove-up)
+(bind-key* "C-S-<down>"  'windmove-down)
+
+(bind-key  "C-M-<return>"   'split-window-horizontally)
+(bind-key  "C-M-S-<return>" 'split-window-vertically)
 
 (bind-key "C-M-g" 'exit-recursive-edit) ; a more natural exit command
 

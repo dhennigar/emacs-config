@@ -4,7 +4,7 @@
 
 ;; Author: Daniel Hennigar
 ;; URL: https://github.com/dhennigar/emacs-config
-;; Package-Requires: ((emacs "28.2"))
+;; Package-Requires: ((emacs "29.1"))
 
 ;; This file is NOT part of GNU Emacs
 
@@ -26,19 +26,22 @@
 
 ;;; Code:
 
-;; Early init ---------------------------------------------------------
+
+;; -----------------------------------------------------------------------------
+;; Early init
 
 ;; avoid garbage collection during init
 (setq gc-cons-threshold (* 10 1000 1000 1000))
 
-;; enable this for troubleshooting startup times.
-;; (add-hook 'emacs-startup-hook
-;;           (lambda ()
-;;             (message "Emacs ready in %s with %d garbage collections."
-;;                      (format "%.2f seconds"
-;;                              (float-time
-;;                               (time-subtract after-init-time before-init-time)))
-;;                      gcs-done)))
+;;enable this for troubleshooting startup times.
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "Emacs ready in %s with %d garbage collections."
+                     (format "%.2f seconds"
+                             (float-time
+                              (time-subtract
+                                 after-init-time before-init-time)))
+                     gcs-done)))
 
 ;; do not load packages until I say so
 (setq package-enable-at-startup nil)
@@ -60,8 +63,8 @@
 
 ;; Default frame settings
 (setq default-frame-alist
-      '((font . "IBM Plex Mono-11")
-	(height . 26)
+      '((font . "IBM Plex Mono-10")
+	(height . 40)
 	(width . 84)
 	(left-fringe . 0)
 	(right-fringe . 0)))
