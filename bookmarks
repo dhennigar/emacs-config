@@ -2,7 +2,19 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("my-script.ahk"
+(("org-refile-last-stored"
+ (filename . "~/Documents/Org/personal.org")
+ (front-context-string . "** TODO Purchase")
+ (rear-context-string . " in new office\n\n")
+ (position . 942)
+ (last-modified 25826 61188 358109 0))
+("org-capture-last-stored"
+ (filename . "~/Documents/Org/inbox.org")
+ (front-context-string . "* TODO Purchase ")
+ (rear-context-string . ".\n#+end_comment\n")
+ (position . 154)
+ (last-modified 25826 60993 397986 0))
+("my-script.ahk"
  (filename . "~/AutoHotkey/my-script.ahk")
  (front-context-string . "Capslock::Ctrl\n\n")
  (rear-context-string . "MouseHook True\n\n")

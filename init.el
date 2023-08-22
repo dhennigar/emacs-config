@@ -25,8 +25,8 @@
 ;; I use Emacs as an integrated research environment (IRE).  With this
 ;; configuration I can complete most of my academic research within Emacs,
 ;; from lit-review and bibliographic note-taking, to data analysis in R
-;; and report/manuscript outlining, writing, and editing. I can also manage my
-;; e-book library and read books in EPUB format.
+;; and report/manuscript outlining, writing, and editing.  I can also manage
+;; my e-book library and read books in EPUB format.
 
 ;;; Code:
 
@@ -160,9 +160,12 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 
-(use-package org-contrib)
+;(use-package org-contrib) ; is this needed?
 
 (use-package org
+  :hook
+  ('org-mode-hook . 'visual-line-mode)
+  
   :custom
 
   ;; General org-mode stuff goes here
@@ -248,15 +251,20 @@
   ("C-c o" . (lambda ()
 	       (interactive)
 	       (find-file "~/Documents/Org")))
+  ("C-c i" . (lambda ()
+	       (interactive)
+	       (find-file "~/Documents/Org/inbox.org")))
   ("C-c a" . 'org-agenda)
   ("C-c c" . 'org-capture))
   
 (use-package ob-R
   :ensure nil
+  :after (org)
   :commands (org-babel-execute:R))
 
 (use-package ob-lisp
   :ensure nil
+  :after (org)
   :commands (org-babel-execute:lisp))
 
 
@@ -265,9 +273,10 @@
 
 ;; The following two packages provide linting and documentation on hover
 
-(use-package flycheck ;melpa
-  :init
-  (global-flycheck-mode t)
+(use-package flycheck
+  :hook
+  ('ess-mode-hook . flycheck-mode)
+  ('emacs-lisp-mode . flycheck-mode)
   :custom
   (flycheck-lintr-linters
    "linters_with_defaults(trailing_blank_lines_linter = NULL, indentation_linter = indentation_linter(indent = 4L))")
@@ -277,15 +286,15 @@
   ("C-c f n" . 'flycheck-next-error)
   ("C-c f p" . 'flycheck-previous-error))
 
-(use-package eldoc ;gnu
+(use-package eldoc
   :diminish
   :custom
   ;; A small delay in Eldoc prevents it from stepping on my typing.
-  (eldoc-idle-delay 3))
+  (eldoc-idle-delay 2.5))
 
 ;; Language-specific configs
 
-(use-package ess ;melpa
+(use-package ess
   :custom
   (ess-use-flymake nil)
   (inferior-R-args "--no-save")
@@ -372,7 +381,6 @@
   (org-mode . citar-capf-setup))
 
 (use-package denote
-  :ensure t
   :custom
   (denote-directory (expand-file-name "~/Documents/Org/notes"))
   (denote-known-keywords '("work" "personal" "emacs"))
@@ -382,7 +390,7 @@
   (denote-prompts '(title keywords))
   (denote-date-prompt-use-org-read-date t)
   :bind
-  ("C-c d d" . denote)
+  ("C-c d d" . denote-open-or-create)
   ("C-c d l" . denote-link)
   ("C-c d L" . denote-add-links)
   ("C-c d b" . denote-backlinks)
@@ -468,10 +476,6 @@
 (add-hook 'eshell-mode-hook (lambda ()
     (interactive)
     (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
-
-(use-package eshell-toggle
-  :bind
-  ("C-c t" . eshell-toggle))
 
 
 ;; -----------------------------------------------------------------------------
