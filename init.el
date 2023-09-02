@@ -70,6 +70,7 @@
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
 
+; (require 'modus-themes-exporter)
 
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
@@ -78,8 +79,8 @@
 ;;  ;; any linux-specific config goes here
 ;;     )
 
-(if (eq system-type 'windows-nt)
-    (setq ring-bell-function 'ignore))
+;;(if (eq system-type 'windows-nt)
+;;    (setq ring-bell-function 'ignore))
 
 
 ;; -----------------------------------------------------------------------------
@@ -487,21 +488,18 @@
 ;; The startup timer message in early-init.el is another tool that
 ;; is useful for this purpose.
 
-(use-package esup
-   :custom
-   (esup-depth 0))
+;; (use-package esup
+;;    :custom
+;;    (esup-depth 0))
 
 
 ;; -----------------------------------------------------------------------------
 ;; General Keybindings
 
-(bind-key* "C-S-<right>" 'windmove-right)
-(bind-key* "C-S-<left>"  'windmove-left)
-(bind-key* "C-S-<up>"    'windmove-up)
-(bind-key* "C-S-<down>"  'windmove-down)
-
-(bind-key  "C-M-<return>"   'split-window-horizontally)
-(bind-key  "C-M-S-<return>" 'split-window-vertically)
+(bind-key* "C-x <right>" 'windmove-right)
+(bind-key* "C-x <left>"  'windmove-left)
+(bind-key* "C-x <up>"    'windmove-up)
+(bind-key* "C-x <down>"  'windmove-down)
 
 (bind-key "C-M-g" 'exit-recursive-edit) ; a more natural exit command
 
@@ -512,7 +510,7 @@
 (unbind-key "C-M-e") ; since I use this to start an emacs client
 
 
-;; set the garbage collection back to something reasonable
+;; set the garbage collection threshold back to something reasonable
 (setq gc-cons-threshold (* 2 1000 1000))
 
 ;;; init.el ends here

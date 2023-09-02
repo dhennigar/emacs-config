@@ -26,25 +26,27 @@
 
 ;;; Code:
 
-
 ;; -----------------------------------------------------------------------------
 ;; Early init
 
 ;; avoid garbage collection during init
 (setq gc-cons-threshold (* 10 1000 1000 1000))
 
-;;enable this for troubleshooting startup times.
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "Emacs ready in %s with %d garbage collections."
-                     (format "%.2f seconds"
-                             (float-time
-                              (time-subtract
-                                 after-init-time before-init-time)))
-                     gcs-done)))
+;; ;;enable this for troubleshooting startup times.
+;; (add-hook 'emacs-startup-hook
+;;           (lambda ()
+;;             (message "Emacs ready in %s with %d garbage collections."
+;;                      (format "%.2f seconds"
+;;                              (float-time
+;;                               (time-subtract
+;;                                  after-init-time before-init-time)))
+;;                      gcs-done)))
 
 ;; do not load packages until I say so
 (setq package-enable-at-startup nil)
+
+;; add custom lisp directory to load path
+(add-to-list 'load-path "~/.emacs.d/lisp/")
 
 ;; use a custom custom file
 (setq custom-file (concat user-emacs-directory "custom.el"))
@@ -84,5 +86,8 @@
             (set-window-margins
 	     (car (get-buffer-window-list
 		   (current-buffer) nil t)) 1 1)))
+
+;; I don't want annoying beeps
+(setq ring-bell-function 'ignore)
 
 ;;; early-init.el ends here
