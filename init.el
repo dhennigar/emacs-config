@@ -296,7 +296,12 @@
 ;; Language-specific configs
 
 (use-package ess
+  :config
+  (if (eq system-type 'windows-nt)
+      (setq inferior-ess-R-program-name "R.exe"))
+  
   :custom
+  
   (ess-use-flymake nil)
   (inferior-R-args "--no-save")
   (ess-R-readline nil) ; I don't remember why this is here.
