@@ -16,6 +16,8 @@ auto-save-list/*
 straight/*
 eln-cache/*
 transient/*
+elpa/*
+eshell/*
 
 # private info
 *private.el
