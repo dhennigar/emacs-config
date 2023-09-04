@@ -75,12 +75,7 @@
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
 
-;; (if (eq system-type 'gnu/linux)
-;;  ;; any linux-specific config goes here
-;;     )
-
-;;(if (eq system-type 'windows-nt)
-;;    (setq ring-bell-function 'ignore))
+;; (when (eq system-type 'windows-nt || gnu/linux))
 
 
 ;; -----------------------------------------------------------------------------
@@ -161,7 +156,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 
-;(use-package org-contrib) ; is this needed?
+(setq org-directory (expand-file-name "~/Org"))
 
 (use-package org
   :hook
@@ -169,9 +164,7 @@
   
   :custom
 
-  ;; General org-mode stuff goes here
 
-  (org-tags-column -80)
   
   ;; This section defines my settings for org-agenda and calendar
   ;; views which form the basis of my personal productivity system.
@@ -180,12 +173,9 @@
    '((sequence
       "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
   
-  (org-agenda-files '("~/Documents/Org/work.org"
-		      "~/Documents/Org/personal.org"
-		      "~/Documents/Org/inbox.org"
-		      "~/Documents/Org/calendar.org"))
+  (org-agenda-files (list org-directory))
 
-  (org-archive-location "~/Documents/Org/archive/archive23.org::")
+  (org-archive-location (concat (file-name-as-directory org-directory) "archive"))
 
   (org-refile-targets
 	'((nil :maxlevel . 9)
@@ -198,17 +188,17 @@
   (denote-org-capture-specifier "%l\n%i\n%?")
   
   (org-capture-templates '(("t" "Task" entry
-			    (file "~/Documents/Org/inbox.org")
+			    (file "inbox.org")
 			    "* TODO %i%?")
 			   ("a" "Appointment" entry
-			    (file "~/Documents/Org/calendar.org")
+			    (file+headline "calendar.org" "Appointments")
 			    "* %i%? \n %^t")
 			   ("n" "Note" plain
 			    (file denote-last-path)
 			    #'denote-org-capture
 			    :no-save t :immediate-finish nil :kill-buffer t)
 			   ("r" "Reading List" entry
-			    (file "~/Documents/Org/reading-list.org")
+			    (file+headline "reading-list.org" "Reading List")
 			    "* %i%?")))
 
   (org-agenda-remove-tags t)
@@ -247,17 +237,13 @@
   ;; See the ob-* use-package declarations below for language-
   ;; specific org-babel set up.
   (org-confirm-babel-evaluate nil)
+
+  (fill-prefix "")
   
   :bind
-  ("C-c o" . (lambda ()
-	       (interactive)
-	       (find-file "~/Documents/Org")))
-  ("C-c i" . (lambda ()
-	       (interactive)
-	       (find-file "~/Documents/Org/inbox.org")))
   ("C-c a" . 'org-agenda)
   ("C-c c" . 'org-capture))
-  
+
 (use-package ob-R
   :ensure nil
   :after (org)
@@ -297,8 +283,9 @@
 
 (use-package ess
   :config
-  (if (eq system-type 'windows-nt)
-      (setq inferior-ess-R-program-name "R.exe"))
+  (when (eq system-type 'windows-nt)
+    (setq inferior-ess-r-program "R.exe")
+    (setq inferior-ess-R-program-name "R.exe"))
   
   :custom
   
@@ -325,6 +312,19 @@
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
+
+
+;; Python Mode
+(setq python-shell-interpreter "~/miniconda3/python")
+
+(use-package conda
+  :config
+  (conda-env-initialize-interactive-shells)
+  (conda-env-initialize-eshell)
+  (conda-env-autoactivate-mode t)
+  :custom
+  (conda-anaconda-home "~/miniconda3"))
+
 
 ;; The slime-helper.el script takes a few seconds to run,
 ;; so instead of calling it on startup I prefer to bind
@@ -388,7 +388,7 @@
 
 (use-package denote
   :custom
-  (denote-directory (expand-file-name "~/Documents/Org/notes"))
+  (denote-directory (concat (file-name-as-directory org-directory) "notes"))
   (denote-known-keywords '("work" "personal" "emacs"))
   (denote-infer-keywords t)
   (denote-sort-keywords t)
@@ -409,7 +409,7 @@
   :diminish
   :init (citar-denote-mode)
   :custom
-  (citar-notes-paths '("~/Documents/Org/notes"))
+  (citar-notes-paths denote-directory)
   (citar-denote-title-format "author-year")
   (citar-denote-subdir t)
   :bind
@@ -434,10 +434,6 @@
 ;; -----------------------------------------------------------------------------
 ;; PDF and EPUB
 
-;; These three packages combine to allow me to view pdfs, epubs,
-;; and several other document formats, and manage my e-book library
-;; by integrating the Calibre's database.
-
 (use-package pdf-tools
   :defines pdf-view-themed-minor-mode
   :mode ("\\.pdf\\'" . pdf-view-mode)
@@ -450,11 +446,6 @@
   :custom
   (nov-unzip-program "tar")
   (nov-unzip-args '("-xC" directory "-f" filename)))
-
-(use-package calibredb
-  :custom
-  (calibredb-db-dir "~/Documents/Calibre/metadata.db")
-  (calibredb-library-alist '("~/Documents/Calibre")))
 
 
 ;; -----------------------------------------------------------------------------

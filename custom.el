@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(calibredb nov pdf-tools poly-R markdown-mode citar-denote denote citar ahk-mode ess flycheck corfu vertico marginalia orderless modus-themes diminish)))
+   '(conda vertico poly-R pdf-tools orderless nov modus-themes marginalia flycheck ess diminish corfu citar-denote calibredb ahk-mode)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
