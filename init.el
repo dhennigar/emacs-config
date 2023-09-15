@@ -35,7 +35,6 @@
 
 (require 'package)
 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
@@ -70,7 +69,7 @@
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
 
-; (require 'modus-themes-exporter)
+(require 'modus-themes-exporter)
 
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
@@ -85,27 +84,6 @@
 (setq tab-always-indent 'complete)
 (setq tab-first-completion nil)
 
-;; This section renders a fairly usable native completion framework,
-;; but it isn't compatible with vertico, so don't enable both. This
-;; should be used in lieu of the nice packages below as a backup.
-
-;; (setq completion-auto-help 'always)
-;; (setq completion-auto-select 'second-tab)
-
-;; (setq completions-max-height 10)
-;; (setq completions-header-format nil)
-;; (setq completion-show-help nil)
-
-;; (define-key minibuffer-mode-map (kbd "C-n")
-;; 	    #'minibuffer-next-completion)
-;; (define-key minibuffer-mode-map (kbd "C-p")
-;; 	    #'minibuffer-previous-completion)
-
-;; (define-key completion-in-region-mode-map (kbd "C-n")
-;; 	    #'minibuffer-next-completion)
-;; (define-key completion-in-region-mode-map (kbd "C-p")
-;; 	    #'minibuffer-previous-completion)
-
 (use-package orderless
   :custom
   (completion-styles '(orderless basic))
@@ -115,15 +93,13 @@
 (use-package marginalia
   :init (marginalia-mode))
 
-
-;; These two packages render a nicer looking completion framework
-;; both for the minibuffer and in-region. They should not be used
-;; in conjunction with the native completion framework code above.
-
 (use-package vertico
   :init (vertico-mode))
 
 (use-package corfu
+  :config
+  (require 'corfu-popupinfo)
+  (corfu-popupinfo-mode)
   :custom
   (corfu-auto nil)
   (corfu-quit-no-match t)
@@ -131,14 +107,13 @@
   :bind
   (:map corfu-map ("SPC" . corfu-insert-separator))
   :init
-  (global-corfu-mode)
-  :hook
-  ('eshell-mode-hook . (lambda ()
-			 (setq-local corfu-auto nil)
-			 (corfu-mode))))
+  (global-corfu-mode))
 
-
-;; See the abbrev file for available auto-expanding completions.
+;; add this hook to enable corfu in eshell mode
+;;  :hook
+;;  ('eshell-mode-hook . (lambda ()
+;;			 (setq-local corfu-auto nil)
+;;			 (corfu-mode))))
 
 (use-package abbrev
   :ensure nil
@@ -156,18 +131,14 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 
-(setq org-directory (expand-file-name "~/Org"))
+(setq org-directory (expand-file-name "~/org"))
 
 (use-package org
   :hook
   ('org-mode-hook . 'visual-line-mode)
   
   :custom
-
-
-  
-  ;; This section defines my settings for org-agenda and calendar
-  ;; views which form the basis of my personal productivity system.
+  (org-return-follows-link t)
   
   (org-todo-keywords
    '((sequence
@@ -175,7 +146,8 @@
   
   (org-agenda-files (list org-directory))
 
-  (org-archive-location (concat (file-name-as-directory org-directory) "archive"))
+  (org-archive-location
+   (concat (file-name-as-directory org-directory) "archive/archive23.org::"))
 
   (org-refile-targets
 	'((nil :maxlevel . 9)
@@ -196,19 +168,16 @@
 			   ("n" "Note" plain
 			    (file denote-last-path)
 			    #'denote-org-capture
-			    :no-save t :immediate-finish nil :kill-buffer t)
-			   ("r" "Reading List" entry
-			    (file+headline "reading-list.org" "Reading List")
-			    "* %i%?")))
+			    :no-save t :immediate-finish nil :kill-buffer t)))
 
   (org-agenda-remove-tags t)
 
-  (org-agenda-custom-commands '(("o" "Office tasks" tags-todo "office")
-				("f" "Field tasks" tags-todo "field")))
+  (org-agenda-custom-commands '(("u" "School" tags-todo "ubc")
+				("r" "Raincoast" tags-todo "raincoast")
+				("p" "Personal" tags-todo "personal")))
   
   ;; Here I define the statutory holidays for British Columbia
   ;; which will appear in my calendar views.
-  
   (holiday-local-holidays
 	'((holiday-fixed 1 1 "New Year's Day")
 	  (holiday-float 2 1 3 "Family Day")
@@ -238,11 +207,14 @@
   ;; specific org-babel set up.
   (org-confirm-babel-evaluate nil)
 
-  (fill-prefix "")
+  (fill-prefix "") ; fixes some bug with pressing RET in org buffers.
   
   :bind
   ("C-c a" . 'org-agenda)
-  ("C-c c" . 'org-capture))
+  ("C-c c" . 'org-capture)
+  ("C-c o" . (lambda ()
+	       (interactive)
+	       (find-file "~/Org/index.org"))))
 
 (use-package ob-R
   :ensure nil
@@ -279,8 +251,7 @@
   ;; A small delay in Eldoc prevents it from stepping on my typing.
   (eldoc-idle-delay 2.5))
 
-;; Language-specific configs
-
+;; R
 (use-package ess
   :config
   (when (eq system-type 'windows-nt)
@@ -288,7 +259,6 @@
     (setq inferior-ess-R-program-name "R.exe"))
   
   :custom
-  
   (ess-use-flymake nil)
   (inferior-R-args "--no-save")
   (ess-R-readline nil) ; I don't remember why this is here.
@@ -313,23 +283,12 @@
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
 
-
-;; Python Mode
-(setq python-shell-interpreter "~/miniconda3/python")
-
-(use-package conda
-  :config
-  (conda-env-initialize-interactive-shells)
-  (conda-env-initialize-eshell)
-  (conda-env-autoactivate-mode t)
-  :custom
-  (conda-anaconda-home "~/miniconda3"))
+;; Python
 
 
-;; The slime-helper.el script takes a few seconds to run,
-;; so instead of calling it on startup I prefer to bind
-;; it to a function that allows me to initialize slime
-;; as and when I need it.
+;; Common Lisp
+;; slime-helper.el takes a few seconds to load, so I bind it to a command
+;; instead of loading it on startup.
 
 (defun dh/load-slime-helper ()
   "Perform the setup for Common Lisp development with SLIME."
@@ -337,13 +296,7 @@
   (setq-default inferior-lisp-program "sbcl")
   (load (expand-file-name "~/quicklisp/slime-helper.el"))) ;melpa
 
-;; I don't actually use Go that much anymore, so I've disabled the support here.
-;; Uncomment if the go bug bites again.
-;; (use-package go-mode)
-;; (use-package go-complete
-;;   :hook
-;;   ('completion-at-point-functions 'go-complete-at-point))
-
+;; AutoHotkey
 (use-package ahk-mode) ; haven't explored any config options
 
 
@@ -396,14 +349,14 @@
   (denote-prompts '(title keywords))
   (denote-date-prompt-use-org-read-date t)
   :bind
-  ("C-c d d" . denote-open-or-create)
+  ("C-c d d" . denote)
+  ("C-c d o" . denote-open-or-create)
   ("C-c d l" . denote-link)
   ("C-c d L" . denote-add-links)
   ("C-c d b" . denote-backlinks)
   ("C-c d f" . denote-find-link)
   ("C-c d F" . denote-find-backlink)
-  ("C-c d r" . denote-rename-file)
-  ("C-c d R" . denote-rename-file-using-front-matter))
+  ("C-c d r" . denote-rename-file))
 
 (use-package citar-denote
   :diminish
@@ -428,7 +381,8 @@
 (use-package poly-R
   :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)
   :custom
-  (markdown-code-block-braces t))
+  (markdown-code-block-braces t)
+  (markdown-asymmetric-header t))
 
 
 ;; -----------------------------------------------------------------------------
@@ -451,7 +405,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Eshell
 
-;; This is necessary since clear command sends any current input
+;; This is necessary since the 'clear' command sends any current input
 ;; on the command line before clearing for some reason. The following
 ;; code renders the expected C-l behavior of most shells.
 
@@ -470,9 +424,10 @@
     (eshell-bol)
     (yank))
 
-(add-hook 'eshell-mode-hook (lambda ()
-    (interactive)
-    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
+(add-hook 'eshell-mode-hook
+	  (lambda ()
+	    (interactive)
+	    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
 
 
 ;; -----------------------------------------------------------------------------

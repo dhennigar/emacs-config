@@ -76,6 +76,10 @@
 (set-scroll-bar-mode nil)
 (setq menu-bar-mode nil)
 
+;; smooth scrolling
+(pixel-scroll-precision-mode)
+(setq pixel-scroll-precision-use-momentum t)
+
 ;; more minimal scratch message
 (setq initial-scratch-message
       ";; Emacs LISP *scratch* buffer\n\n")
