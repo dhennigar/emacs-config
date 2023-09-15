@@ -1,0 +1,35 @@
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8-emacs; mode: lisp-data -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("org-refile-last-stored"
+ (filename . "~/org/personal.org")
+ (front-context-string . "** TODO Figure o")
+ (rear-context-string . "Braya's wedding\n")
+ (position . 162)
+ (last-modified 25859 44877 537427 0))
+("Org Index"
+ (filename . "~/Org/index.org")
+ (front-context-string . "Inbox]]\n2. [[fil")
+ (rear-context-string . "file:inbox.org][")
+ (position . 114)
+ (last-modified 25857 5358 52645 0))
+("Early Init File"
+ (filename . "~/.emacs.d/early-init.el")
+ (front-context-string . "\n;; ------------")
+ (rear-context-string . "nit.\n\n;;; Code:\n")
+ (position . 937)
+ (last-modified 25857 5318 47519 0))
+("Init File"
+ (filename . "~/.emacs.d/init.el")
+ (front-context-string . "\n;; ------------")
+ (rear-context-string . "mat.\n\n;;; Code:\n")
+ (position . 1213)
+ (last-modified 25857 5286 975353 0))
+("org-capture-last-stored"
+ (filename . "~/org/inbox.org")
+ (front-context-string . "* TODO Figure ou")
+ (rear-context-string . "Braya's wedding\n")
+ (position . 161)
+ (last-modified 25859 44771 623523 0))
+)
