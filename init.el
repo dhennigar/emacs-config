@@ -69,7 +69,7 @@
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
 
-(require 'modus-themes-exporter)
+;; (require 'modus-themes-exporter)
 
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
@@ -78,7 +78,19 @@
 
 
 ;; -----------------------------------------------------------------------------
+;; General
+
+(use-package buffer-move
+  :bind
+  ("C-x S-<right>" . 'buf-move-right)
+  ("C-x S-<left>" . 'buf-move-left)
+  ("C-x S-<up>" . 'buf-move-up)
+  ("C-x S-<down>" . 'buf-move-down))
+
+;; -----------------------------------------------------------------------------
 ;; Autocompletion
+
+; (require 'native-completion)
 
 (electric-pair-mode)
 (setq tab-always-indent 'complete)
@@ -112,8 +124,8 @@
 ;; add this hook to enable corfu in eshell mode
 ;;  :hook
 ;;  ('eshell-mode-hook . (lambda ()
-;;			 (setq-local corfu-auto nil)
-;;			 (corfu-mode))))
+;; 			 (setq-local corfu-auto nil)
+;; 			 (corfu-mode))))
 
 (use-package abbrev
   :ensure nil
@@ -135,9 +147,16 @@
 
 (use-package org
   :hook
-  ('org-mode-hook . 'visual-line-mode)
+  ('org-mode . 'visual-line-mode)
   
   :custom
+  ;; Improve org mode looks
+  (org-startup-indented t)
+  (org-pretty-entities t)
+  (org-hide-emphasis-markers t)
+  (org-startup-with-inline-images t)
+  (org-image-actual-width '(300))
+  
   (org-return-follows-link t)
   
   (org-todo-keywords

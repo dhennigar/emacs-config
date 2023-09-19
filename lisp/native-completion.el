@@ -12,6 +12,7 @@
 (setq completion-auto-select 'second-tab)
 
 (setq completions-max-height 10)
+(setq completions-format 'one-column)
 (setq completions-header-format nil)
 (setq completion-show-help nil)
 
@@ -27,3 +28,5 @@
 
 (provide 'native-completion)
 ;;; native-completion.el ends here
+
+
