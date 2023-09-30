@@ -85,10 +85,9 @@
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
 
-;; (when (eq system-type 'windows-nt || gnu/linux))
+(when (eq system-type 'gnu/linux)
+  (use-package vterm))
 
-;; TODO: Add theme switch hook for linux only which writes modus-exporter output
-;;       to the relevant configuration files.
 
 ;; -----------------------------------------------------------------------------
 ;; General
