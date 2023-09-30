@@ -64,21 +64,39 @@
       (bg-mode-line-active bg-blue-intense)
       (fg-mode-line-active fg-main))))
 
-(if (and (< (nth 2 (decode-time (current-time))) 20)
+;; This manually sets a dark or light theme on startup based on time of day.
+(if (and (< (nth 2 (decode-time (current-time))) 19)
 	 (>= (nth 2 (decode-time (current-time))) 6))
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
 
-;; (require 'modus-themes-exporter)
+;; (use-package circadian
+;;   :ensure t
+;;   :defer nil
+;;   :config
+;;   (setq calendar-latitude 49.3)
+;;   (setq calendar-longitude 123.1)
+;;   (setq circadian-themes '(("6:00"  . modus-operandi)
+;; 			   ("19:00" . modus-vivendi)))
+;;   (circadian-setup))
+
+(require 'modus-themes-exporter)
 
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
 
 ;; (when (eq system-type 'windows-nt || gnu/linux))
 
+;; TODO: Add theme switch hook for linux only which writes modus-exporter output
+;;       to the relevant configuration files.
 
 ;; -----------------------------------------------------------------------------
 ;; General
+
+(bind-key* "C-x <right>" 'windmove-right)
+(bind-key* "C-x <left>"  'windmove-left)
+(bind-key* "C-x <up>"    'windmove-up)
+(bind-key* "C-x <down>"  'windmove-down)
 
 (use-package buffer-move
   :bind
@@ -86,6 +104,15 @@
   ("C-x S-<left>" . 'buf-move-left)
   ("C-x S-<up>" . 'buf-move-up)
   ("C-x S-<down>" . 'buf-move-down))
+
+(bind-key "C-M-g" 'exit-recursive-edit) ; a more natural exit command
+
+(unbind-key "C-?") ; formerly undo-redo
+(bind-key "C-x M-u" 'undo-redo)
+
+(unbind-key "C-M-w") ; since I use this to start my web browser
+(unbind-key "C-M-e") ; since I use this to start an emacs client
+
 
 ;; -----------------------------------------------------------------------------
 ;; Autocompletion
@@ -302,9 +329,6 @@
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
 
-;; Python
-
-
 ;; Common Lisp
 ;; slime-helper.el takes a few seconds to load, so I bind it to a command
 ;; instead of loading it on startup.
@@ -450,37 +474,17 @@
 
 
 ;; -----------------------------------------------------------------------------
-;; Init profiling
+;; Start up time
 
-;; This is used for profiling the startup time of your init files.
-;; Load this config to troubleshoot any future start-up lags.
-;;
-;; The startup timer message in early-init.el is another tool that
-;; is useful for this purpose.
+;; Esup provides start up time profiling. See also the start up timer message
+;; function in early-init.el.
 
-;; (use-package esup
-;;    :custom
-;;    (esup-depth 0))
+(use-package esup
+    :custom
+    (esup-depth 0))
 
-
-;; -----------------------------------------------------------------------------
-;; General Keybindings
-
-(bind-key* "C-x <right>" 'windmove-right)
-(bind-key* "C-x <left>"  'windmove-left)
-(bind-key* "C-x <up>"    'windmove-up)
-(bind-key* "C-x <down>"  'windmove-down)
-
-(bind-key "C-M-g" 'exit-recursive-edit) ; a more natural exit command
-
-(unbind-key "C-?") ; formerly undo-redo
-(bind-key "C-x M-u" 'undo-redo)
-
-(unbind-key "C-M-w") ; since I use this to start my web browser
-(unbind-key "C-M-e") ; since I use this to start an emacs client
-
-
-;; set the garbage collection threshold back to something reasonable
+;; The garbage collection threshold is set very low in early-init to reduce
+;; start up time. Here we return it to a reasonable value.
 (setq gc-cons-threshold (* 2 1000 1000))
 
 ;;; init.el ends here

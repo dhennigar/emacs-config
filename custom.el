@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(buffer-move vertico poly-R pdf-tools orderless nov modus-themes marginalia flycheck ess diminish corfu citar-denote ahk-mode)))
+   '(esup vertico poly-R pdf-tools orderless nov modus-themes marginalia flycheck evil-collection ess diminish corfu citar-denote circadian buffer-move ahk-mode)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
