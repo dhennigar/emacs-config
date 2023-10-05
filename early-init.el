@@ -65,7 +65,7 @@
 
 ;; Default frame settings
 (setq default-frame-alist
-      '((font . "IBM Plex Mono-10")
+      '((font . "IBM Plex Mono-11")
 	(height . 40)
 	(width . 84)
 	(left-fringe . 0)
@@ -93,5 +93,9 @@
 
 ;; I don't want annoying beeps
 (setq ring-bell-function 'ignore)
+
+;; I want focus-follows-mouse type deal
+(setq focus-follows-mouse t)
+(setq mouse-autoselect-window t)
 
 ;;; early-init.el ends here
