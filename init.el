@@ -34,8 +34,10 @@
 ;; Package Management
 
 (require 'package)
-(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list
+ 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list
+ 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
 (require 'use-package)
@@ -328,6 +330,15 @@
   ('inferior-ess-mode-hook
    setq-local ansi-color-for-comint-mode 'filter))
 
+;; Python
+(use-package pyvenv)
+
+;; Julia
+(use-package julia-mode)
+
+;; Go
+(use-package go-mode)
+
 ;; Common Lisp
 ;; slime-helper.el takes a few seconds to load, so I bind it to a command
 ;; instead of loading it on startup.
@@ -470,6 +481,13 @@
 	  (lambda ()
 	    (interactive)
 	    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
+
+
+;; -----------------------------------------------------------------------------
+;; Finance
+
+(use-package ledger-mode)
+(use-package flycheck-ledger)
 
 
 ;; -----------------------------------------------------------------------------

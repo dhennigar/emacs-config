@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(vterm vertico poly-R pdf-tools orderless nov modus-themes marginalia flycheck esup ess diminish corfu citar-denote buffer-move ahk-mode)))
+   '(flycheck-ledger ledger-mode vterm vertico poly-R pdf-tools orderless nov modus-themes marginalia lorem-ipsum julia-mode go-mode flycheck esup ess elpy diminish corfu citar-denote buffer-move ahk-mode)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
