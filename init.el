@@ -141,19 +141,13 @@
   (require 'corfu-popupinfo)
   (corfu-popupinfo-mode)
   :custom
-  (corfu-auto nil)
+  (corfu-auto t)
   (corfu-quit-no-match t)
   (corfu-min-width 30)
   :bind
   (:map corfu-map ("SPC" . corfu-insert-separator))
   :init
   (global-corfu-mode))
-
-;; add this hook to enable corfu in eshell mode
-;;  :hook
-;;  ('eshell-mode-hook . (lambda ()
-;; 			 (setq-local corfu-auto nil)
-;; 			 (corfu-mode))))
 
 (use-package abbrev
   :ensure nil
@@ -298,6 +292,10 @@
   ;; A small delay in Eldoc prevents it from stepping on my typing.
   (eldoc-idle-delay 2.5))
 
+
+;; -----------------------------------------------------------------------------
+;; Programming Languages
+
 ;; R
 (use-package ess
   :config
@@ -339,6 +337,12 @@
 ;; Go
 (use-package go-mode)
 
+;; J
+(use-package j-mode
+  :custom
+  (j-console-cmd "~/J/j9.4/jconsole.sh")
+  :mode ("\\.ij[rstp]$" . j-mode))
+
 ;; Common Lisp
 ;; slime-helper.el takes a few seconds to load, so I bind it to a command
 ;; instead of loading it on startup.
@@ -348,9 +352,6 @@
   (interactive)
   (setq-default inferior-lisp-program "sbcl")
   (load (expand-file-name "~/quicklisp/slime-helper.el"))) ;melpa
-
-;; AutoHotkey
-(use-package ahk-mode) ; haven't explored any config options
 
 
 ;; -----------------------------------------------------------------------------
@@ -387,18 +388,16 @@
   (citar-bibliography '("~/Zotero/references.bib"))
   :bind
   ("C-c b f" . citar-open-files)
-  (:map org-mode-map :package org ("C-c b i" . #'org-cite-insert))
+  ("C-c b b" . citar-insert-citation)
   :hook
-  (markdown-mode . citar-capf-setup)
-  (org-mode . citar-capf-setup))
+  (markdown-mode . citar-capf-setup))
 
 (use-package denote
   :custom
-  (denote-directory (concat (file-name-as-directory org-directory) "notes"))
-  (denote-known-keywords '("work" "personal" "emacs"))
+  (denote-directory (file-name-as-directory "~/Notes"))
+  (denote-file-type 'markdown-yaml)
   (denote-infer-keywords t)
   (denote-sort-keywords t)
-  (denote-file-type nil)
   (denote-prompts '(title keywords))
   (denote-date-prompt-use-org-read-date t)
   :bind
@@ -411,25 +410,13 @@
   ("C-c d F" . denote-find-backlink)
   ("C-c d r" . denote-rename-file))
 
-(use-package citar-denote
-  :diminish
-  :init (citar-denote-mode)
-  :custom
-  (citar-notes-paths denote-directory)
-  (citar-denote-title-format "author-year")
-  (citar-denote-subdir t)
-  :bind
-  ("C-c b b" . citar-create-note)
-  ("C-c b o" . citar-denote-open-note)
-  ("C-c b k" . citar-denote-add-citekey)
-  ("C-c b r" . citar-denote-find-reference)
-  ("C-c b C-f" . citar-denote-find-citation))
-
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
   :custom
-  (markdown-command "pandoc"))
+  (markdown-command "pandoc")
+  :config
+  (visual-line-mode))
 
 (use-package poly-R
   :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)
@@ -481,13 +468,6 @@
 	  (lambda ()
 	    (interactive)
 	    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
-
-
-;; -----------------------------------------------------------------------------
-;; Finance
-
-(use-package ledger-mode)
-(use-package flycheck-ledger)
 
 
 ;; -----------------------------------------------------------------------------

@@ -1,3 +1,0 @@
-alias la ls -la $*
-alias ll ls -l $*
-alias clear clear 1
