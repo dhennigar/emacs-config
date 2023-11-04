@@ -3,11 +3,11 @@
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-refile-last-stored"
- (filename . "~/org/personal.org")
- (front-context-string . "** TODO Figure o")
- (rear-context-string . "Braya's wedding\n")
- (position . 162)
- (last-modified 25859 44877 537427 0))
+ (filename . "~/org/planner.org")
+ (front-context-string . "*** TODO This is")
+ (rear-context-string . "DS's and DJ's\n\n\n")
+ (position . 307)
+ (last-modified 25925 22794 829263 602000))
 ("Org Index"
  (filename . "~/Org/index.org")
  (front-context-string . "Inbox]]\n2. [[fil")
@@ -28,8 +28,8 @@
  (last-modified 25857 5286 975353 0))
 ("org-capture-last-stored"
  (filename . "~/org/inbox.org")
- (front-context-string . "* TODO Figure ou")
- (rear-context-string . "Braya's wedding\n")
- (position . 161)
- (last-modified 25859 44771 623523 0))
+ (front-context-string . "* TODO This is a")
+ (rear-context-string . "you capture it.\n")
+ (position . 102)
+ (last-modified 25925 22755 732363 730000))
 )

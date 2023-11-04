@@ -72,23 +72,21 @@
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
 
-;; (use-package circadian
-;;   :ensure t
-;;   :defer nil
-;;   :config
-;;   (setq calendar-latitude 49.3)
-;;   (setq calendar-longitude 123.1)
-;;   (setq circadian-themes '(("6:00"  . modus-operandi)
-;; 			   ("19:00" . modus-vivendi)))
-;;   (circadian-setup))
+;; ;; Export modus themes to various formats.
+;; (require 'modus-themes-exporter)
 
-(require 'modus-themes-exporter)
 
 ;; -----------------------------------------------------------------------------
 ;; OS-Specific Configuration
 
 (when (eq system-type 'gnu/linux)
-  (use-package vterm))
+  (use-package vterm)			; shell for linux
+  (use-package vterm-toggle
+    :bind
+    ("C-c t" . 'vterm-toggle)))
+
+(when (eq system-type 'windows-nt)
+  (use-package powershell))		; shell for windows
 
 
 ;; -----------------------------------------------------------------------------
@@ -114,11 +112,17 @@
 (unbind-key "C-M-w") ; since I use this to start my web browser
 (unbind-key "C-M-e") ; since I use this to start an emacs client
 
+(use-package ctrlf ; more intuitive ISearch, with a nice interface
+  :config
+  (ctrlf-mode))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Autocompletion
 
-; (require 'native-completion)
+;; ;; This provides a pretty good completion system using only built in tools.
+;; ;; It isn't as nice as the packages below, but serves as a usable backup.
+;; (require 'native-completion)
 
 (electric-pair-mode)
 (setq tab-always-indent 'complete)
@@ -168,17 +172,13 @@
 (setq org-directory (expand-file-name "~/org"))
 
 (use-package org
+  :config
+  (advice-add 'org-agenda-quit :before 'org-save-all-org-buffers)
+  
   :hook
   ('org-mode . 'visual-line-mode)
   
   :custom
-  ;; Improve org mode looks
-  (org-startup-indented t)
-  (org-pretty-entities t)
-  (org-hide-emphasis-markers t)
-  (org-startup-with-inline-images t)
-  (org-image-actual-width '(300))
-  
   (org-return-follows-link t)
   
   (org-todo-keywords
@@ -186,16 +186,13 @@
       "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
   
   (org-agenda-files (list org-directory))
-
   (org-archive-location
    (concat (file-name-as-directory org-directory) "archive/archive23.org::"))
 
   (org-refile-targets
 	'((nil :maxlevel . 9)
           (org-agenda-files :maxlevel . 9)))
-  
   (org-outline-path-complete-in-steps nil)
-  
   (org-refile-use-outline-path t)
   
   (denote-org-capture-specifier "%l\n%i\n%?")
@@ -212,7 +209,6 @@
 			    :no-save t :immediate-finish nil :kill-buffer t)))
 
   (org-agenda-remove-tags t)
-
   (org-agenda-custom-commands '(("u" "School" tags-todo "ubc")
 				("r" "Raincoast" tags-todo "raincoast")
 				("p" "Personal" tags-todo "personal")))
@@ -244,28 +240,17 @@
 
   (calendar-holidays holiday-local-holidays)
 
-  ;; See the ob-* use-package declarations below for language-
-  ;; specific org-babel set up.
-  (org-confirm-babel-evaluate nil)
-
   (fill-prefix "") ; fixes some bug with pressing RET in org buffers.
   
   :bind
   ("C-c a" . 'org-agenda)
   ("C-c c" . 'org-capture)
-  ("C-c o" . (lambda ()
+  ("C-c i" . (lambda ()
 	       (interactive)
-	       (find-file "~/Org/index.org"))))
-
-(use-package ob-R
-  :ensure nil
-  :after (org)
-  :commands (org-babel-execute:R))
-
-(use-package ob-lisp
-  :ensure nil
-  :after (org)
-  :commands (org-babel-execute:lisp))
+	       (find-file "~/org/inbox.org")))
+  ("C-c p" . (lambda ()
+	       (interactive)
+	       (find-file "~/org/planner.org"))))
 
 
 ;; -----------------------------------------------------------------------------
@@ -445,29 +430,31 @@
 ;; -----------------------------------------------------------------------------
 ;; Eshell
 
+;; Note: I don't really use eshell anymore since 'vterm' is wayyy better.
+
 ;; This is necessary since the 'clear' command sends any current input
 ;; on the command line before clearing for some reason. The following
 ;; code renders the expected C-l behavior of most shells.
 
-(declare-function eshell-kill-input 'eshell)
-(declare-function eshell-send-input 'eshell)
-(declare-function eshell-bol        'eshell)
+;; (declare-function eshell-kill-input 'eshell)
+;; (declare-function eshell-send-input 'eshell)
+;; (declare-function eshell-bol        'eshell)
 
-(defun run-this-in-eshell (cmd)
-    "Run the command 'CMD' in eshell."
-    `(goto-char (point-max))
-    (eshell-kill-input)
-    (message (concat "Running in Eshell: " cmd))
-    (insert cmd)
-    (eshell-send-input)
-    `(goto-char (point-max))
-    (eshell-bol)
-    (yank))
+;; (defun run-this-in-eshell (cmd)
+;;     "Run the command 'CMD' in eshell."
+;;     `(goto-char (point-max))
+;;     (eshell-kill-input)
+;;     (message (concat "Running in Eshell: " cmd))
+;;     (insert cmd)
+;;     (eshell-send-input)
+;;     `(goto-char (point-max))
+;;     (eshell-bol)
+;;     (yank))
 
-(add-hook 'eshell-mode-hook
-	  (lambda ()
-	    (interactive)
-	    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
+;; (add-hook 'eshell-mode-hook
+;; 	  (lambda ()
+;; 	    (interactive)
+;; 	    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
 
 
 ;; -----------------------------------------------------------------------------
@@ -476,9 +463,9 @@
 ;; Esup provides start up time profiling. See also the start up timer message
 ;; function in early-init.el.
 
-(use-package esup
-    :custom
-    (esup-depth 0))
+;; (use-package esup
+;;     :custom
+;;     (esup-depth 0))
 
 ;; The garbage collection threshold is set very low in early-init to reduce
 ;; start up time. Here we return it to a reasonable value.
