@@ -109,19 +109,21 @@
 (unbind-key "C-?") ; formerly undo-redo
 (bind-key "C-x M-u" 'undo-redo)
 
-(unbind-key "C-M-w") ; since I use this to start my web browser
-(unbind-key "C-M-e") ; since I use this to start an emacs client
-
-(use-package ctrlf ; more intuitive ISearch, with a nice interface
-  :config
+(use-package ctrlf ; more intuitive ISearch, with a nice interface. Not starting?
+  :init
   (ctrlf-mode))
+
+(use-package ediff
+  :custom
+  (ediff-split-window-function 'split-window-horizontal)
+  (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 
 ;; -----------------------------------------------------------------------------
 ;; Autocompletion
 
-;; ;; This provides a pretty good completion system using only built in tools.
-;; ;; It isn't as nice as the packages below, but serves as a usable backup.
+;; This provides a pretty good completion system using only built in tools.
+;; It isn't as nice as the packages below, but serves as a usable backup.
 ;; (require 'native-completion)
 
 (electric-pair-mode)
@@ -153,6 +155,11 @@
   :init
   (global-corfu-mode))
 
+(use-package corfu-candidate-overlay
+  :after corfu
+  :config
+  (corfu-candidate-overlay-mode +1))
+
 (use-package abbrev
   :ensure nil
   :diminish
@@ -169,7 +176,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Org Mode
 
-(setq org-directory (expand-file-name "~/org"))
+(defvar org-directory (expand-file-name "~/org"))
 
 (use-package org
   :config
@@ -283,17 +290,9 @@
 
 ;; R
 (use-package ess
-  :config
-  (when (eq system-type 'windows-nt)
-    (setq inferior-ess-r-program "R.exe")
-    (setq inferior-ess-R-program-name "R.exe"))
-  
   :custom
   (ess-use-flymake nil)
   (inferior-R-args "--no-save")
-  (ess-R-readline nil) ; I don't remember why this is here.
-
-  ;; syntax hilighting options
   (ess-R-font-lock-keywords
    '((ess-R-fl-keywor~modifiers . t)
      (ess-R-fl-keywor~fun-defs . t)
@@ -307,10 +306,9 @@
      (ess-fl-keywor~=)
      (ess-R-fl-keywor~F&T . t)
      (ess-R-fl-keywor~%op% . t)))
-  
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
-  ('inferior-ess-mode-hook
+  ('inferior-ess-mode-hook ; fixes color bug in console
    setq-local ansi-color-for-comint-mode 'filter))
 
 ;; Python
@@ -375,12 +373,15 @@
   ("C-c b f" . citar-open-files)
   ("C-c b b" . citar-insert-citation)
   :hook
+  (org-mode . citar-capf-setup)
   (markdown-mode . citar-capf-setup))
 
 (use-package denote
+  ;; quickly take notes in markdown format.
   :custom
   (denote-directory (file-name-as-directory "~/Notes"))
   (denote-file-type 'markdown-yaml)
+  ;; (denote-file-type nil) ; defaults to org
   (denote-infer-keywords t)
   (denote-sort-keywords t)
   (denote-prompts '(title keywords))
@@ -440,7 +441,7 @@
 ;; (declare-function eshell-send-input 'eshell)
 ;; (declare-function eshell-bol        'eshell)
 
-;; (defun run-this-in-eshell (cmd)
+;; (defun dh/run-this-in-eshell (cmd)
 ;;     "Run the command 'CMD' in eshell."
 ;;     `(goto-char (point-max))
 ;;     (eshell-kill-input)
@@ -454,7 +455,7 @@
 ;; (add-hook 'eshell-mode-hook
 ;; 	  (lambda ()
 ;; 	    (interactive)
-;; 	    (bind-key* "C-l" (run-this-in-eshell "clear 1") eshell-mode-map)))
+;; 	    (bind-key* "C-l" (dh/run-this-in-eshell "clear 1") eshell-mode-map)))
 
 
 ;; -----------------------------------------------------------------------------
