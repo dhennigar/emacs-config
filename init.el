@@ -66,8 +66,8 @@
       (bg-mode-line-active bg-blue-intense)
       (fg-mode-line-active fg-main))))
 
-;; This manually sets a dark or light theme on startup based on time of day.
-(if (and (< (nth 2 (decode-time (current-time))) 19)
+;; Set a dark or light theme on startup based on time of day.
+(if (and (< (nth 2 (decode-time (current-time))) 20)
 	 (>= (nth 2 (decode-time (current-time))) 6))
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
@@ -109,7 +109,7 @@
 (unbind-key "C-?") ; formerly undo-redo
 (bind-key "C-x M-u" 'undo-redo)
 
-(use-package ctrlf ; more intuitive ISearch, with a nice interface. Not starting?
+(use-package ctrlf ; more intuitive ISearch, with a nice interface.
   :init
   (ctrlf-mode))
 
@@ -117,6 +117,13 @@
   :custom
   (ediff-split-window-function 'split-window-horizontal)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package pomodoro
+  :custom
+  (pomodoro-work-time 25)
+  (pomodoro-break-time 5)
+  (pomodoro-long-break-time 15) ; step away from the screen for 15 min.
+  (pomodoro-nth-for-longer-break 4))
 
 
 ;; -----------------------------------------------------------------------------
