@@ -94,8 +94,8 @@
 ;; I don't want annoying beeps
 (setq ring-bell-function 'ignore)
 
-;; I want focus-follows-mouse type deal
-(setq focus-follows-mouse t)
-(setq mouse-autoselect-window t)
+;; If you want focus-follows-mouse type deal
+;; (setq focus-follows-mouse t)
+;; (setq mouse-autoselect-window t)
 
 ;;; early-init.el ends here

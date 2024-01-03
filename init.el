@@ -67,7 +67,7 @@
       (fg-mode-line-active fg-main))))
 
 ;; Set a dark or light theme on startup based on time of day.
-(if (and (< (nth 2 (decode-time (current-time))) 20)
+(if (and (< (nth 2 (decode-time (current-time))) 19)
 	 (>= (nth 2 (decode-time (current-time))) 6))
     (load-theme 'modus-operandi)
   (load-theme 'modus-vivendi))
@@ -118,19 +118,14 @@
   (ediff-split-window-function 'split-window-horizontal)
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
-(use-package pomodoro
-  :custom
-  (pomodoro-work-time 25)
-  (pomodoro-break-time 5)
-  (pomodoro-long-break-time 15) ; step away from the screen for 15 min.
-  (pomodoro-nth-for-longer-break 4))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Autocompletion
 
 ;; This provides a pretty good completion system using only built in tools.
 ;; It isn't as nice as the packages below, but serves as a usable backup.
+;; Note: Does not combine with vertico or corfu, but does work with orderless
+;; and marginalia.
 ;; (require 'native-completion)
 
 (electric-pair-mode)
@@ -209,18 +204,12 @@
   (org-outline-path-complete-in-steps nil)
   (org-refile-use-outline-path t)
   
-  (denote-org-capture-specifier "%l\n%i\n%?")
-  
   (org-capture-templates '(("t" "Task" entry
 			    (file "inbox.org")
 			    "* TODO %i%?")
 			   ("a" "Appointment" entry
 			    (file+headline "calendar.org" "Appointments")
-			    "* %i%? \n %^t")
-			   ("n" "Note" plain
-			    (file denote-last-path)
-			    #'denote-org-capture
-			    :no-save t :immediate-finish nil :kill-buffer t)))
+			    "* %i%? \n %^t")))
 
   (org-agenda-remove-tags t)
   (org-agenda-custom-commands '(("u" "School" tags-todo "ubc")
@@ -347,8 +336,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Writing
 
-(setenv "LANG" "en_CA")
-
 (use-package flyspell
   :ensure nil
   :diminish
@@ -387,6 +374,7 @@
   ;; quickly take notes in markdown format.
   :custom
   (denote-directory (file-name-as-directory "~/Notes"))
+  (denote-silo-extras--directories '("~/Notes/work" "~/Notes/chess"))
   (denote-file-type 'markdown-yaml)
   ;; (denote-file-type nil) ; defaults to org
   (denote-infer-keywords t)
@@ -407,15 +395,16 @@
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
   :custom
-  (markdown-command "pandoc")
-  :config
-  (visual-line-mode))
+  (markdown-command "pandoc"))
 
 (use-package poly-R
   :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)
   :custom
   (markdown-code-block-braces t)
   (markdown-asymmetric-header t))
+
+(add-hook 'markdown-mode-hook #'visual-line-mode)
+(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
 
 
 ;; -----------------------------------------------------------------------------
