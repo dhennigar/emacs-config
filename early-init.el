@@ -51,7 +51,7 @@
 ;; use a custom custom file
 (setq custom-file (concat user-emacs-directory "custom.el"))
 
-;; backups are stored in the system temp directory
+;; backups are stored in a backup directory
 (setq
  backup-directory-alist '((".*" . "~/.emacs.d/backups/"))
  delete-old-versions t

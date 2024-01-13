@@ -55,16 +55,17 @@
   :custom
   (modus-themes-org-blocks 'tinted-background)
   (modus-themes-common-palette-overrides
-    '((fnname blue-cooler)
-      (string green)
-      (variable cyan)
-      (cursor magenta-faint)
-      (bg-region bg-magenta-subtle)
-      (fg-region unspecified)
-      (border-mode-line-active unspecified)
-      (border-mode-line-inactive unspecified)
-      (bg-mode-line-active bg-blue-intense)
-      (fg-mode-line-active fg-main))))
+   '((fnname blue-cooler)
+     (string green)
+     (variable cyan)
+     (border-mode-line-active unspecified)
+     (border-mode-line-inactive)))
+  (modus-operandi-palette-overrides
+   '((bg-mode-line-active blue-cooler)
+     (fg-mode-line-active bg-dim)
+     (bg-region bg-blue-subtle)))
+  (modus-vivendi-palette-overrides
+   '((bg-region bg-blue-nuanced))))
 
 ;; Set a dark or light theme on startup based on time of day.
 (if (and (< (nth 2 (decode-time (current-time))) 19)
