@@ -53,7 +53,10 @@
 
 (use-package modus-themes
   :custom
+  ;; interface options
   (modus-themes-org-blocks 'tinted-background)
+  (modus-themes-prompts '(bold))
+  ;; customize colors
   (modus-themes-common-palette-overrides
    '((fnname blue-cooler)
      (string green)
@@ -84,7 +87,11 @@
   (use-package vterm)			; shell for linux
   (use-package vterm-toggle
     :bind
-    ("C-c t" . 'vterm-toggle)))
+    ("C-c t" . 'vterm-toggle))
+  (use-package ggtags
+    :bind
+    (:map ggtags-mode-map
+	  ("C-c g s" . 'ggtags-find-other-symbol))))
 
 (when (eq system-type 'windows-nt)
   (use-package powershell))		; shell for windows
@@ -120,6 +127,17 @@
   (ediff-window-setup-function 'ediff-setup-windows-plain))
 
 
+(use-package which-key
+  :custom
+  ;; Allow C-h to trigger which-key before it is done automatically
+  (which-key-show-early-on-C-h t)
+  ;; make sure which-key doesn't show normally but refreshes quickly after it is
+  ;; triggered.
+  (which-key-idle-delay 10000)
+  (which-key-idle-secondary-delay 0.05)
+  :init
+  (which-key-mode))
+
 ;; -----------------------------------------------------------------------------
 ;; Autocompletion
 
@@ -150,18 +168,22 @@
   (require 'corfu-popupinfo)
   (corfu-popupinfo-mode)
   :custom
-  (corfu-auto t)
+  (corfu-auto nil)
   (corfu-quit-no-match t)
   (corfu-min-width 30)
+  (corfu-popupinfo-delay nil)
   :bind
-  (:map corfu-map ("SPC" . corfu-insert-separator))
+  (:map corfu-map
+	("SPC" . corfu-insert-separator)
+	("<f1>" . corfu-popupinfo-toggle)
+	("<f2>" . corfu-popupinfo-location))
   :init
   (global-corfu-mode))
 
 (use-package corfu-candidate-overlay
   :after corfu
   :config
-  (corfu-candidate-overlay-mode +1))
+  (corfu-candidate-overlay-mode))
 
 (use-package abbrev
   :ensure nil
@@ -286,6 +308,9 @@
 ;; Programming Languages
 
 ;; R
+(defalias 'dh/ess-insert-pipe
+   (kmacro "SPC % > C-e <return>"))
+
 (use-package ess
   :custom
   (ess-use-flymake nil)
@@ -303,6 +328,10 @@
      (ess-fl-keywor~=)
      (ess-R-fl-keywor~F&T . t)
      (ess-R-fl-keywor~%op% . t)))
+  :bind
+  (:map ess-mode-map
+	("C-," . 'ess-insert-assign)
+	("C-." . 'dh/ess-insert-pipe))
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook ; fixes color bug in console

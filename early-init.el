@@ -64,9 +64,12 @@
 (setq custom-safe-themes t)
 
 ;; Default frame settings
+(set-face-attribute 'default nil
+		    :family "IBM Plex Mono"
+		    :height 110)
+
 (setq default-frame-alist
-      '((font . "IBM Plex Mono-11")
-	(height . 40)
+      '((height . 40)
 	(width . 84)
 	(left-fringe . 0)
 	(right-fringe . 0)))
