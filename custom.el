@@ -4,7 +4,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(ggtags yasnippet which-key vterm-toggle vertico standard-themes pyvenv poly-R pdf-tools orderless nov modus-themes marginalia lorem-ipsum julia-mode j-mode ht highlight-indentation go-mode flycheck esup ess ef-themes diminish denote ctrlf corfu-candidate-overlay citar chess buffer-move ahk-mode)))
+   '(yasnippet which-key vterm-toggle vertico standard-themes poly-R pdf-tools orderless nov modus-themes marginalia lorem-ipsum ht highlight-indentation ggtags flycheck esup ess ef-themes diminish denote ctrlf corfu-candidate-overlay citar buffer-move)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
