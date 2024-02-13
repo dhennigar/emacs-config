@@ -1,5 +1,5 @@
-;;; native-completion.el --- Making the most of the built in completion framework
-;;; Author: Daniel Hennigar
+;;; native-completion.el --- Making the most of the built-in completion framework
+;;; Author: Daniel Hennigar, 2024
 
 ;;; Commentary:
 
@@ -27,6 +27,7 @@
 	    #'minibuffer-previous-completion)
 
 (provide 'native-completion)
+
 ;;; native-completion.el ends here
 
 
