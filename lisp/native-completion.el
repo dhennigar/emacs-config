@@ -8,6 +8,12 @@
 
 ;;; Code:
 
+(setq display-buffer-alist
+      '(("\\*Completions\\*"
+	 (display-buffer-reuse-mode-window display-buffer-at-bottom)
+	 (window-parameters . ((mode-line-format . none))))))
+
+
 (setq completion-auto-help 'always)
 (setq completion-auto-select 'second-tab)
 
