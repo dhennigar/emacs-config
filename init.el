@@ -330,13 +330,20 @@
 ;; -----------------------------------------------------------------------------
 ;; R
 
-;; TODO: `ess-r-mode-map' is not defined in polymode. How can I use my ESS
-;;       keybindings in polymode (e.g., for assignment or pipes)?
-
-;; (defalias 'dh/ess-insert-pipe
+;;(defalias 'dh/ess-insert-pipe
 ;;    (kmacro "SPC % > C-e <return>"))
 
+
 (use-package ess
+  :config
+  (defun dh/ess-insert-pipe ()
+    "Remove surrounding whitespace as necessary, insert a pipe operator,
+then call `ess-roxy-newline' to create a newline and indent as necessary."
+    (interactive)
+    (unless (ess-inside-string-or-comment-p)
+      (delete-horizontal-space)
+      (insert " %>% ")
+      (ess-roxy-newline)))
   :custom
   (ess-use-flymake nil)
   (inferior-R-args "--no-save")
@@ -353,10 +360,11 @@
      (ess-fl-keyword:=)
      (ess-R-fl-keyword:F&T . t)
      (ess-R-fl-keyword:%op% . t)))
-  ;; :bind
-  ;; (:map ess-r-mode-map
-  ;; 	("C-," . ess-insert-assign)
-  ;; 	("C-." . dh/ess-insert-pipe))
+  :bind
+  (:map ess-r-mode-map
+	("<f1>" . ess-help)
+ 	("C-," . ess-insert-assign)
+   	("C-." . dh/ess-insert-pipe))
   :hook
   ('ess-mode-hook 'turn-on-pretty-mode)
   ('inferior-ess-mode-hook ; fixes color bug in console
@@ -445,6 +453,7 @@
 
 ;; Edit Rmarkdwon documents
 (use-package poly-R
+  :after (ess markdown)
   :mode ("\\.[rR]md\\'" . poly-gfm+r-mode)
   :custom
   (markdown-code-block-braces t)
