@@ -63,42 +63,40 @@
 ;; GUI settings for early init
 (setq custom-safe-themes t)
 
-;; Default frame settings
+;; Face attributes
 (set-face-attribute 'default nil
-		    :family "IBM Plex Mono"
+		    :family "Iosevka Comfy Wide"
+		    :weight 'semi-light
 		    :height 110)
 
+;; Default frame settings
 (setq default-frame-alist
       '((height . 40)
-	(width . 84)
+	(width . 130)
 	(left-fringe . 0)
 	(right-fringe . 0)))
 (setq inhibit-startup-screen t)
 (setq inhibit-splash-screen t)
 (setq tool-bar-mode nil)
-(set-scroll-bar-mode nil)
+(scroll-bar-mode -1)
 (setq menu-bar-mode nil)
 
-;; smooth scrolling
+;; Smoothe scrolling
 (pixel-scroll-precision-mode)
 (setq pixel-scroll-precision-use-momentum t)
 
-;; more minimal scratch message
+;; Minimal scratch message
 (setq initial-scratch-message
       ";; Emacs LISP *scratch* buffer\n\n")
 
-;; I want small window margins
+;; Small window margins
 (add-hook 'window-configuration-change-hook
           (lambda ()
             (set-window-margins
 	     (car (get-buffer-window-list
 		   (current-buffer) nil t)) 1 1)))
 
-;; I don't want annoying beeps
+;; No annoying beeps
 (setq ring-bell-function 'ignore)
-
-;; If you want focus-follows-mouse type deal
-;; (setq focus-follows-mouse t)
-;; (setq mouse-autoselect-window t)
 
 ;;; early-init.el ends here
