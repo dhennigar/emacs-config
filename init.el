@@ -52,7 +52,6 @@
 ;; Selectively hide minor modes from the mode line
 ;; Available via the use-package keyword `:diminish'
 (use-package diminish
-  :ensure t
   :config
   (diminish 'visual-line-mode))
 
@@ -61,16 +60,18 @@
 ;; Linux-specific configuration
 
 (when (eq system-type 'gnu/linux)
-  ;; A much nicer terminal emulator
   (use-package vterm)
   (use-package vterm-toggle
     :bind
     ("C-c t" . 'vterm-toggle))
-  ;; ctags-esque functionality
   (use-package ggtags
+    :init
+    (define-prefix-command 'dh/ggtags-map)
     :bind
-    (:map ggtags-mode-map
-	  ("C-c g s" . 'ggtags-find-other-symbol))))
+    ("C-c g" . 'dh/ggtags-map)
+    (:map dh/ggtags-map
+	  ("g" . 'ggtags-mode)
+	  ("s" . 'ggtags-find-other-symbol))))
 
 
 ;; -----------------------------------------------------------------------------
@@ -81,6 +82,7 @@
 (defvar dh/morning-transition 6)
 
 (use-package standard-themes
+  :defer nil
   :custom
   (standard-themes-disable-other-themes t)
   (standard-themes-mixed-fonts t)
@@ -138,7 +140,10 @@
 (bind-key* "C-x <left>"  'windmove-left)
 (bind-key* "C-x <up>"    'windmove-up)
 (bind-key* "C-x <down>"  'windmove-down)
+(bind-key* "<mouse-8>"   'previous-buffer)
+(bind-key* "<mouse-9>"   'next-buffer)
 (use-package buffer-move
+  :defer nil
   :bind
   ("C-x S-<right>" . 'buf-move-right)
   ("C-x S-<left>" . 'buf-move-left)
@@ -152,6 +157,7 @@
 
 ;; Superior search tool
 (use-package ctrlf
+  :defer nil
   :init
   (ctrlf-mode))
 
@@ -163,6 +169,7 @@
 
 ;; Show available key sequence completions with C-h
 (use-package which-key
+  :defer nil
   :diminish which-key-mode
   :custom
   (which-key-show-early-on-C-h t)
@@ -192,6 +199,7 @@
 
 ;; Space delimited orderless selection filtering
 (use-package orderless
+  :defer nil
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides
@@ -199,10 +207,12 @@
 
 ;; Provide useful details in completion buffers
 (use-package marginalia
+  :defer nil
   :init (marginalia-mode))
 
 ;; Provide completion candidates in a vertical list
 (use-package vertico
+  :defer nil
   :custom
   (vertico-count 8)
   (vertico-resize nil)
@@ -211,11 +221,13 @@
 
 ;; Persistant search history pairs well with vertico
 (use-package savehist
+  :defer nil
   :init
   (savehist-mode))
 
 ;; On-the-fly completion candidate overlay
 (use-package corfu
+  :defer nil
   :config
   (require 'corfu-popupinfo)
   (corfu-popupinfo-mode)
@@ -235,6 +247,7 @@
 
 ;; Quick abbreviation expansion
 (use-package abbrev
+  :defer nil
   :ensure nil ; does not require installation
   :diminish abbrev-mode
   :config
@@ -249,80 +262,6 @@
 
 
 ;; -----------------------------------------------------------------------------
-;; Org Mode
-
-(defvar org-directory (expand-file-name "~/org"))
-
-(use-package org
-  :custom
-  ;; File locations and refiling
-  (org-agenda-files (list org-directory))
-  (org-archive-location
-   (concat (file-name-as-directory org-directory) "archive/archive23.org::"))
-  (org-refile-targets
-	'((nil :maxlevel . 9)
-          (org-agenda-files :maxlevel . 9)))
-  (org-outline-path-complete-in-steps nil)
-  (org-refile-use-outline-path t)
-
-  ;; Capture
-  (org-capture-templates '(("t" "Task" entry
-			    (file "inbox.org")
-			    "* TODO %i%?")
-			   ("a" "Appointment" entry
-			    (file+headline "calendar.org" "Appointments")
-			    "* %i%? \n %^t")
-			   ("n" "New note (with Denote)" plain
-			    (file denote-last-path)
-			    #'denote-org-capture
-			    :no-save t
-			    :immediate-finish nil
-			    :kill-buffer t
-			    :jump-to-captured t)))
-
-  ;; Agenda
-  (org-agenda-remove-tags t)
-  (org-agenda-custom-commands '(("u" "School" tags-todo "ubc")
-				("r" "Raincoast" tags-todo "raincoast")
-				("p" "Personal" tags-todo "personal")))
-
-  (holiday-local-holidays		; Define local holidays
-	'((holiday-fixed 1 1 "New Year's Day")
-	  (holiday-float 2 1 3 "Family Day")
-	  (holiday-easter-etc -2 "Good Friday")
-	  (holiday-float 5 1 -2 "Victoria Day")
-	  (holiday-fixed 6 21 "Indigenous Peoples Day")
-	  (holiday-fixed 7 1 "Canada Day")
-	  (holiday-float 8 1 1 "BC Day")
-	  (holiday-fixed 9 30 "National Day for Truth and Reconcilliation")
-	  (holiday-float 10 1 2 "Canadian Thanksgiving")
-	  (holiday-fixed 10 31 "Halloween")
-	  (holiday-fixed 11 11 "Rememberance Day")
-	  (holiday-float 11 4 4 "American Thanksgiving")
-	  (holiday-fixed 12 25 "Christmas")))
-
-  (holiday-general-holidays nil)	; Remove US and Religeous holidays
-  (holiday-christian-holidays nil)
-  (holiday-islamic-holidays nil)
-  (holiday-bahai-holidays nil)
-  (holiday-hebrew-holidays nil)
-  (holiday-oriental-holidays nil)
-  (calendar-holidays holiday-local-holidays)
-
-  ;; Behaviour of RET in org buffers
-  (org-return-follows-link t)		; press enter to follow links
-  (fill-prefix "") ; fixes some bug with pressing RET in org buffers.
-
-  :config
-  ;; save all org-agenda buffers upon exit
-  (advice-add 'org-agenda-quit :before 'org-save-all-org-buffers)
-
-  :bind
-  ("C-c a" . 'org-agenda)
-  ("C-c c" . 'org-capture))
-
-
-;; -----------------------------------------------------------------------------
 ;; Programming tools
 
 ;; Documentation on hover
@@ -333,15 +272,18 @@
   (eldoc-idle-delay 2.0))
 
 ;; Flymake, the on-the-fly syntax checker
-(require 'flymake)
-(setq flymake-no-changes-timeout 2.0)
-(defvar-keymap dh/flymake-command-map
-  :doc "My entry point for common Flymake commands."
-  "n" #'flymake-goto-next-error
-  "p" #'flymake-goto-prev-error
-  "b" #'flymake-show-buffer-diagnostics)
-(bind-key "C-c f" dh/flymake-command-map)
-;; (add-hook 'emacs-lisp-mode-hook #'flymake-mode)
+(use-package flymake
+  :ensure nil
+  :init (define-prefix-command 'dh/flymake-map)
+  :custom
+  (flymake-no-changes-timeout 2.0)
+  :bind
+  ("C-c f" . dh/flymake-map)
+  (:map dh/flymake-map
+	("f" . flymake-mode)
+	("n" . flymake-goto-next-error)
+	("p" . flymake-goto-prev-error)
+	("b" . flymake-show-buffer-diagnostics)))
 
 ;; Projectile, the project-level management system
 (use-package projectile
@@ -447,39 +389,24 @@
 
 ;; Citation manager (integrates with Zotero via better-bibtex)
 (use-package citar
+  :defer nil
+  :after org-roam
+  :init
+  (define-prefix-command 'dh/citar-map)
   :custom
   (citar-bibliography '("~/Zotero/references.bib"))
   (org-cite-global-bibliography '("~/Zotero/references.bib"))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
-  (citar-bibliography '("~/Zotero/references.bib"))
   :bind
-  ("C-c b f" . citar-open-files)
-  ("C-c b b" . citar-insert-citation)
+  ("C-c b" . dh/citar-map)
+  (:map dh/citar-map
+	("b" . citar-open)
+	("i" . citar-insert-citation))
   :hook
   (org-mode . citar-capf-setup)
   (markdown-mode . citar-capf-setup))
-
-;; Notes management (implements custom file-naming format for organization)
-(use-package denote
-  :custom
-  (denote-directory (file-name-as-directory "~/Notes"))
-  (denote-silo-extras--directories '("~/Notes/work" "~/Notes/chess"))
-  (denote-file-type 'markdown-yaml)
-  (denote-infer-keywords t)
-  (denote-sort-keywords t)
-  (denote-prompts '(title keywords))
-  (denote-date-prompt-use-org-read-date t)
-  :bind
-  ("C-c d d" . denote)
-  ("C-c d o" . denote-open-or-create)
-  ("C-c d l" . denote-link)
-  ("C-c d L" . denote-add-links)
-  ("C-c d b" . denote-backlinks)
-  ("C-c d f" . denote-find-link)
-  ("C-c d F" . denote-find-backlink)
-  ("C-c d r" . denote-rename-file))
 
 ;; Edit markdown documents
 (use-package markdown-mode
@@ -497,8 +424,95 @@
   (markdown-code-block-braces t)
   (markdown-asymmetric-header t))
 
-;; Cleanup hooks when opening markdown files
-(add-hook 'find-file-hook #'denote-link-buttonize-buffer)
+
+;; -----------------------------------------------------------------------------
+;; Org
+
+(defvar org-directory (expand-file-name "~/org"))
+
+(use-package org
+  :defer nil
+  :custom
+  ;; File locations and refiling
+  (org-agenda-files (list org-directory))
+  (org-archive-location
+   (concat (file-name-as-directory org-directory) "archive/archive23.org::"))
+  (org-refile-targets
+	'((nil :maxlevel . 9)
+          (org-agenda-files :maxlevel . 9)))
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-use-outline-path t)
+
+  ;; Capture
+  (org-capture-templates '(("t" "Task" entry
+			    (file "inbox.org")
+			    "* TODO %i%?")))
+
+  ;; Agenda
+  (org-agenda-remove-tags t)
+  (org-agenda-custom-commands '(("u" "School" tags-todo "ubc")
+				("r" "Raincoast" tags-todo "raincoast")
+				("p" "Personal" tags-todo "personal")))
+
+  (holiday-local-holidays		; Define local holidays
+	'((holiday-fixed 1 1 "New Year's Day")
+	  (holiday-float 2 1 3 "Family Day")
+	  (holiday-easter-etc -2 "Good Friday")
+	  (holiday-float 5 1 -2 "Victoria Day")
+	  (holiday-fixed 6 21 "Indigenous Peoples Day")
+	  (holiday-fixed 7 1 "Canada Day")
+	  (holiday-float 8 1 1 "BC Day")
+	  (holiday-fixed 9 30 "National Day for Truth and Reconcilliation")
+	  (holiday-float 10 1 2 "Canadian Thanksgiving")
+	  (holiday-fixed 10 31 "Halloween")
+	  (holiday-fixed 11 11 "Rememberance Day")
+	  (holiday-float 11 4 4 "American Thanksgiving")
+	  (holiday-fixed 12 25 "Christmas")))
+
+  (holiday-general-holidays nil)	; Remove US and Religeous holidays
+  (holiday-christian-holidays nil)
+  (holiday-islamic-holidays nil)
+  (holiday-bahai-holidays nil)
+  (holiday-hebrew-holidays nil)
+  (holiday-oriental-holidays nil)
+  (calendar-holidays holiday-local-holidays)
+
+  ;; Behaviour of RET in org buffers
+  (org-return-follows-link t)		; press enter to follow links
+  (fill-prefix "") ; fixes some bug with pressing RET for newlines
+
+  :config
+  ;; save all org-agenda buffers upon exit
+  (advice-add 'org-agenda-quit :before 'org-save-all-org-buffers)
+
+  :bind
+  ("C-c a" . 'org-agenda)
+  ("C-c c" . 'org-capture))
+
+(use-package org-roam
+  :defer nil
+  :init (define-prefix-command 'dh/org-roam-map)
+  :custom
+  (org-roam-directory "~/org/roam/")
+  :bind
+  ("C-c n" . dh/org-roam-map)
+  (:map dh/org-roam-map
+	("b" . org-roam-buffer-toggle)
+        ("f" . org-roam-node-find)
+        ("g" . org-roam-graph)
+        ("i" . org-roam-node-insert)
+        ("n" . org-roam-capture)
+        ("j" . org-roam-dailies-capture-today))
+  :config
+  (org-roam-db-autosync-mode))
+
+(use-package citar-org-roam
+  :defer nil
+  :after (citar org-roam)
+  :no-require
+  :diminish citar-org-roam-mode
+  :custom (citar-org-roam-subdir "bib")
+  :config (citar-org-roam-mode))
 
 
 ;; -----------------------------------------------------------------------------
@@ -530,60 +544,41 @@
   (elfeed-search-filter "@1-week-ago +unread ")
   :config
   (use-package elfeed-org
-    :after (elfeed)
-    :demand t
     :config
     (elfeed-org))
   (use-package elfeed-tube
-    :after (elfeed)
     :bind (:map elfeed-search-mode-map
 		("F" . 'elfeed-tube-fetch)))
   (use-package elfeed-tube-mpv
-    :after (elfeed-tube)
     :bind (:map elfeed-show-mode-map
 		("Y" . 'elfeed-tube-mpv))))
 
 ;; Internet Radio
 (use-package eradio
-  :init
-  (defvar dh/eradio-mode nil
-  "A basic minor mode to display `eradio' status.")
-  (defvar dh/eradio-mode-line " eradio")
-  (add-to-list 'minor-mode-alist '(dh/eradio-mode dh/eradio-mode-line))
-  :config
-  (defun dh/eradio-mode ()
-    "Toggles eradio player and enables my minor mode."
-    (interactive)
-    (if dh/eradio-mode
-	(progn
-	  (eradio-stop)
-	  (message "eradio stopped."))
-      (progn
-	(eradio-play)
-	(message "eradio started.")
-	(setq dh/eradio-mode-line
-	      (format " eradio: %s"
-		      (car (rassoc eradio-current-channel eradio-channels))))))
-    (setq dh/eradio-mode (not dh/eradio-mode))
-    (force-mode-line-update))
+  :init (define-prefix-command 'dh/eradio-map)
+  :ensure nil
   :bind
-  ("C-c r" . dh/eradio-mode)
+  ("C-c r" . dh/eradio-map)
+  (:map dh/eradio-map
+	("p" . eradio-play)
+	("s" . eradio-stop)
+	("t" . eradio-toggle))
   :custom
   (eradio-player '("mpv" "--no-video" "--no-terminal"))
   (eradio-channels
-   '(("CBC Vancouver" . "http://playerservices.streamtheworld.com/pls/CBU2FM_CBC.pls")
-     ("CBC Victoria" . "http://playerservices.streamtheworld.com/pls/CBCVFM_CBC.pls")
+   '(("CBC Van" . "http://playerservices.streamtheworld.com/pls/CBU2FM_CBC.pls")
+     ("CBC Vic" . "http://playerservices.streamtheworld.com/pls/CBCVFM_CBC.pls")
      ("CBC Music" . "http://playerservices.streamtheworld.com/pls/CBUFM_CBC.pls")
-     ("AM730 Traffic" . "https://corus.leanstream.co/CKGOAM-MP3")
-     ("CFUV UVic Campus Radio" . "https://ais-sa1.streamon.fm/7132_64k.aac")
-     ("CiTR UBC Campus Radio" . "https://live.citr.ca/live.aac")
-     ("BOX Afrofusion" . "https://play.streamafrica.net/afrofusion")
-     ("BOX Lofi" . "https://play.streamafrica.net/lofiradio")
-     ("BOX Reggae" . "https://play.streamafrica.net/reggaerepublic")
-     ("SomaFM Groove Salad" . "https://somafm.com/groovesalad256.pls")
-     ("SomaFM Groove Salad Classic" . "https://somafm.com/gsclassic.pls")
-     ("SomaFM Suburbs of Goa" . "https://somafm.com/suburbsofgoa.pls")
-     ("SomaFM Indie Pop Rocks" . "https://somafm.com/indiepop.pls"))))
+     ("AM730" . "https://corus.leanstream.co/CKGOAM-MP3")
+     ("CFUV" . "https://ais-sa1.streamon.fm/7132_64k.aac")
+     ("CiTR" . "https://live.citr.ca/live.aac")
+     ("Afro" . "https://play.streamafrica.net/afrofusion")
+     ("Lofi" . "https://play.streamafrica.net/lofiradio")
+     ("Reggae" . "https://play.streamafrica.net/reggaerepublic")
+     ("Groove" . "https://somafm.com/groovesalad256.pls")
+     ("Groove Classic" . "https://somafm.com/gsclassic.pls")
+     ("World" . "https://somafm.com/suburbsofgoa.pls")
+     ("Indie" . "https://somafm.com/indiepop.pls"))))
 
 ;; Watch YouTube videos
 (use-package yeetube
@@ -604,7 +599,7 @@
 ;;     :custom
 ;;     (esup-depth 0))
 
-;; The garbage collection threshold is set very low in `early-init.el' to reduce
+;; The garbage collection threshold is set very low in early init to reduce
 ;; start-up time. Here we return it to a reasonable value.
 (setq gc-cons-threshold (* 2 1000 1000))
 
