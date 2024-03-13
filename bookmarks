@@ -4,10 +4,10 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-refile-last-stored"
  (filename . "~/org/planner.org")
- (front-context-string . "*** TODO This is")
- (rear-context-string . "DS's and DJ's\n\n\n")
- (position . 307)
- (last-modified 25925 22794 829263 602000))
+ (front-context-string . "*** TODO Put mus")
+ (rear-context-string . " interface)\n\n\n\n\n")
+ (position . 1624)
+ (last-modified 26089 60526 78449 183000))
 ("Org Index"
  (filename . "~/Org/index.org")
  (front-context-string . "Inbox]]\n2. [[fil")
@@ -27,9 +27,9 @@
  (position . 1213)
  (last-modified 25857 5286 975353 0))
 ("org-capture-last-stored"
- (filename . "~/org/inbox.org")
- (front-context-string . "* TODO Put music")
- (rear-context-string . "you capture it.\n")
- (position . 102)
- (last-modified 26059 45488 605379 974000))
+ (filename . "~/org/roam/20240311215751-radio.org")
+ (front-context-string . "\nsee [[www.radio")
+ (rear-context-string . "\n#+title: Radio\n")
+ (position . 83)
+ (last-modified 26096 253 533941 103000))
 )
