@@ -1,0 +1,18 @@
+#+TITLE: Elfeed Configuration File
+#+AUTHOR: Daniel Hennigar
+
+* Feeds                                                              :elfeed:
+
+** [[https://planet.emacslife.com/atom.xml][Planet Emacslife]]                                                   :emacs:
+
+** [[https://pwelverumandsun.substack.com/feed][PW Elverum and Sun Substack]]                                     :substack:
+
+** [[https://hakaimagazine.com/feed][Hakai Magazine]]                                                      :news:
+
+** [[https://thenarwhal.ca/feed/][Narwhal]]                                                             :news:
+
+** [[https://www.nasa.gov/news-release/feed/][NASA News Releases]]                                                  :news:
+
+** [[https://www.youtube.com/feeds/videos.xml?channel_id=UC0uTPqBCFIpZxlz_Lv1tk_g][Protesilaos Stavrou]]                                              :youtube:
+
+** [[https://www.cbc.ca/webfeed/rss/rss-topstories][CBC News]]                                                            :news:
