@@ -71,8 +71,8 @@
 
 ;; Default frame settings
 (setq default-frame-alist
-      '((height . 40)
-	(width . 130)
+      '((height . 30)
+	(width . 100)
 	(left-fringe . 0)
 	(right-fringe . 0)))
 (setq inhibit-startup-screen t)

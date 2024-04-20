@@ -2,34 +2,34 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-refile-last-stored"
+(("planner.org"
  (filename . "~/org/planner.org")
- (front-context-string . "*** TODO Put mus")
- (rear-context-string . " interface)\n\n\n\n\n")
- (position . 1624)
- (last-modified 26089 60526 78449 183000))
-("Org Index"
- (filename . "~/Org/index.org")
- (front-context-string . "Inbox]]\n2. [[fil")
- (rear-context-string . "file:inbox.org][")
- (position . 114)
- (last-modified 25857 5358 52645 0))
-("Early Init File"
+ (front-context-string . "#+TITLE: Persona")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26142 64261 147756 77000))
+("inbox.org"
+ (filename . "~/org/inbox.org")
+ (front-context-string . "#+TITLE: Inbox\n#")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26137 40003 523266 453000))
+("ssh:nuc"
+ (filename . "/ssh:nuc:~/")
+ (front-context-string . ".\n  drwxr-xr-x 5")
+ (rear-context-string . "96 Apr  9 11:41 ")
+ (position . 71)
+ (last-modified 26133 38763 601807 648000))
+("early-init.el"
  (filename . "~/.emacs.d/early-init.el")
- (front-context-string . "\n;; ------------")
- (rear-context-string . "nit.\n\n;;; Code:\n")
- (position . 937)
- (last-modified 25857 5318 47519 0))
-("Init File"
+ (front-context-string . ";;; early-init.e")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26133 38711 12296 967000))
+("init.el"
  (filename . "~/.emacs.d/init.el")
- (front-context-string . "\n;; ------------")
- (rear-context-string . "mat.\n\n;;; Code:\n")
- (position . 1213)
- (last-modified 25857 5286 975353 0))
-("org-capture-last-stored"
- (filename . "~/org/roam/20240311215751-radio.org")
- (front-context-string . "\nsee [[www.radio")
- (rear-context-string . "\n#+title: Radio\n")
- (position . 83)
- (last-modified 26096 253 533941 103000))
+ (front-context-string . ";;; init.el --- ")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26133 38690 377694 728000))
 )

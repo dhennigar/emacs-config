@@ -53,7 +53,8 @@
 ;; Available via the use-package keyword `:diminish'
 (use-package diminish
   :config
-  (diminish 'visual-line-mode))
+  (diminish 'visual-line-mode)
+  (diminish 'org-indent-mode))
 
 
 ;; -----------------------------------------------------------------------------
@@ -78,8 +79,8 @@
 ;; Theme settings
 
 ;; Set these transition times (in hours) for time-appropriate theme selection.
-(defvar dh/evening-transition 19)
-(defvar dh/morning-transition 6)
+(defvar dh/evening-transition 20)
+(defvar dh/morning-transition 5)
 
 (use-package standard-themes
   :defer nil
@@ -336,7 +337,9 @@
      (ess-fl-keyword:delimiters)
      (ess-fl-keyword:=)
      (ess-R-fl-keyword:F&T . t)
-     (ess-R-fl-keyword:%op% . t))))
+     (ess-R-fl-keyword:%op% . t)))
+  :bind
+  ("C-c C-r" . R))
 
 ;; Tidyverse-esque data viewer in an Emacs buffer
 (use-package ess-view-data
@@ -349,17 +352,53 @@
 
 
 ;; -----------------------------------------------------------------------------
-;; Common Lisp
+;; Python
+
+(use-package elpy
+  :init (elpy-enable)
+  :custom
+  (python-shell-interpreter "jupyter")
+  (python-shell-interpreter-args "console --simple-prompt")
+  (python-shell-prompt-detect-failure-warning nil)
+  :config
+  (add-to-list 'python-shell-completion-native-disabled-interpreters
+               "jupyter"))
+
+
+;; -----------------------------------------------------------------------------
+;; Common LISP
 
 ;; `slime-helper.el' adds quicklisp to Emacs load path
 
 (defun dh/load-quicklisp-slime-helper ()
   "Perform the setup for Common LISP development with SLIME."
   (interactive)
-  (setq-default inferior-lisp-program "sbcl")
+  (setq-default inferior-lisp-program "sbcli")
   (load (expand-file-name "~/quicklisp/slime-helper.el")))
 
 (add-hook 'lisp-mode-hook #'dh/load-quicklisp-slime-helper)
+
+
+;; -----------------------------------------------------------------------------
+;; SCHEME
+
+(use-package geiser
+  :config
+  (use-package geiser-chicken
+    :custom
+    (geiser-chicken-binary "chicken-csi"))
+  (use-package geiser-racket))
+
+
+;; -----------------------------------------------------------------------------
+;; Emacs LISP
+
+(defun dh/eval-print-sexp ()
+  (interactive)
+  (move-end-of-line nil)
+  (eval-print-last-sexp)) 
+
+(bind-key "C-<return>" 'dh/eval-print-sexp 'lisp-interaction-mode-map)
 
 
 ;; -----------------------------------------------------------------------------
@@ -385,7 +424,10 @@
   :custom
   (ispell-personal-dictionary "~/.hunspell")
   (ispell-cmd-args "-p ~/.hunspell")
-  (ispell-program-name "hunspell"))
+  (ispell-program-name "hunspell")
+  :config
+  (unless (file-exists-p ispell-personal-dictionary)
+    (write-region "" nil ispell-personal-dictionary nil 0)))
 
 ;; Citation manager (integrates with Zotero via better-bibtex)
 (use-package citar
@@ -451,8 +493,8 @@
   ;; Agenda
   (org-agenda-remove-tags t)
   (org-agenda-custom-commands '(("u" "School" tags-todo "ubc")
-				("r" "Raincoast" tags-todo "raincoast")
-				("p" "Personal" tags-todo "personal")))
+				("r" "Raincoast" tags-todo "rcf")
+				("p" "Personal" tags-todo "per")))
 
   (holiday-local-holidays		; Define local holidays
 	'((holiday-fixed 1 1 "New Year's Day")
@@ -481,13 +523,35 @@
   (org-return-follows-link t)		; press enter to follow links
   (fill-prefix "") ; fixes some bug with pressing RET for newlines
 
+  ;; No automatic bookmarks
+  (org-capture-bookmark nil)
+  (org-bookmark-names-plist nil)
+
+  ;; Aesthetics
+  (org-startup-indented t)
+  (org-hide-emphasis-markers t)
+  (org-pretty-entities t)
+
   :config
   ;; save all org-agenda buffers upon exit
   (advice-add 'org-agenda-quit :before 'org-save-all-org-buffers)
-
+  ;; replace "-" list markers with a dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 ()
+				  (compose-region (match-beginning 1) (match-end 1) "•"))))))
   :bind
   ("C-c a" . 'org-agenda)
   ("C-c c" . 'org-capture))
+
+(use-package org-appear
+  :custom
+  (org-appear-autoemphasis t)
+  (org-appear-autolinks t)
+  (org-appear-autosubmarkers t)
+  (org-appear-autoentities t)
+  :hook
+  (org-mode . (lambda () (org-appear-mode 1))))
 
 (use-package org-roam
   :defer nil
@@ -514,6 +578,37 @@
   :custom (citar-org-roam-subdir "bib")
   :config (citar-org-roam-mode))
 
+(use-package org-gcal
+  :demand t
+  :custom
+  (org-gcal-client-id
+   "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com")
+  (oauth2-auto-google-client-id
+   "18231230218-kmo8nh08p6o5t4hujcu2j1q7kra5gqk1.apps.googleusercontent.com")
+  (org-gcal-client-secret
+   "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")
+  (oauth2-auto-google-client-secret
+   "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")
+  (org-gcal-fetch-file-alist '(("danrhennigar@gmail.com" . "~/org/gcal.org")))
+  (org-gcal-recurring-events-mode 'nested)
+  (org-gcal-notify-p nil)
+  :config
+  (let ((inhibit-message t))
+    (org-gcal-sync nil t)))
+
+
+(use-package org-alert
+  :after org
+  :demand t
+  :custom
+
+  (alert-default-style 'libnotify)
+  (org-alert-notification-title "Org TODO")
+  (org-alert-match-string
+   "SCHEDULED>=\"<today>\"+SCHEDULED<\"<tomorrow>\"|DEADLINE>=\"<today>\"+DEADLINE<\"<tomorrow>\"""SCHEDULED>=\"<today>\"+SCHEDULED<\"<tomorrow>\"|DEADLINE>=\"<today>\"+DEADLINE<\"<tomorrow>\"|:org-gcal:")
+  :config
+  (org-alert-enable))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Reading, News, and Multimedia
@@ -534,7 +629,11 @@
   :custom
   (calibre-libraries
    '(("Fiction" . "~/Documents/Library/Calibre/Fiction")
-     ("Non-Fiction" . "~/Documents/Library/Calibre/Non-Fiction"))))
+     ("Science" . "~/Documents/Library/Calibre/Science")
+     ("Chess" . "~/Documents/Library/Calibre/Chess")
+     ("Humanities" . "~/Documents/Library/Calibre/Humanities")))
+  :bind
+  ("C-c l" . calibre-library))
 
 ;; News feeds
 (use-package elfeed
@@ -587,6 +686,49 @@
   (yeetube-display-thumbnails nil)
   :bind
   ("C-c y" . 'yeetube-search))
+
+
+;; -----------------------------------------------------------------------------
+;; Chess
+
+(use-package pygn-mode
+  :bind
+  (:map pygn-mode-map
+	("<right>" . pygn-mode-next-move-follow-board)
+	("<left>" . pygn-mode-previous-move-follow-board)
+	("M-e" . pygn-mode-engine-go-depth)
+	("M-n" . pygn-mode-next-game)
+	("M-p" . pygn-mode-previous-game)))
+
+
+;; -----------------------------------------------------------------------------
+;; Study timer
+
+(use-package pomm
+  :init
+  (define-prefix-command 'dh/pomm-map)
+  :custom
+  (pomm-audio-enabled t)
+  (pomm-audio-player-executable "mpv")
+  (pomm-third-time-csv-history-file "~/.emacs.d/pomm.csv")
+  :bind
+  ("C-c p" . 'dh/pomm-map)
+  (:map dh/pomm-map
+	("s" . 'pomm-third-time-start)
+	("S" . 'pomm-third-time-stop)
+	("b" . 'pomm-third-time-switch)
+	("r" . 'pomm-third-time-reset))
+  :config
+  (pomm-mode-line-mode))
+
+;; -----------------------------------------------------------------------------
+;; Security
+
+(use-package plstore
+  :ensure nil
+  :config
+  ;; My GPG Key ID for Emacs
+  (add-to-list 'plstore-encrypt-to "0CF61C7D927BFB747F50F5CC3D113A04A103ACDF"))
 
 
 ;; -----------------------------------------------------------------------------
