@@ -1,0 +1,16 @@
+;;-*-coding: utf-8;-*-
+(define-abbrev-table 'global-abbrev-table
+  '(
+    ("/name" "Daniel Hennigar" nil :count 1)
+    ("/email" "drhenn@student.ubc.ca" nil :count 1)
+    ("/gmail" "danrhennigar@gmail.com" nil :count 1)
+    ("/cell" "672-999-5820" nil :count 1)
+    ("/git" "https://github.com/dhennigar" nil :count 1)
+    ("/lab" "Conservation Decisions Lab" nil :count 1)
+    ("/ubc" "University of British Columbia" nil :count 1)
+    ("/rcf" "Raincoast Conservation Foundation" nil :count 1)
+    ("/duc" "Ducks Unlimited Canada" nil :count 1)
+    ("/bc" "British Columbia" nil :count 1)
+    ("/pc" "per capita" nil :count 1)
+   ))
+

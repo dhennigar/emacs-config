@@ -1,0 +1,52 @@
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8-emacs; mode: lisp-data -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("Notes"
+ (filename . "~/org/notes/")
+ (front-context-string . "20240716T233112-")
+ (rear-context-string . "49 Jul 16 23:31 ")
+ (position . 142)
+ (last-modified 26263 26547 638431 484000))
+("RSS Feed"
+ (location . "@1-month-ago +unread")
+ (tags "unread")
+ (handler . elfeed-search-bookmark-handler))
+("Podcasts"
+ (location . "@6-months-ago +podcast")
+ (tags "podcast")
+ (handler . elfeed-search-bookmark-handler))
+("Music"
+ (filename . "~/Music/")
+ (front-context-string . "King Gizzard and")
+ (rear-context-string . "04 Apr 30 21:10 ")
+ (position . 138)
+ (last-modified 26178 54797 392785 348000))
+("Planner"
+ (filename . "~/org/planner.org")
+ (front-context-string . "#+TITLE: Persona")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26142 64261 147756 77000))
+("Thesis"
+ (filename . "~/org/thesis.org")
+ (position . 1))
+("NUC"
+ (filename . "/ssh:nuc:~/")
+ (front-context-string . ".\n  drwxr-xr-x 5")
+ (rear-context-string . "96 Apr  9 11:41 ")
+ (position . 71)
+ (last-modified 26133 38763 601807 648000))
+("Early Init"
+ (filename . "~/.emacs.d/early-init.el")
+ (front-context-string . ";;; early-init.e")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26133 38711 12296 967000))
+("Init"
+ (filename . "~/.emacs.d/init.el")
+ (front-context-string . ";;; init.el --- ")
+ (rear-context-string)
+ (position . 1)
+ (last-modified 26133 38690 377694 728000))
+)

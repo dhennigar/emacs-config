@@ -1,0 +1,25 @@
+#+TITLE: Elfeed Configuration File
+#+AUTHOR: Daniel Hennigar
+#+DESCRIPTION: My collection of RSS feeds.
+
+* Feeds                                                              :elfeed:
+
+** [[https://pwelverumandsun.substack.com/feed][PW Elverum and Sun Substack]]
+
+** [[https://protesilaos.com/master.xml][Protesilaos Stavrou]]
+
+** [[https://hakaimagazine.com/feed][Hakai Magazine]]                                                  
+
+** [[https://thenarwhal.ca/feed/][Narwhal]]
+
+** [[https://feeds.captivate.fm/future-ecologies/][Future Ecologies]]                                                :podcast:
+
+** [[https://pod.link/1368790239.rss][Emergence Magazine]]                                              :podcast:
+
+** [[https://feeds.simplecast.com/54nAGcIl][The Daily]]                                                       :podcast:
+
+** [[https://feeds.simplecast.com/ydACIPHO][The Headlines]]                                                   :podcast: 
+
+** [[https://feeds.simplecast.com/TGclX98p][The Decibel]]                                                     :podcast:
+
+** [[https://rss.art19.com/buddhist-geeks][Buddhist Geeks]]                                                  :podcast:
