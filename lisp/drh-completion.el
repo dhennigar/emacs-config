@@ -1,5 +1,24 @@
 ;;; drh-completion.el --- Making the most of the built-in completion framework
-;;; Author: Daniel Hennigar, 2024
+
+;; Copyright (c) 2022-2024 Daniel Hennigar
+
+;; Author: Daniel Hennigar
+;; URL: https://github.com/dhennigar/emacs-config
+;; Package-Requires: ((emacs "29.4"))
+
+;; This file is NOT part of GNU Emacs
+
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 or any later version.
+
+;; This file is distributed in the hope that it will be useful,
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this file. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 

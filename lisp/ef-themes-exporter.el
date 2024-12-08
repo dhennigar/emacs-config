@@ -1,11 +1,10 @@
 ;;; ef-themes-exporter.el --- Help port the active Ef theme to external applications -*- lexical-binding:t -*-
 
-;; Copyright (C) 2021-2023  Protesilaos Stavrou; Copyright (C) 2024 Daniel Hennigar
+;; Copyright (C) 2021-2023  Protesilaos Stavrou
+;; Copyright (C) 2024 Daniel Hennigar
 
 ;; Original author: Protesilaos Stavrou <info@protesilaos.com>
-;; URL: https://git.sr.ht/~protesilaos/ef-themes
-
-;; Modified by: Daniel Hennigar
+;; Modified by: Daniel Hennigar <danrhennigar@gmail.com>
 
 ;; This file is NOT part of GNU Emacs.
 
