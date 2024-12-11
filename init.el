@@ -57,6 +57,7 @@
 (setq straight-use-package-by-default t)
 
 
+
 ;; -----------------------------------------------------------------------------
 ;; Aesthetics
 
@@ -192,8 +193,8 @@
 ;; (require 'drh-completion)
 
 (add-hook 'prog-mode-hook 'electric-pair-mode) ; Match delimiters for coding
-(setq tab-always-indent 'complete)	       ; Context aware tab completion
-(setq tab-first-completion nil)		       ; Offer choice of completions
+;; (setq tab-always-indent 'complete)	       ; Context aware tab completion
+;; (setq tab-first-completion nil)	       ; Offer choice of completions
 
 ;; Out of order search term filtering
 (use-package orderless
@@ -221,15 +222,19 @@
 ;; Completion-at-point overlay
 (use-package corfu
   :config
-  (setq corfu-auto nil)			; corfu is not eager
-  (setq corfu-quit-no-match t)		; close on no match
-  (setq corfu-min-width 30)		; minimum window width
-  (setq corfu-popupinfo-delay nil)	; info is not eager  
-  ;; Show documentation for the completion candidate
+
+  (setq corfu-auto t)
+  (setq corfu-quit-no-match t)
+
+  (setq corfu-left-margin-width 0)
+  (setq corfu-right-margin-width 0)
+  
   (require 'corfu-popupinfo)
+  (setq corfu-popupinfo-delay nil)  
   (corfu-popupinfo-mode)
-  ;; Enable corfu everywhere
+  
   (global-corfu-mode +1)
+
   :bind
   (:map corfu-map
 	("M-SPC" . 'corfu-insert-separator)
@@ -261,6 +266,9 @@
   ;; A small delay in Eldoc prevents it from stepping on my typing.
   (setq eldoc-idle-delay 1.0))
 
+;; I don't like the documentation-on-hover provided by most LSP servers.
+(add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
+
 ;; Real-time syntax checking
 (use-package flymake
   :ensure nil
@@ -276,6 +284,30 @@
 	("p" . flymake-goto-prev-error)
 	("b" . flymake-show-buffer-diagnostics)))
 
+;; Install treesitter grammars
+(setq treesit-language-source-alist
+      '((markdown "https://github.com/ikatyang/tree-sitter-markdown")
+	(python   "https://github.com/tree-sitter/tree-sitter-python")
+	(bash     "https://github.com/tree-sitter/tree-sitter-bash")
+	(elisp    "https://github.com/Wilfred/tree-sitter-elisp")
+	(r        "https://github.com/r-lib/tree-sitter-r")
+	(perl '("https://github.com/tree-sitter-perl/tree-sitter-perl" "release"))
+	(pod  '("https://github.com/trees-sitter-perl/tree-sitter-pod" "release"))))
+
+
+;; -----------------------------------------------------------------------------
+;; Bash
+
+;; Use LSP for bash scripts
+;; note: must install `'bash-language-server', `shfmt', and `shellcheck'
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+	       '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
+(add-hook 'sh-mode-hook 'eglot-ensure)
+(add-hook 'bash-ts-mode-hook 'eglot-ensure)
+
+;; and use treesitter mode by default
+(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
 
 ;; -----------------------------------------------------------------------------
 ;; R
@@ -346,8 +378,49 @@
 ;; -----------------------------------------------------------------------------
 ;; Perl
 
+;; use the more modern Perl mode by default
 (add-to-list 'major-mode-remap-alist '(perl-mode . cperl-mode))
+(setq cperl-invalid-face nil)
+(setq cperl-indent-parens-as-block t)
+(setq cperl-indent-level 4)
+(setq cperl-close-paren-offset (- cperl-indent-level))
 
+;; use PerlNavigator LSP via eglot
+(setq-default eglot-workspace-configuration
+              '((:perlnavigator . (:perlPath
+				   "/usr/bin/perl"
+				   :enableWarnings t))))
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               `((cperl-mode perl-mode) . ("~/perl5/bin/perlnavigator", "--stdio"))))
+(add-hook 'cperl-mode-hook 'eglot-ensure)
+(add-hook 'perl-mode-hook 'eglot-ensure)
+
+;; tidy up your code
+(use-package perltidy
+  :straight (perltidy
+	     :type git
+	     :host github
+	     :repo "perl-ide/perltidy.el"
+	     :branch "master"))
+
+;; -----------------------------------------------------------------------------
+;; For publishing software
+(use-package legalese
+  :config
+  (setq legalese-default-author "Daniel Hennigar")
+  (setq legalese-default-copyright "Daniel Hennigar")
+  (add-to-list
+   'legalese-licenses
+   ;; Use as licensing boilerplate for Perl programs
+   '(dual "This program is free software; you can redistribute it and/or modify
+it under the terms of either:
+
+  a) the Artistic License 2.0, or
+  b) the GNU General Public License as published by the Free Software
+     Foundation; either version 3, or (at your option) any later version.
+
+See the LICENSE file for more information.")))
 
 ;; -----------------------------------------------------------------------------
 ;; Writing Documents
