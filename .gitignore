@@ -15,5 +15,6 @@ org-roam.db
 .cache/
 custom/
 *.org~
+.org-id-locations
 history
 custom.el
