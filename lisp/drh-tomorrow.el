@@ -888,6 +888,13 @@ names to which it refers are bound."
       (company-scrollbar-fg (:background ,contrast-bg))
       (company-echo-common (:inherit company-echo :foreground ,red))
 
+      ;; corfu
+      (corfu-current (:background ,contrast-bg))
+      (corfu-bar (:background ,contrast-bg))
+      (corfu-border (:background ,highlight))
+      (corfu-default (:background ,highlight))
+
+      
       ;; counsel-css
       (counsel-css-selector-depth-face-1 (:foreground ,yellow))
       (counsel-css-selector-depth-face-2 (:foreground ,orange))
