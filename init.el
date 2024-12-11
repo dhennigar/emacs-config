@@ -296,6 +296,17 @@
 
 
 ;; -----------------------------------------------------------------------------
+;; Integrated terminal emulator
+
+(use-package vterm
+  :bind
+  ("C-c t" . 'vterm-other-window)
+  ("C-c M-t" . 'vterm)
+  (:map vterm-mode-map
+	("C-q" . 'vterm-send-next-key)))
+
+
+;; -----------------------------------------------------------------------------
 ;; Bash
 
 ;; Use LSP for bash scripts
@@ -308,6 +319,7 @@
 
 ;; and use treesitter mode by default
 (add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
+
 
 ;; -----------------------------------------------------------------------------
 ;; R
@@ -375,6 +387,7 @@
 
 (add-hook 'lisp-mode-hook #'dh/load-quicklisp-slime-helper)
 
+
 ;; -----------------------------------------------------------------------------
 ;; Perl
 
@@ -404,6 +417,7 @@
 	     :repo "perl-ide/perltidy.el"
 	     :branch "master"))
 
+
 ;; -----------------------------------------------------------------------------
 ;; For publishing software
 (use-package legalese
@@ -421,6 +435,7 @@ it under the terms of either:
      Foundation; either version 3, or (at your option) any later version.
 
 See the LICENSE file for more information.")))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Writing Documents
@@ -613,7 +628,6 @@ See the LICENSE file for more information.")))
   :mode (("\\.pdf\\'" . pdf-view-mode)))
 
 
-
 ;; -----------------------------------------------------------------------------
 ;; Study timer
 
@@ -719,40 +733,6 @@ See the LICENSE file for more information.")))
 ;; Used to serve my simple static website locally
 ;; See the `site' subdirectory in my org files.
 (use-package simple-httpd)
-
-
-;; -----------------------------------------------------------------------------
-;; OS-Specific Configuration
-
-;; I don't use Windows, so I'm just avoiding the OS check for now. If I ever
-;; need this Emacs to be transportable I can use these blocks for further
-;; configuration. For now the only thing that wouldn't transfer to Windows
-;; (that I know of) would be the libvterm terminal emulator. The powershell
-;; package provides the Windows equivalent.
-
-;; Linux
-;; (when (eq system-type 'gnu/linux)
-(use-package vterm
-  :bind
-  ("C-c t" . 'vterm)
-  (:map vterm-mode-map
-	("C-q" . 'vterm-send-next-key)))
-
-;; (use-package vterm-toggle
-;;   :config
-;;   (setq vterm-toggle-fullscreen-p nil)
-;;   :bind
-;;   ("C-c t" . 'vterm-toggle)
-;;   ("C-c M-t" . 'vterm-toggle-cd))
-
-;; (add-hook 'server-after-make-frame-hook #'vterm)
-;; )
-
-;; Windows
-;; (when (eq system-type 'windows-nt)
-;;   (use-package powershell
-;;     :bind
-;;     ("C-c t" . 'powershell)))
 
 
 ;; -----------------------------------------------------------------------------
