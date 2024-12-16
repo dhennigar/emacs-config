@@ -1,0 +1,7 @@
+#+title: Emacs Config
+#+author: Daniel Hennigar
+
+My personal Emacs configuration.
+
+* Installation
+~git clone https://github.com/dhennigar/emacs-config $HOME/.emacs.d~

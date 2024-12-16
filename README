@@ -1,4 +1,0 @@
-Emacs Config - my personal configuration for Emacs
-
-Installation:
-	git clone https://github.com/dhennigar/emacs-config ~/.emacs.d
