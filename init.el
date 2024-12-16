@@ -80,12 +80,9 @@
 ;; My tomorrow themes
 (use-package drh-tomorrow
   :straight nil
-  :ensure nil)
-
-;; My monochromatic themes
-(use-package drh-mono
-  :straight nil
-  :ensure nil)
+  :ensure nil
+  :config
+  (load-theme-disable-others 'drh-tomorrow-day))
 
 ;; Minimalist mode line
 (use-package mood-line
@@ -193,8 +190,8 @@
 ;; (require 'drh-completion)
 
 (add-hook 'prog-mode-hook 'electric-pair-mode) ; Match delimiters for coding
-;; (setq tab-always-indent 'complete)	       ; Context aware tab completion
-;; (setq tab-first-completion nil)	       ; Offer choice of completions
+(setq tab-always-indent 'complete)	       ; Context aware tab completion
+(setq tab-first-completion nil)	       ; Offer choice of completions
 
 ;; Out of order search term filtering
 (use-package orderless
@@ -224,7 +221,9 @@
   :config
 
   (setq corfu-auto t)
+  (setq corfu-auto-delay 0.5)
   (setq corfu-quit-no-match t)
+  (setq corfu-quit-at-boundary t)
 
   (setq corfu-left-margin-width 0)
   (setq corfu-right-margin-width 0)
@@ -263,18 +262,18 @@
   :ensure nil
   :diminish eldoc-mode
   :config
-  ;; A small delay in Eldoc prevents it from stepping on my typing.
-  (setq eldoc-idle-delay 1.0))
-
-;; I don't like the documentation-on-hover provided by most LSP servers.
-(add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
+  (setq eldoc-documentation-strategy 'eldoc-documentation-default)
+  (setq eldoc-idle-delay 0.5)
+  (setq eldoc-echo-area-use-multiline-p nil)
+  (setq eldoc-echo-area-display-truncation-message nil))
 
 ;; Real-time syntax checking
 (use-package flymake
   :ensure nil
+  :straight nil
   :init (define-prefix-command 'dh/flymake-map)
   :config
-  (setq flymake-no-changes-timeout 2.0)
+  (setq flymake-no-changes-timeout 10.0)
   :bind
   (:map global-map
 	("C-c f" . dh/flymake-map))
@@ -285,14 +284,21 @@
 	("b" . flymake-show-buffer-diagnostics)))
 
 ;; Install treesitter grammars
-(setq treesit-language-source-alist
-      '((markdown "https://github.com/ikatyang/tree-sitter-markdown")
-	(python   "https://github.com/tree-sitter/tree-sitter-python")
-	(bash     "https://github.com/tree-sitter/tree-sitter-bash")
-	(elisp    "https://github.com/Wilfred/tree-sitter-elisp")
-	(r        "https://github.com/r-lib/tree-sitter-r")
-	(perl '("https://github.com/tree-sitter-perl/tree-sitter-perl" "release"))
-	(pod  '("https://github.com/trees-sitter-perl/tree-sitter-pod" "release"))))
+(setq
+ treesit-language-source-alist
+ '((markdown "https://github.com/ikatyang/tree-sitter-markdown")
+   (python   "https://github.com/tree-sitter/tree-sitter-python")
+   (bash     "https://github.com/tree-sitter/tree-sitter-bash")
+   (elisp    "https://github.com/Wilfred/tree-sitter-elisp")
+   (r        "https://github.com/r-lib/tree-sitter-r")
+   (perl '("https://github.com/tree-sitter-perl/tree-sitter-perl" "release"))
+   (pod  '("https://github.com/trees-sitter-perl/tree-sitter-pod" "release"))
+   (c "https://github.com/tree-sitter/tree-sitter-c")))
+
+;; eglot lsp client
+(require 'eglot)
+(setq eglot-send-changes-idle-time 0.5)
+(setq eglot-autoshutdown t)
 
 
 ;; -----------------------------------------------------------------------------
@@ -301,7 +307,6 @@
 (use-package vterm
   :bind
   ("C-c t" . 'vterm-other-window)
-  ("C-c M-t" . 'vterm)
   (:map vterm-mode-map
 	("C-q" . 'vterm-send-next-key)))
 
@@ -309,16 +314,49 @@
 ;; -----------------------------------------------------------------------------
 ;; Bash
 
-;; Use LSP for bash scripts
-;; note: must install `'bash-language-server', `shfmt', and `shellcheck'
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-	       '((sh-mode bash-ts-mode) . ("bash-language-server" "start"))))
-(add-hook 'sh-mode-hook 'eglot-ensure)
+(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
+(add-to-list
+ 'eglot-server-programs
+ '(bash-ts-mode "bash-language-server" "start"))
 (add-hook 'bash-ts-mode-hook 'eglot-ensure)
 
-;; and use treesitter mode by default
-(add-to-list 'major-mode-remap-alist '(sh-mode . bash-ts-mode))
+
+;; -----------------------------------------------------------------------------
+;; Perl
+
+;; use the more modern Perl mode by default
+(add-to-list 'major-mode-remap-alist '(perl-mode . cperl-mode))
+(setq cperl-invalid-face nil)
+(setq cperl-indent-parens-as-block t)
+(setq cperl-indent-level 4)
+(setq cperl-close-paren-offset (- cperl-indent-level))
+
+;; eglot workspace configuration
+(setq-default eglot-workspace-configuration
+	      '((:perlnavigator . (:perlPath
+				   "/usr/bin/perl"
+				   :enableWarnings t))))
+
+;; enable lsp support
+(add-to-list
+ 'eglot-server-programs
+ '(cperl-mode "~/perl5/bin/perlnavigator" "--stdio"))
+(add-hook 'cperl-mode-hook 'eglot-ensure)
+
+;; tidy up your code
+(use-package perltidy
+  :straight (perltidy
+	     :type git
+	     :host github
+	     :repo "perl-ide/perltidy.el"
+	     :branch "master"))
+
+
+;; -----------------------------------------------------------------------------
+;; C
+
+(add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+(add-hook 'c-ts-mode-hook 'eglot-ensure)
 
 
 ;; -----------------------------------------------------------------------------
@@ -362,21 +400,6 @@
 
 
 ;; -----------------------------------------------------------------------------
-;; Python
-
-;; A complete IDE for Python in Emacs
-(use-package elpy
-  :init
-  (advice-add 'python-mode :before 'elpy-enable)
-  :config
-  (setq python-shell-interpreter "jupyter") ; an improved Python REPL experience
-  (setq python-shell-interpreter-args "console --simple-prompt")
-  (setq python-shell-prompt-detect-failure-warning nil)
-  (add-to-list 'python-shell-completion-native-disabled-interpreters
-               "jupyter"))
-
-
-;; -----------------------------------------------------------------------------
 ;; Common LISP
 
 (defun dh/load-quicklisp-slime-helper ()
@@ -389,37 +412,8 @@
 
 
 ;; -----------------------------------------------------------------------------
-;; Perl
-
-;; use the more modern Perl mode by default
-(add-to-list 'major-mode-remap-alist '(perl-mode . cperl-mode))
-(setq cperl-invalid-face nil)
-(setq cperl-indent-parens-as-block t)
-(setq cperl-indent-level 4)
-(setq cperl-close-paren-offset (- cperl-indent-level))
-
-;; use PerlNavigator LSP via eglot
-(setq-default eglot-workspace-configuration
-              '((:perlnavigator . (:perlPath
-				   "/usr/bin/perl"
-				   :enableWarnings t))))
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               `((cperl-mode perl-mode) . ("~/perl5/bin/perlnavigator", "--stdio"))))
-(add-hook 'cperl-mode-hook 'eglot-ensure)
-(add-hook 'perl-mode-hook 'eglot-ensure)
-
-;; tidy up your code
-(use-package perltidy
-  :straight (perltidy
-	     :type git
-	     :host github
-	     :repo "perl-ide/perltidy.el"
-	     :branch "master"))
-
-
-;; -----------------------------------------------------------------------------
 ;; For publishing software
+
 (use-package legalese
   :config
   (setq legalese-default-author "Daniel Hennigar")
